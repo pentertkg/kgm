@@ -23,12 +23,14 @@ w(`-- ════════════════════════�
 do $seed$
 declare
   v_store uuid;
-  v_user  uuid := auth.uid();
+  -- ใน SQL Editor ของ Supabase จะรันด้วย role postgres ซึ่งไม่มี JWT
+  -- ทำให้ auth.uid() เป็น NULL จึง fallback ไปใช้ผู้ใช้คนแรกที่สร้างไว้
+  v_user  uuid := coalesce(auth.uid(), (select id from auth.users order by created_at limit 1));
   v_order uuid;
   v_today date := (now() at time zone 'Asia/Bangkok')::date;
 begin
   if v_user is null then
-    raise exception 'ต้องรันโดยผู้ใช้ที่ login แล้ว — เปิด SQL Editor ของ Supabase ในสภาพที่ login อยู่ หรือสร้างผู้ใช้ก่อน';
+    raise exception 'ยังไม่มีผู้ใช้ในระบบ — ไปสร้างที่ Authentication → Users → Add user ก่อน แล้วรันไฟล์นี้อีกครั้ง';
   end if;
 
   -- ─── ร้าน ───────────────────────────────────────────────────────────────

@@ -49,9 +49,9 @@ margin ของทุกเมนูที่ใช้หมูจะขยั�
 **3) สร้างผู้ใช้คนแรก** — Authentication → Users → Add user (ใส่อีเมล+รหัสผ่าน, ติ๊ก auto-confirm)
 
 **4) รัน seed** — SQL Editor รัน `04_seed.sql`
-> ⚠️ `04_seed.sql` ใช้ `auth.uid()` เพื่อผูกร้านเข้ากับบัญชีคุณ ถ้ารันใน SQL Editor แล้วขึ้น error
-> ว่าต้อง login ให้ใช้วิธีนี้แทน: หา user id จากหน้า Authentication แล้วแก้บรรทัด
-> `v_user uuid := auth.uid();` เป็น `v_user uuid := '<user-id-ที่คัดลอกมา>';`
+> `04_seed.sql` ผูกร้านเข้ากับผู้ใช้โดยใช้ `auth.uid()` แต่ SQL Editor รันด้วย role `postgres`
+> ซึ่งไม่มี JWT ทำให้ `auth.uid()` เป็น NULL — ไฟล์จึง fallback ไปใช้**ผู้ใช้คนแรกที่สร้างไว้**
+> อัตโนมัติ ไม่ต้องแก้ไฟล์มือ (แต่ต้องทำขั้นตอนที่ 3 ก่อน ไม่งั้นจะขึ้น error ว่ายังไม่มีผู้ใช้)
 
 **5) ใส่ค่าใน `assets/js/config.js`** — เอาจาก Project Settings → API
 ```javascript
