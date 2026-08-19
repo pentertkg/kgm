@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ตรวจการเชื่อมต่อฐานข้อมูล — StreetFood OS</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<div class="page" style="max-width:820px;margin:0 auto;padding:32px 20px">
+  <div class="row g10 mb16">
+    <span class="logo">🌿</span>
+    <div><h2>ตรวจการเชื่อมต่อฐานข้อมูล</h2>
+      <div class="t-sm muted">เครื่องมือสำหรับ dev — ใช้ยืนยันว่า schema, RLS และ views ทำงานถูกก่อนแก้หน้าแอป</div></div>
+  </div>
+
+  <div class="card card-p mb16" id="cfgBox"></div>
+
+  <div class="card card-p mb16">
+    <h4>1. เข้าสู่ระบบ</h4>
+    <div class="grid g-2 mt12" style="gap:12px">
+      <div class="field"><label class="label">อีเมล</label><input class="input" id="email" type="email" autocomplete="username"></div>
+      <div class="field"><label class="label">รหัสผ่าน</label><input class="input" id="pw" type="password" autocomplete="current-password"></div>
+    </div>
+    <div class="row g8 mt12 wrap">
+      <button class="btn btn-primary btn-sm" id="btnIn">เข้าสู่ระบบ</button>
+      <button class="btn btn-ghost btn-sm" id="btnUp">สมัครใหม่</button>
+      <button class="btn btn-ghost btn-sm" id="btnOut">ออกจากระบบ</button>
+      <span class="badge" id="authState">ยังไม่ได้เข้าสู่ระบบ</span>
+    </div>
+    <p class="t-xs muted mt8">รหัสผ่านถูกส่งตรงไปที่ Supabase ของคุณเท่านั้น และไม่ได้เก็บไว้ในหน้านี้</p>
+  </div>
+
+  <div class="card card-p mb16">
+    <div class="between mb12"><h4>2. ทดสอบอ่านข้อมูลทุก view</h4>
+      <button class="btn btn-primary btn-sm" id="btnRun">รันการทดสอบ</button></div>
+    <div id="results"><div class="t-sm muted">กด "รันการทดสอบ" หลังเข้าสู่ระบบแล้ว</div></div>
+  </div>
+
+  <div class="card card-p">
+    <div class="between mb12"><h4>3. ทดสอบเขียน (สร้างออเดอร์จริง)</h4>
+      <button class="btn btn-ghost btn-sm" id="btnWrite">สร้างออเดอร์ทดสอบ</button></div>
+    <div id="writeOut"><div class="t-sm muted">จะสร้างบิล 1 ใบจากเมนูแรกของร้าน เพื่อทดสอบ trigger ที่ snapshot ราคา/ต้นทุนและออกเลขบิล</div></div>
+  </div>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/db-live.js"></script>
+<script src="assets/js/db-check.js"></script>
+</body>
+</html>
