@@ -10,6 +10,6 @@
    ============================================================ */
 window.SFOS_CONFIG = {
   supabaseUrl: 'https://maezclcrarmqsgtoieas.supabase.co',
-  supabaseAnonKey: '',    // ⬅️ ใส่ anon / public key จาก Project Settings → API Keys
+  supabaseAnonKey: 'sb_publishable_yuqDY-mkBDWGA7ZDxxAEjQ_e0G4NX9N',
   storeId: ''             // ปล่อยว่างไว้ = ใช้ร้านแรกที่ผู้ใช้เป็นสมาชิก
 };
