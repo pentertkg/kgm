@@ -142,7 +142,7 @@ window.APP = (function () {
 
     <nav class="bottom-nav" id="bnav"></nav>
 
-    <button class="fab" id="fab"><span class="fi">${ico('advisor', 18)}</span><span>ถาม AI</span><span class="fd"></span></button>
+    <button class="fab" id="fab" aria-label="ถาม AI"><span class="fi">${ico('advisor', 18)}</span><span class="fl">ถาม AI</span><span class="fd"></span></button>
 
     <div class="ai-panel" id="aiPanel">
       <div class="ai-head">

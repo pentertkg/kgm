@@ -29,8 +29,10 @@
   };
 
   function steps() {
-    if (S.mode !== 'signup') { document.getElementById('steps').innerHTML = ''; return; }
-    const names = ['ตั้งรหัสผ่าน', 'ความยินยอม'];
+    const box = document.getElementById('steps');
+    if (S.mode !== 'signup') { box.innerHTML = ''; box.className = 'steps mb24'; return; }
+    const names = ['อีเมลและรหัสผ่าน', 'ความยินยอม'];
+    box.className = 'steps steps--few mb24';
     document.getElementById('steps').innerHTML = names.map((n, i) => {
       const k = i + 1, cls = k === S.step ? 'on' : k < S.step ? 'done' : '';
       return `<div class="step-i ${cls}"><span class="step-n">${k < S.step ? '✓' : k}</span>
@@ -209,44 +211,74 @@
     };
   }
 
-  /* ── ขั้น 2: ความยินยอม ────────────────────────────────── */
+  /* ── ขั้น 2: ความยินยอม ──────────────────────────────────
+     ออกแบบใหม่หลังทดสอบบนมือถือ ปัญหาเดิม:
+       · บอก "ขั้นที่ 2" ซ้ำ 3 ที่ (วงกลม + badge + หัวข้อ)
+       · ข้อความ 530 ตัวอักษรก่อนถึงปุ่ม ต้องอ่านเยอะกว่าจะรู้ว่าต้องทำอะไร
+       · ทุกข้อหน้าตาเหมือนกันหมด ไม่รู้ว่าข้อไหนต้องติ๊ก
+       · กดปุ่มแล้วค่อยรู้ว่าลืมติ๊ก (ลองผิดลองถูก)
+     แนวทางใหม่: ข้อจำเป็น 1 ข้อเด่นชัดอยู่บนสุด · ข้อไม่บังคับยุบสั้น
+     · ปุ่มปิดไว้จนติ๊กข้อจำเป็น พร้อมบอกเหตุผลใต้ปุ่มตั้งแต่ต้น */
   function s2(msg) {
+    const req = A.PURPOSES.find(p => p.required);
+    const opt = A.PURPOSES.filter(p => !p.required);
     stage.innerHTML = `
-      <span class="badge badge-brand">ขั้นที่ 2</span>
-      <h2 class="mt12">ขอความยินยอมก่อนสร้างบัญชี</h2>
-      <p class="muted mt8">เลือกได้ว่าจะยินยอมเรื่องใด ข้อที่ไม่บังคับปฏิเสธได้และยังใช้ระบบได้ปกติ</p>
+      <h2>อีกขั้นเดียว — ขอความยินยอม</h2>
+      <p class="muted mt8" style="line-height:1.65">ตามกฎหมาย PDPA เราต้องได้รับความยินยอมจากคุณก่อน
+        จะสร้างบัญชีให้ <b>${U.esc(S.email)}</b></p>
 
-      <div class="tile mt16" style="background:var(--surface-2)">
-        <div class="row g10">${(window.ICON||(()=>''))('bell',17)}
-          <div class="t-sm"><b>ข้อมูลที่ระบบเก็บ: อีเมลของคุณเท่านั้น</b><br>
-            <span class="muted">ไม่เก็บชื่อ เบอร์โทร ที่อยู่ IP หรือพฤติกรรมการใช้งาน
-            และไม่ส่งต่อให้ใคร — <a href="privacy.html" target="_blank" rel="noopener">อ่านรายละเอียด</a></span></div></div>
-      </div>
+      <label class="consent-main mt20" id="reqBox">
+        <input type="checkbox" data-p="${req.id}" ${S.chosen[req.id] ? 'checked' : ''}>
+        <span>
+          <b>${U.esc(req.title)}</b>
+          <span class="t-sm muted">เก็บแค่อีเมล ไม่เก็บชื่อ เบอร์โทร ที่อยู่ IP หรือพฤติกรรมการใช้งาน
+            และไม่ส่งต่อให้ใคร · <a href="privacy.html" target="_blank" rel="noopener">อ่านคำชี้แจง</a></span>
+        </span>
+      </label>
 
-      <div class="col g10 mt16" id="cons"></div>
+      <div class="consent-opt-h mt20">ไม่บังคับ — ปฏิเสธได้ ใช้งานได้ปกติ และเปลี่ยนใจภายหลังได้</div>
+      <div class="col g8 mt10" id="cons"></div>
+
       ${msg ? err(msg) : ''}
-      <button class="btn btn-primary btn-lg btn-block mt20" id="go">ยินยอมและสร้างบัญชี</button>
-      <div class="ctr mt12"><button class="btn btn-ghost btn-sm" id="back">← ย้อนกลับ</button></div>`;
+      <button class="btn btn-primary btn-lg btn-block mt20" id="go">สร้างบัญชี</button>
+      <p class="t-xs muted ctr mt10" id="goHint"></p>
+      <div class="ctr mt8"><button class="btn btn-ghost btn-sm" id="back">← กลับไปแก้อีเมลหรือรหัสผ่าน</button></div>`;
 
-    document.getElementById('cons').innerHTML = A.PURPOSES.map(p => `
-      <label class="choice" style="align-items:flex-start;cursor:pointer">
-        <input type="checkbox" data-p="${p.id}" ${S.chosen[p.id] ? 'checked' : ''}
-               style="width:19px;height:19px;margin-top:2px;flex:none;accent-color:var(--brand)">
-        <span class="grow">
-          <b class="t-sm">${U.esc(p.title)}</b>
-          ${p.required ? '<span class="badge badge-bad" style="margin-left:6px">จำเป็น</span>'
-                       : '<span class="badge" style="margin-left:6px">เลือกได้</span>'}
-          <br><span class="t-xs muted">${U.esc(p.detail)}</span>
-        </span></label>`).join('');
+    document.getElementById('cons').innerHTML = opt.map(p => `
+      <label class="consent-opt">
+        <input type="checkbox" data-p="${p.id}" ${S.chosen[p.id] ? 'checked' : ''}>
+        <span><b class="t-sm">${U.esc(p.title)}</b>
+          <span class="t-xs muted">${U.esc(p.detail.replace(' — ถอนได้ทุกเมื่อ', ''))}</span></span>
+      </label>`).join('');
 
+    /* ปุ่มพร้อมใช้เมื่อไร บอกตั้งแต่ก่อนกด ไม่ใช่หลังกด */
+    const syncGate = () => {
+      const ok = !!S.chosen[req.id];
+      const btn = document.getElementById('go');
+      btn.disabled = !ok;
+      btn.style.opacity = ok ? '' : '.5';
+      btn.style.cursor = ok ? '' : 'not-allowed';
+      document.getElementById('goHint').textContent = ok
+        ? 'สร้างบัญชีแล้วเข้าใช้งานได้ทันที'
+        : 'ติ๊กข้อบนสุดก่อนจึงจะสร้างบัญชีได้';
+      document.getElementById('reqBox').classList.toggle('on', ok);
+    };
     stage.querySelectorAll('[data-p]').forEach(cb => {
-      cb.onchange = () => { S.chosen[cb.dataset.p] = cb.checked; };
+      cb.onchange = () => {
+        S.chosen[cb.dataset.p] = cb.checked;
+        const box = cb.closest('.consent-opt,.consent-main');
+        if (box) box.classList.toggle('on', cb.checked);
+        syncGate();
+      };
+      const box = cb.closest('.consent-opt,.consent-main');
+      if (box) box.classList.toggle('on', cb.checked);
     });
+    syncGate();
     document.getElementById('back').onclick = () => { S.step = 1; render(); };
     document.getElementById('go').onclick = async () => {
       if (!S.chosen.account) return s2('ต้องยินยอมข้อที่จำเป็น (ใช้อีเมลยืนยันตัวตน) จึงจะสร้างบัญชีได้');
       const btn = document.getElementById('go');
-      btn.disabled = true; btn.textContent = 'กำลังส่งรหัส…';
+      btn.disabled = true; btn.textContent = 'กำลังสร้างบัญชี…';
       try {
         const r = await A.signUp(S.email, S.pw);
         S.pw = '';                        // ทิ้งรหัสผ่านจากหน่วยความจำทันทีที่ใช้เสร็จ
@@ -263,7 +295,6 @@
         U.toast('สร้างบัญชีสำเร็จ', 'ok');
         setTimeout(() => location.replace(next), 400);
       } catch (e) {
-        btn.disabled = false; btn.textContent = 'ยินยอมและสร้างบัญชี';
         s2(e.message);
       }
     };
