@@ -20,15 +20,22 @@ DO   = re.compile(r"\bdo\s+\$(\w*)\$([\s\S]*?)\$\1\$\s*;", re.I)
 DECL = "new record; old record; tg_op text;"
 
 
-def probe_body(body: str) -> str:
-    """ห่อ body ของ plpgsql ให้ parser ตรวจได้ โดยไม่แตะตรรกะของโค้ด"""
-    b = re.sub(r"\breturn\s+(new|old|null)\s*;", "return;", body, flags=re.I)
-    s = b.strip()
+def probe_body(body: str, ret: str = "void") -> str:
+    """ห่อ body ของ plpgsql ให้ parser ตรวจได้ โดยไม่แตะตรรกะของโค้ด
+
+    ret = ชนิดที่ฟังก์ชันจริงประกาศคืนค่า ต้องส่งมาให้ตรง ไม่งั้นบรรทัด
+    `return <expr>;` จะถูกมองว่าผิดใน function ที่ returns void
+    """
+    s = body.strip()
+    if ret == "trigger":
+        # trigger ใช้ NEW/OLD และ return new; → แปลงเป็น returns void + ประกาศ record
+        s = re.sub(r"\breturn\s+(new|old|null)\s*;", "return;", s, flags=re.I)
+        ret = "void"
     if re.match(r"^declare\b", s, re.I):
         s = re.sub(r"^declare\b", "declare " + DECL, s, count=1, flags=re.I)
     else:
         s = "declare " + DECL + " " + s
-    return f"create or replace function __probe() returns void language plpgsql as $z$ {s} $z$;"
+    return f"create or replace function __probe() returns {ret} language plpgsql as $z$ {s} $z$;"
 
 
 fail = 0
@@ -47,8 +54,10 @@ for path in sorted(glob.glob("supabase/*.sql")):
         if "language plpgsql" not in stmt.lower():
             continue
         name = re.search(r"function\s+(\w+)", stmt, re.I).group(1)
+        rm = re.search(r"\breturns\s+([a-zA-Z_][\w \[\]]*?)\s+language", stmt, re.I)
+        ret = rm.group(1).strip() if rm else "void"
         try:
-            pglast.parse_plpgsql(probe_body(m.group(2)))
+            pglast.parse_plpgsql(probe_body(m.group(2), ret))
             nf += 1
         except Exception as e:
             print(f"❌ {label} — plpgsql ใน {name}(): {str(e)[:200]}")

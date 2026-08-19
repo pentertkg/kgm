@@ -18,6 +18,9 @@ window.SFOS_LIVE = (function () {
   const AUTH = CFG.supabaseUrl ? CFG.supabaseUrl.replace(/\/$/, '') + '/auth/v1' : '';
   const TOKEN_KEY = 'sfos_session';
 
+  /* session เป็นของ auth.js เจ้าเดียว (assets/js/auth.js) — ที่นี่แค่ยืมมาใช้
+     ถ้ายังไม่ได้โหลด auth.js จะ fallback ไปอ่าน localStorage เองเพื่อความเข้ากันได้ */
+  const A = () => window.SFOS_AUTH || null;
   let session = null;
   try { session = JSON.parse(localStorage.getItem(TOKEN_KEY) || 'null'); } catch (e) {}
 
@@ -27,7 +30,8 @@ window.SFOS_LIVE = (function () {
       apikey: CFG.supabaseAnonKey,
       'Content-Type': 'application/json'
     }, extra || {});
-    h.Authorization = 'Bearer ' + ((session && session.access_token) || CFG.supabaseAnonKey);
+    const t = (A() && A().token()) || (session && session.access_token);
+    h.Authorization = 'Bearer ' + (t || CFG.supabaseAnonKey);
     return h;
   }
 
@@ -85,6 +89,7 @@ window.SFOS_LIVE = (function () {
 
   /* ต่ออายุ token ให้อัตโนมัติก่อนยิงทุก request */
   async function ensureSession() {
+    if (A()) return A().ensure();          // ให้ auth.js จัดการต่ออายุ token
     if (session && session.expires_at && Date.now() > session.expires_at) {
       try { await refresh(); } catch (e) { signOut(); }
     }

@@ -70,9 +70,9 @@
   /* ---- flow ---- */
   const flow = [
     { n:'Plan',   ic:'🗺️', t:'วางแผน',   d:'สร้างร้าน ตั้งเป้า เพิ่มเมนู คำนวณต้นทุนและราคาขาย', href:'onboarding.html' },
-    { n:'Sell',   ic:'🧾', t:'ขาย',      d:'รับออเดอร์หน้าร้าน/Delivery ส่งเข้าครัวทันที', href:'app.html#/orders' },
-    { n:'Manage', ic:'📦', t:'บริหาร',   d:'คุม Stock ต้นทุน พนักงาน และข้อมูลลูกค้า', href:'app.html#/stock' },
-    { n:'Grow',   ic:'📈', t:'ทำให้โต',  d:'อ่าน Analytics ฟัง AI แล้วยิงโปรโมชัน/โฆษณา', href:'app.html#/analytics' }
+    { n:'Sell',   ic:'🧾', t:'ขาย',      d:'รับออเดอร์หน้าร้าน/Delivery ส่งเข้าครัวทันที', href:'app.html?demo=1#/orders' },
+    { n:'Manage', ic:'📦', t:'บริหาร',   d:'คุม Stock ต้นทุน พนักงาน และข้อมูลลูกค้า', href:'app.html?demo=1#/stock' },
+    { n:'Grow',   ic:'📈', t:'ทำให้โต',  d:'อ่าน Analytics ฟัง AI แล้วยิงโปรโมชัน/โฆษณา', href:'app.html?demo=1#/analytics' }
   ];
   document.getElementById('flowline').innerHTML = flow.map((f,i)=>`
     <a class="flow-node card-hover" href="${f.href}">
@@ -83,15 +83,15 @@
 
   /* ---- features ---- */
   document.getElementById('features').innerHTML = [
-    ['📊','Dashboard','เห็นภาพร้านวันนี้ใน 5 วินาที ยอดขาย ออเดอร์ AOV กำไร พร้อมเทียบกับเมื่อวาน','app.html#/dashboard'],
-    ['🧾','Orders','แยกสถานะ ใหม่ → กำลังทำ → พร้อมเสิร์ฟ → เสร็จแล้ว ครบทุกช่องทาง','app.html#/orders'],
-    ['🍽️','Menu & Cost','ใส่วัตถุดิบทีละอย่าง ระบบคิดต้นทุน กำไร และ Margin ให้ทันที','app.html#/menu'],
-    ['👨‍🍳','Kitchen Display','จอสำหรับครัว ตัวใหญ่ อ่านง่าย มีตัวจับเวลาต่อออเดอร์','app.html#/kitchen'],
-    ['📦','Stock','เตือนวัตถุดิบต่ำ และคาดการณ์ปริมาณที่ต้องใช้พรุ่งนี้','app.html#/stock'],
-    ['👥','Customers','แบ่งกลุ่มลูกค้า VIP/ประจำ/ใกล้หาย พร้อมเมนูโปรดของแต่ละคน','app.html#/customers'],
-    ['📣','Marketing','วัด ROAS และ CAC ของทุกแคมเปญ รู้ว่าควรเพิ่มหรือหยุดงบ','app.html#/marketing'],
-    ['🎁','Promotion Builder','ตอบ 5 คำถาม ได้โปรโมชันที่ตรงกับเป้าหมายจริง','app.html#/promotion'],
-    ['📈','Analytics','ยอดขาย สินค้า ลูกค้า การตลาด และกำไรสุทธิ ในที่เดียว','app.html#/analytics']
+    ['📊','Dashboard','เห็นภาพร้านวันนี้ใน 5 วินาที ยอดขาย ออเดอร์ AOV กำไร พร้อมเทียบกับเมื่อวาน','app.html?demo=1#/dashboard'],
+    ['🧾','Orders','แยกสถานะ ใหม่ → กำลังทำ → พร้อมเสิร์ฟ → เสร็จแล้ว ครบทุกช่องทาง','app.html?demo=1#/orders'],
+    ['🍽️','Menu & Cost','ใส่วัตถุดิบทีละอย่าง ระบบคิดต้นทุน กำไร และ Margin ให้ทันที','app.html?demo=1#/menu'],
+    ['👨‍🍳','Kitchen Display','จอสำหรับครัว ตัวใหญ่ อ่านง่าย มีตัวจับเวลาต่อออเดอร์','app.html?demo=1#/kitchen'],
+    ['📦','Stock','เตือนวัตถุดิบต่ำ และคาดการณ์ปริมาณที่ต้องใช้พรุ่งนี้','app.html?demo=1#/stock'],
+    ['👥','Customers','แบ่งกลุ่มลูกค้า VIP/ประจำ/ใกล้หาย พร้อมเมนูโปรดของแต่ละคน','app.html?demo=1#/customers'],
+    ['📣','Marketing','วัด ROAS และ CAC ของทุกแคมเปญ รู้ว่าควรเพิ่มหรือหยุดงบ','app.html?demo=1#/marketing'],
+    ['🎁','Promotion Builder','ตอบ 5 คำถาม ได้โปรโมชันที่ตรงกับเป้าหมายจริง','app.html?demo=1#/promotion'],
+    ['📈','Analytics','ยอดขาย สินค้า ลูกค้า การตลาด และกำไรสุทธิ ในที่เดียว','app.html?demo=1#/analytics']
   ].map(([ic,t,d,h])=>`<a class="card card-p card-hover" href="${h}">
       <div class="row g10"><span style="font-size:21px">${ic}</span><h4>${t}</h4></div>
       <p class="t-sm muted mt8" style="line-height:1.65">${d}</p>
@@ -119,8 +119,8 @@
           <div class="t-sm"><b>ทำ Bundle กะเพรา + เครื่องดื่ม 75 บาท</b><br>
           <span class="muted">ดัน AOV จาก ฿65 → ฿73 (+฿2,272/วัน)</span></div></div>
       </div>
-      <div class="row g8 mt12"><a class="btn btn-ai btn-sm" href="app.html#/advisor">ทำเลย</a>
-        <a class="btn btn-ghost btn-sm" href="app.html#/analytics">ดูรายละเอียด</a></div>
+      <div class="row g8 mt12"><a class="btn btn-ai btn-sm" href="app.html?demo=1#/advisor">ทำเลย</a>
+        <a class="btn btn-ghost btn-sm" href="app.html?demo=1#/analytics">ดูรายละเอียด</a></div>
     </div>
     <div class="chips"><span class="chip">เมนูไหนควรหยุดขาย?</span><span class="chip">ควรทำ Promotion อะไร?</span></div>`;
 

@@ -77,6 +77,15 @@ window.APP = (function () {
     window.addEventListener('unhandledrejection', e => show((e.reason && e.reason.message) || 'promise rejection'));
   }
 
+  /* ถ้าตั้งค่า Supabase แล้ว ต้องล็อกอิน + ยินยอมก่อนใช้งาน
+     ถ้ายังไม่ตั้งค่า (โหมดเดโม) ให้ใช้งานได้เลยเหมือนเดิม */
+  async function guard() {
+    const A = window.SFOS_AUTH;
+    if (!A || !A.ready) return true;              // โหมดเดโม
+    const r = await A.requireAuth();              // ไม่ผ่าน = redirect ไป login.html
+    return r.ok;
+  }
+
   function boot() {
     installErrorGuard();
     document.body.innerHTML = `
@@ -87,7 +96,7 @@ window.APP = (function () {
           <a class="row g10" href="index.html"><span class="logo">🌿</span>
             <span class="logo-txt">StreetFood<span>OS</span></span></a>
           <span class="badge" style="margin-left:auto;font-size:10.5px;height:21px;padding:0 8px"
-                title="ข้อมูลทั้งหมดในระบบนี้เป็นข้อมูลตัวอย่าง">Prototype</span>
+                title="ข้อมูลทั้งหมดในระบบนี้เป็นข้อมูลตัวอย่าง" id="modeBadge">Prototype</span>
         </div>
         <button class="sb-store" id="storeSel">
           <span class="av">${D.store.emoji}</span>
@@ -164,6 +173,23 @@ window.APP = (function () {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); searchModal(); }
     });
     aiSeed();
+    // บอกให้ชัดว่ากำลังอยู่โหมดไหน
+    (function () {
+      const A = window.SFOS_AUTH, b = document.getElementById('modeBadge');
+      if (!A || !b) return;
+      if (A.ready && A.isSignedIn()) {
+        b.textContent = 'เชื่อมฐานข้อมูล';
+        b.className = 'badge badge-good';
+        b.style.cssText = 'margin-left:auto;font-size:10.5px;height:21px;padding:0 8px';
+        b.title = 'ล็อกอินแล้ว: ' + (A.email() || '');
+      } else if (A.ready && A.isDemo()) {
+        b.textContent = 'โหมดเดโม';
+        b.className = 'badge badge-warn';
+        b.style.cssText = 'margin-left:auto;font-size:10.5px;height:21px;padding:0 8px;cursor:pointer';
+        b.title = 'ข้อมูลตัวอย่างในเครื่อง — กดเพื่อเข้าสู่ระบบจริง';
+        b.onclick = () => { A.exitDemo(); location.href = 'login.html'; };
+      }
+    })();
     window.addEventListener('hashchange', route);
     route();
   }
@@ -501,15 +527,30 @@ window.APP = (function () {
       onMount(el){ el.querySelector('#addStore').onclick = () => { U.closeModal(); go('settings?tab=subscription'); }; } });
   }
   function profileModal() {
-    U.modal({ title:'สมชาย เจ้าของร้าน', icon:'👤', sub:'owner@streetfoodos.app', foot:false,
+    const A = window.SFOS_AUTH;
+    const signedIn = !!(A && A.ready && A.isSignedIn());
+    const who = signedIn ? A.email() : 'โหมดเดโม (ยังไม่ได้ล็อกอิน)';
+    U.modal({ title: signedIn ? 'บัญชีของคุณ' : 'สมชาย เจ้าของร้าน', icon:'👤', sub: who, foot:false,
       body:`<div class="col g8">
         ${[['⚙️','ตั้งค่าร้าน','settings'],['👥','ผู้ใช้และพนักงาน','settings?tab=staff'],
            ['💳','แพ็กเกจและการชำระเงิน','settings?tab=subscription'],['🤖','AI Advisor','advisor']]
           .map(([ic,t,to])=>`<button class="choice" data-to="${to}"><span class="ci">${ic}</span>
             <span class="grow b6" style="text-align:left">${t}</span><span class="muted">→</span></button>`).join('')}
-        <a class="choice" href="index.html"><span class="ci">🚪</span>
-          <span class="grow b6" style="text-align:left">ออกจากระบบ (กลับหน้า Landing)</span></a></div>`,
-      onMount(el){ el.querySelectorAll('[data-to]').forEach(b => b.onclick = () => { U.closeModal(); go(b.dataset.to); }); } });
+        ${signedIn
+          ? `<button class="choice" id="doSignOut"><span class="ci">🚪</span>
+              <span class="grow b6" style="text-align:left">ออกจากระบบ</span></button>`
+          : `<a class="choice" href="login.html"><span class="ci">🔑</span>
+              <span class="grow b6" style="text-align:left">เข้าสู่ระบบด้วยอีเมล</span></a>`}
+        </div>`,
+      onMount(el){
+        el.querySelectorAll('[data-to]').forEach(b => b.onclick = () => { U.closeModal(); go(b.dataset.to); });
+        const so = el.querySelector('#doSignOut');
+        if (so) so.onclick = async () => {
+          so.disabled = true; so.textContent = 'กำลังออกจากระบบ…';
+          await window.SFOS_AUTH.signOut();
+          location.replace('login.html');
+        };
+      } });
   }
   function searchModal() {
     const el = U.modal({ title:'ค้นหาทั่วระบบ', icon:'🔍', sub:'เมนู · ออเดอร์ · ลูกค้า · หน้าต่างๆ', foot:false,
@@ -569,4 +610,11 @@ window.APP = (function () {
 
   return { boot, go, refresh, state, advance, cancelOrder, newOrderModal, aiAsk, aiOpen, answer, NAV, FLAT };
 })();
-document.addEventListener('DOMContentLoaded', () => window.APP.boot());
+document.addEventListener('DOMContentLoaded', async () => {
+  const A = window.SFOS_AUTH;
+  if (A && A.ready) {
+    const r = await A.requireAuth();
+    if (!r.ok) return;                            // กำลังพาไปหน้า login
+  }
+  window.APP.boot();
+});

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>คำชี้แจงการเก็บข้อมูลส่วนบุคคล — StreetFood OS</title>
+<meta name="description" content="StreetFood OS เก็บข้อมูลส่วนบุคคลเพียงอีเมลเท่านั้น ไม่มีการติดตามพฤติกรรม ไม่ส่งต่อให้บุคคลที่สาม และถอนความยินยอมหรือลบบัญชีได้เองทุกเมื่อ">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ff6a2b">
+<link rel="canonical" href="https://streetfood-os.vercel.app/privacy.html">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
+<link rel="preload" href="assets/fonts/noto-sans-thai-thai.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/styles.css">
+<style>
+  .doc{max-width:720px;margin:0 auto;padding:34px 22px 80px}
+  .doc h2{font-size:21px;margin:34px 0 10px}
+  .doc h2:first-of-type{margin-top:24px}
+  .doc p{margin:12px 0 0;line-height:1.85;color:var(--ink-2)}
+  .doc ul{margin:12px 0 0;padding-left:22px;line-height:1.85;color:var(--ink-2)}
+  .doc li{margin-top:6px}
+  .doc .tbl td:first-child{width:38%;font-weight:600;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="ob-nav">
+  <a class="row g10" href="index.html"><span class="logo">🌿</span><span class="logo-txt">StreetFood<span>OS</span></span></a>
+  <span class="badge">Prototype</span>
+</div>
+
+<div class="doc">
+  <span class="badge badge-brand">คำชี้แจง เวอร์ชัน 2026-08-19</span>
+  <h1 style="font-size:30px;margin-top:14px">คำชี้แจงการเก็บข้อมูลส่วนบุคคล</h1>
+  <p>
+    เอกสารนี้อธิบายว่า StreetFood OS เก็บข้อมูลส่วนบุคคลอะไร เพื่ออะไร เก็บนานเท่าไร
+    และคุณมีสิทธิอะไร จัดทำตามหลักของ <b>พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA)</b>
+  </p>
+
+  <div class="card card-p mt24" style="background:var(--good-soft);border-color:var(--good-line)">
+    <div class="row-t g12">
+      <span style="font-size:22px">📧</span>
+      <div>
+        <b>สรุปสั้นที่สุด</b>
+        <p style="margin-top:6px;color:var(--ink)">
+          เราเก็บ <b>อีเมลของคุณเพียงอย่างเดียว</b> · ไม่มีรหัสผ่าน · ไม่ติดตามพฤติกรรม ·
+          ไม่ส่งต่อให้ใคร · ถอนความยินยอมและลบบัญชีได้เองในหน้า Settings
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <h2>1. ข้อมูลที่เก็บ</h2>
+  <div class="card mt12" style="overflow:hidden">
+    <table class="tbl">
+      <tbody>
+        <tr><td>อีเมล</td><td>ใช้ยืนยันตัวตนและเป็นชื่อบัญชี — <b>เป็นข้อมูลส่วนบุคคลชิ้นเดียวที่เก็บ</b></td></tr>
+        <tr><td>บันทึกความยินยอม</td><td>เก็บว่ายินยอมเรื่องใด ตามคำชี้แจงเวอร์ชันไหน และเมื่อไร</td></tr>
+        <tr><td>ข้อมูลร้านที่คุณกรอก</td><td>ชื่อร้าน เมนู ต้นทุน ออเดอร์ สต็อก — เป็นข้อมูลธุรกิจของคุณ ไม่ใช่ข้อมูลส่วนบุคคลของคุณ</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>2. สิ่งที่เรา<u>ไม่</u>เก็บ</h2>
+  <ul>
+    <li><b>ไม่มีรหัสผ่าน</b> — เข้าสู่ระบบด้วยรหัสใช้ครั้งเดียวที่ส่งไปยังอีเมล จึงไม่มีรหัสผ่านให้รั่วไหล</li>
+    <li>ไม่เก็บชื่อ-นามสกุล เบอร์โทรศัพท์ ที่อยู่ เลขบัตรประชาชน หรือข้อมูลการชำระเงิน</li>
+    <li><b>ไม่เก็บ IP address และ user-agent</b> แม้ในบันทึกความยินยอม เพราะไม่จำเป็นต่อการพิสูจน์ความยินยอม</li>
+    <li>ไม่มี cookie เพื่อการติดตาม ไม่มีเครื่องมือวิเคราะห์พฤติกรรมของบุคคลที่สาม</li>
+    <li>ไม่มีการทำโปรไฟล์หรือตัดสินใจอัตโนมัติที่ส่งผลต่อคุณ</li>
+  </ul>
+
+  <h2>3. วัตถุประสงค์และฐานทางกฎหมาย</h2>
+  <p>ฐานที่ใช้คือ <b>ความยินยอม</b> ของคุณ โดยแยกเป็นข้อ ๆ ให้เลือกได้:</p>
+  <div class="card mt12" style="overflow:hidden">
+    <table class="tbl">
+      <tbody>
+        <tr><td>ยืนยันตัวตน / เข้าสู่ระบบ</td><td><span class="badge badge-bad">จำเป็น</span> ไม่ยินยอมจะใช้ระบบไม่ได้</td></tr>
+        <tr><td>อีเมลแจ้งเตือนเรื่องร้าน</td><td><span class="badge">เลือกได้</span> เช่น วัตถุดิบใกล้หมด สรุปยอดขาย</td></tr>
+        <tr><td>ข่าวฟีเจอร์ใหม่</td><td><span class="badge">เลือกได้</span> ไม่เกินเดือนละ 1 ครั้ง</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>4. ระยะเวลาเก็บ</h2>
+  <ul>
+    <li>เก็บตราบเท่าที่บัญชียังใช้งานอยู่</li>
+    <li>เมื่อคุณกดลบบัญชี ระบบจะลบอีเมล บันทึกความยินยอม และสมาชิกภาพร้าน <b>ทันที</b> ไม่มีถังขยะและไม่หน่วงเวลา</li>
+    <li>ถ้าคุณเป็นเจ้าของร้านเพียงคนเดียว ข้อมูลร้านทั้งหมดจะถูกลบไปพร้อมกัน</li>
+  </ul>
+
+  <h2>5. ผู้ประมวลผลข้อมูลที่เกี่ยวข้อง</h2>
+  <ul>
+    <li><b>Supabase</b> — ฐานข้อมูลและระบบยืนยันตัวตน (เซิร์ฟเวอร์ที่สิงคโปร์)</li>
+    <li><b>Vercel</b> — ให้บริการหน้าเว็บ (ไฟล์สถิต ไม่ประมวลผลข้อมูลส่วนบุคคล)</li>
+  </ul>
+  <p>ทั้งสองรายทำหน้าที่เป็นผู้ประมวลผลตามคำสั่งของเราเท่านั้น และไม่มีการขายหรือแลกเปลี่ยนข้อมูลกับผู้อื่น</p>
+
+  <h2>6. สิทธิของคุณ</h2>
+  <ul>
+    <li><b>ขอเข้าถึงและขอสำเนา</b> — ดูอีเมลและบันทึกความยินยอมได้ในหน้า Settings และกด Export ข้อมูลร้านเป็น CSV ได้เอง</li>
+    <li><b>ขอแก้ไข</b> — เปลี่ยนอีเมลได้โดยลบบัญชีแล้วสมัครใหม่ด้วยอีเมลที่ต้องการ</li>
+    <li><b>ถอนความยินยอม</b> — ทำได้เองในหน้า Settings ง่ายเท่ากับตอนให้ความยินยอม</li>
+    <li><b>ขอให้ลบ</b> — กดลบบัญชีได้เองทันที ไม่ต้องติดต่อใคร</li>
+    <li><b>ร้องเรียน</b> — หากเห็นว่าเราทำไม่ถูกต้อง ร้องเรียนต่อสำนักงานคณะกรรมการคุ้มครองข้อมูลส่วนบุคคล (สคส.) ได้</li>
+  </ul>
+
+  <h2>7. ความปลอดภัย</h2>
+  <ul>
+    <li>ทุกการเชื่อมต่อเข้ารหัสด้วย HTTPS และบังคับ HSTS</li>
+    <li>ข้อมูลทุกแถวคุมด้วย Row Level Security — ผู้ใช้เห็นได้เฉพาะข้อมูลร้านที่ตนเป็นสมาชิก</li>
+    <li>คีย์ที่ฝังในหน้าเว็บเป็นคีย์สาธารณะโดยการออกแบบ สิ่งที่กันข้อมูลคือ RLS ไม่ใช่การซ่อนคีย์</li>
+    <li>หน้าเว็บตั้ง Content-Security-Policy ให้เชื่อมต่อออกได้เฉพาะฐานข้อมูลของระบบเท่านั้น</li>
+  </ul>
+
+  <h2>8. การแก้ไขคำชี้แจง</h2>
+  <p>
+    คำชี้แจงนี้มีเลขเวอร์ชันกำกับ (ปัจจุบัน <b>2026-08-19</b>) และความยินยอมของคุณผูกกับเวอร์ชันที่ยินยอมไว้
+    ถ้ามีการแก้ไขในสาระสำคัญ ระบบจะขอความยินยอมใหม่ก่อนให้ใช้งานต่อ
+  </p>
+
+  <h2>9. ติดต่อ</h2>
+  <p>
+    เรื่องข้อมูลส่วนบุคคล ติดต่อผู้ดูแลระบบที่อีเมลที่แจ้งไว้ในหน้า Settings ของบัญชีคุณ
+  </p>
+
+  <div class="caution mt32" style="border-left:3px solid var(--warn);background:var(--warn-soft);border-radius:0 10px 10px 0;padding:16px 18px">
+    <div class="up" style="color:var(--warn-ink,#8f5406)">สถานะของระบบ</div>
+    <p style="margin-top:6px;color:var(--ink)">
+      StreetFood OS อยู่ในสถานะ Prototype ข้อมูลร้านตัวอย่างในระบบเป็นข้อมูลสมมติทั้งหมด
+      แต่ <b>อีเมลของคุณและความยินยอมเป็นข้อมูลจริง</b> และได้รับการปฏิบัติตามคำชี้แจงฉบับนี้
+    </p>
+  </div>
+
+  <div class="row g10 mt32 wrap">
+    <a class="btn btn-primary" href="login.html">เข้าสู่ระบบ</a>
+    <a class="btn btn-ghost" href="index.html">กลับหน้าแรก</a>
+  </div>
+</div>
+</body>
+</html>

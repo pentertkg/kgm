@@ -462,7 +462,8 @@
      ============================================================ */
   window.PAGES.settings = function (el, actions, q) {
     let tab = q.tab || 'store';
-    const TABS = [['store','Store Profile','🏪'],['users','Users','👤'],['staff','Staff','👥'],
+    const TABS = [['account','บัญชีและความยินยอม','🔑'],
+      ['store','Store Profile','🏪'],['users','Users','👤'],['staff','Staff','👥'],
       ['roles','Roles & Permissions','🔐'],['payment','Payment','💳'],['noti','Notification','🔔'],
       ['integrations','Integrations','🔌'],['subscription','Subscription','💎']];
     actions.innerHTML = `<button class="btn btn-primary btn-sm" id="sSave">บันทึกการตั้งค่า</button>`;
@@ -478,8 +479,9 @@
         <button class="nav-i ${tab===k?'on':''}" data-t="${k}" style="width:100%;text-align:left">
           <span class="ni">${ic}</span><span>${l}</span></button>`).join('');
       el.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { tab = b.dataset.t; paint(); });
-      el.querySelector('#sBody').innerHTML = ({ store:vStore, users:vUsers, staff:vStaff, roles:vRoles,
-        payment:vPayment, noti:vNoti, integrations:vInteg, subscription:vSub })[tab]();
+      el.querySelector('#sBody').innerHTML = ({ account:vAccount, store:vStore, users:vUsers, staff:vStaff,
+        roles:vRoles, payment:vPayment, noti:vNoti, integrations:vInteg, subscription:vSub })[tab]();
+      if (tab === 'account') mountAccount(el.querySelector('#sBody'));
       const up = el.querySelector('#doUpgrade'); if (up) up.onclick = () => U.toast('Prototype: ยังไม่เชื่อมต่อระบบชำระเงิน','warn');
       el.querySelectorAll('.switch').forEach(s => s.onclick = () => s.classList.toggle('on'));
     };
@@ -487,6 +489,123 @@
     const card = (title, sub, body, foot) => `<div class="card mb16">
       <div class="card-h"><div><h4>${title}</h4>${sub?`<div class="t-sm muted mt4">${sub}</div>`:''}</div>${foot||''}</div>
       <div class="card-b">${body}</div></div>`;
+
+    /* ─── บัญชีและความยินยอม (PDPA) ─────────────────────────────── */
+    function vAccount(){
+      const A = window.SFOS_AUTH;
+      const configured = !!(A && A.ready);
+      const signedIn = !!(configured && A.isSignedIn());
+
+      if (!signedIn) {
+        return card('บัญชีและความยินยอม', configured ? 'กำลังดูในโหมดเดโม' : 'ยังไม่ได้ตั้งค่าฐานข้อมูล', `
+          <div class="ai-strip" style="background:var(--warn-soft);border-color:var(--warn-line)">
+            <div class="ic" style="background:var(--warn)">!</div>
+            <div class="t-sm"><b>ยังไม่ได้เข้าสู่ระบบ</b><br>
+            <span class="muted">${configured
+              ? 'ตอนนี้ใช้ข้อมูลตัวอย่างในเครื่อง ไม่มีบัญชีผู้ใช้และไม่บันทึกอะไรลงฐานข้อมูล เข้าสู่ระบบเพื่อใช้ข้อมูลจริงและจัดการความยินยอม'
+              : 'ยังไม่ได้ใส่ค่า Supabase ใน <code>assets/js/config.js</code> จึงยังไม่มีระบบสมาชิก'}</span></div></div>
+          <div class="row g8 mt16 wrap">
+            <a class="btn btn-primary" href="login.html">เข้าสู่ระบบด้วยอีเมล</a>
+            <a class="btn btn-ghost" href="privacy.html" target="_blank" rel="noopener">อ่านคำชี้แจงการเก็บข้อมูล</a>
+          </div>
+          <div class="ai-strip mt16"><div class="ic">📧</div>
+            <div class="t-sm">ระบบเก็บข้อมูลส่วนบุคคลเพียง <b>อีเมล</b> อย่างเดียว และไม่มีรหัสผ่าน</div></div>`);
+      }
+      return card('บัญชีของคุณ','ข้อมูลส่วนบุคคลที่ระบบเก็บมีเพียงอีเมลเท่านั้น', `
+          <div class="grid g-2" style="gap:12px">
+            <div class="tile"><div class="t-xs muted b6">อีเมล</div>
+              <div class="b7 mt4" style="font-size:15.5px;word-break:break-all">${U.esc(A.email() || '—')}</div></div>
+            <div class="tile"><div class="t-xs muted b6">วิธีเข้าสู่ระบบ</div>
+              <div class="b7 mt4" style="font-size:15.5px">รหัสทางอีเมล (ไม่มีรหัสผ่าน)</div></div>
+          </div>
+          <div class="ai-strip mt16"><div class="ic">🔒</div>
+            <div class="t-sm">ระบบไม่เก็บรหัสผ่าน ชื่อ เบอร์โทร ที่อยู่ IP หรือพฤติกรรมการใช้งาน —
+              <a href="privacy.html" target="_blank" rel="noopener">อ่านคำชี้แจง</a></div></div>`) +
+        card('ความยินยอม','ถอนได้ง่ายเท่ากับตอนให้ ผลมีทันที', `<div id="consentBox">
+            <div class="t-sm muted">กำลังโหลด…</div></div>`,
+          `<span class="badge" id="polVer">เวอร์ชัน ${A.POLICY_VERSION}</span>`) +
+        card('ลบบัญชีและข้อมูล','สิทธิที่จะถูกลืม — ทำได้เองทันที ไม่ต้องติดต่อใคร', `
+          <div class="caution" style="border-left:3px solid var(--bad);background:var(--bad-soft);border-radius:0 10px 10px 0;padding:15px 18px">
+            <div class="lbl" style="font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--bad)">ลบแล้วกู้คืนไม่ได้</div>
+            <p class="t-sm mt8">จะลบอีเมล บันทึกความยินยอม และสมาชิกภาพร้านของคุณทันที
+              และถ้าคุณเป็น<b>เจ้าของร้านคนเดียว</b> ข้อมูลร้านทั้งหมด (เมนู ออเดอร์ ลูกค้า สต็อก)
+              จะถูกลบไปพร้อมกัน</p>
+          </div>
+          <div class="row g8 mt16 wrap">
+            <button class="btn btn-bad" id="delAcct">ลบบัญชีของฉัน</button>
+            <button class="btn btn-ghost" id="signOutBtn">ออกจากระบบ</button>
+          </div>`);
+    }
+
+    async function mountAccount(root){
+      const A = window.SFOS_AUTH;
+      if (!A || !A.ready || !A.isSignedIn()) return;   // โหมดเดโม ไม่มีอะไรต้อง mount
+
+      const box = root.querySelector('#consentBox');
+      const paint = async () => {
+        let cur = {};
+        try { cur = await A.myConsents(); }
+        catch (e) { box.innerHTML = `<div class="t-sm" style="color:var(--bad)">โหลดไม่สำเร็จ: ${U.esc(e.message)}</div>`; return; }
+        box.innerHTML = `<div class="col g10">` + A.PURPOSES.map(p => {
+          const r = cur[p.id];
+          const on = !!(r && !r.withdrawn_at);
+          return `<div class="tile between" style="align-items:flex-start">
+            <div class="grow"><b class="t-sm">${U.esc(p.title)}</b>
+              ${p.required ? '<span class="badge badge-bad" style="margin-left:6px">จำเป็น</span>'
+                           : '<span class="badge" style="margin-left:6px">เลือกได้</span>'}
+              <div class="t-xs muted mt4">${U.esc(p.detail)}</div>
+              <div class="t-xs mt4" style="color:${on ? 'var(--good-ink)' : 'var(--muted)'}">
+                ${on ? '✓ ยินยอมเมื่อ ' + new Date(r.granted_at).toLocaleString('th-TH')
+                     : (r ? '✕ ถอนเมื่อ ' + new Date(r.withdrawn_at).toLocaleString('th-TH') : '— ยังไม่ได้ยินยอม')}
+                ${r ? ' · นโยบาย ' + U.esc(r.policy_version) : ''}
+              </div>
+            </div>
+            <div class="row g6">
+              ${on
+                ? (p.required
+                    ? `<span class="badge badge-good">ใช้งานอยู่</span>`
+                    : `<button class="btn btn-xs btn-soft" data-wd="${p.id}">ถอนความยินยอม</button>`)
+                : `<button class="btn btn-xs btn-primary" data-gr="${p.id}">ยินยอม</button>`}
+            </div></div>`;
+        }).join('') + `</div>
+          <div class="ai-strip mt12"><div class="ic">ℹ️</div>
+            <div class="t-sm">ข้อที่จำเป็นถอนไม่ได้จากหน้านี้ เพราะถอนแล้วจะใช้ระบบไม่ได้ —
+              ถ้าต้องการยุติทั้งหมด ให้ใช้ปุ่ม <b>ลบบัญชีของฉัน</b> ด้านล่าง
+              ซึ่งเป็นการถอนความยินยอมทุกข้อพร้อมลบข้อมูล</div></div>`;
+
+        box.querySelectorAll('[data-wd]').forEach(b => b.onclick = async () => {
+          b.disabled = true;
+          try { await A.withdrawConsent(b.dataset.wd); U.toast('ถอนความยินยอมแล้ว','ok'); await paint(); }
+          catch (e) { b.disabled = false; U.toast(e.message,'warn'); }
+        });
+        box.querySelectorAll('[data-gr]').forEach(b => b.onclick = async () => {
+          b.disabled = true;
+          try { await A.grantConsents([b.dataset.gr]); U.toast('บันทึกความยินยอมแล้ว','ok'); await paint(); }
+          catch (e) { b.disabled = false; U.toast(e.message,'warn'); }
+        });
+      };
+      await paint();
+
+      root.querySelector('#signOutBtn').onclick = async () => {
+        await A.signOut(); location.replace('login.html');
+      };
+      root.querySelector('#delAcct').onclick = () => {
+        U.modal({ title:'ลบบัญชีของคุณ', icon:'⚠️', okText:'ลบบัญชีถาวร', cancelText:'ไม่ลบ',
+          body:`<p>พิมพ์คำว่า <b>ลบบัญชี</b> เพื่อยืนยัน — การลบมีผลทันทีและกู้คืนไม่ได้</p>
+            <div class="field mt16"><label class="label" for="confirmDel">ยืนยัน</label>
+              <input class="input" id="confirmDel" placeholder="ลบบัญชี" autocomplete="off"></div>
+            <div class="t-sm muted mt12">อีเมลที่จะถูกลบ: <b>${U.esc(A.email() || '')}</b></div>`,
+          onOk(m){
+            if (m.querySelector('#confirmDel').value.trim() !== 'ลบบัญชี') {
+              U.toast('พิมพ์คำยืนยันให้ตรง','warn'); return false;
+            }
+            A.deleteAccount().then(r => {
+              U.toast('ลบบัญชีแล้ว' + (r && r.stores_removed ? ' · ลบร้าน ' + r.stores_removed + ' ร้าน' : ''), 'ok');
+              setTimeout(() => location.replace('index.html'), 700);
+            }).catch(e => U.toast(e.message, 'warn'));
+          } });
+      };
+    }
 
     function vStore(){
       return card('ข้อมูลร้าน','ข้อมูลนี้จะแสดงบนใบเสร็จและหน้าสั่งอาหาร', `
