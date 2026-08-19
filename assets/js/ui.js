@@ -218,7 +218,8 @@ window.UI = (function () {
       w.setAttribute('role', 'status'); w.setAttribute('aria-live', 'polite'); w.setAttribute('aria-atomic', 'false');
       document.body.appendChild(w);
     }
-    const ic = kind === 'ok' ? '✅' : kind === 'warn' ? '⚠️' : kind === 'ai' ? '🤖' : '✨';
+    const I = window.ICON || (() => '');
+    const ic = kind === 'ok' ? I('check',15) : kind === 'warn' ? I('alert',15) : I('advisor',15);
     const t = document.createElement('div');
     t.className = 'toast'; t.innerHTML = `<span>${ic}</span><span>${esc(msg)}</span>`;
     w.appendChild(t);

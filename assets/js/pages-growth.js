@@ -4,6 +4,7 @@
 (function () {
   'use strict';
   const D = window.DB, U = window.UI, A = window.APP;
+  const ICO = (n, s2) => (window.ICON ? window.ICON(n, s2) : '');
   const st = () => A.state;
   const SLBL = { ok:['ปกติ','badge-good'], low:['ต่ำ','badge-warn'], out:['หมด','badge-bad'] };
 
@@ -16,20 +17,20 @@
     const out = D.ingredients.filter(i => D.stockStatus(i) === 'out');
     const value = D.ingredients.reduce((s,i)=>s+i.stock*i.cost,0);
 
-    actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="sAdj">✏️ ปรับยอดคงเหลือ</button>
-      <button class="btn btn-primary btn-sm" id="sPO">🛒 สร้างรายการสั่งซื้อ</button>`;
+    actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="sAdj">${ICO('report',16)} ปรับยอดคงเหลือ</button>
+      <button class="btn btn-primary btn-sm" id="sPO">${ICO('stock',16)} สร้างรายการสั่งซื้อ</button>`;
     actions.querySelector('#sPO').onclick = () => poModal(need);
     actions.querySelector('#sAdj').onclick = () => U.toast('Prototype: การนับสต็อกจริงจะทำใน Phase ถัดไป','warn');
 
     el.innerHTML = `
       <div class="grid g-4 mb16">
-        ${U.kpi({ label:'วัตถุดิบทั้งหมด', icon:'📦', value:U.nf(D.ingredients.length),
+        ${U.kpi({ label:'วัตถุดิบทั้งหมด', icon:ICO('box'), value:U.nf(D.ingredients.length),
           foot:`<span class="t-xs muted">มูลค่าสต็อกคงเหลือ ${U.baht(value)}</span>` })}
-        ${U.kpi({ label:'ใกล้หมด (ต่ำ)', icon:'⚠️', iconBg:'var(--warn-soft)', value:U.nf(low.length),
+        ${U.kpi({ label:'ใกล้หมด (ต่ำ)', icon:ICO('alert'), iconBg:'var(--warn-soft)', value:U.nf(low.length),
           foot:`<span class="badge badge-warn">ต้องสั่งภายในวันนี้</span>` })}
-        ${U.kpi({ label:'หมดแล้ว', icon:'🚫', iconBg:'var(--bad-soft)', value:U.nf(out.length),
+        ${U.kpi({ label:'หมดแล้ว', icon:ICO('alert'), iconBg:'var(--bad-soft)', value:U.nf(out.length),
           foot:`<span class="t-xs muted">${out.map(i=>U.esc(i.name)).join(', ') || 'ไม่มี'}</span>` })}
-        ${U.kpi({ label:'มูลค่าที่ต้องสั่งพรุ่งนี้', icon:'🛒', iconBg:'var(--info-soft)',
+        ${U.kpi({ label:'มูลค่าที่ต้องสั่งพรุ่งนี้', icon:ICO('stock'), iconBg:'var(--info-soft)',
           value:U.baht(need.reduce((s,i)=>s+i.gap*i.cost,0)),
           foot:`<span class="t-xs muted">${need.length} รายการ</span>` })}
       </div>
@@ -37,7 +38,7 @@
       <!-- AI FORECAST -->
       <div class="ai-card mb16"><div class="in">
         <div class="between wrap g12">
-          <div class="row g10"><span class="ai-badge">🤖 คาดการณ์วัตถุดิบพรุ่งนี้</span>
+          <div class="row g10"><span class="ai-badge">${ICO('advisor',16)} คาดการณ์วัตถุดิบพรุ่งนี้</span>
             <span class="badge">คำนวณจากยอดขาย 7 วัน + แนวโน้ม +4%</span></div>
           <button class="btn btn-ai btn-sm" id="fcPO">สร้างรายการสั่งซื้อ →</button>
         </div>
@@ -80,7 +81,7 @@
                   <span class="badge ${SLBL[D.stockStatus(i)][1]}">${SLBL[D.stockStatus(i)][0]}</span></div>
                 <div class="row wrap g6 mt8">${used.map(m=>`<span class="badge">${m.emoji} ${U.esc(m.name)}</span>`).join('') || '<span class="t-xs muted">ยังไม่ผูกกับเมนู</span>'}</div>
                 ${D.stockStatus(i)==='out' ? `<div class="t-xs mt8" style="color:var(--bad)">
-                  ⚠️ วัตถุดิบหมด → ${used.length} เมนูถูกปิดขายชั่วคราว</div>`:''}
+                  วัตถุดิบหมด → ${used.length} เมนูถูกปิดขายชั่วคราว</div>`:''}
               </div>`; }).join('')}
           </div>
         </div>
@@ -93,7 +94,7 @@
               .map(([n,t,items,cls])=>`<div class="tile">
                 <div class="between"><b class="t-sm">${n}</b><span class="badge ${cls}">${t}</span></div>
                 <div class="t-xs muted mt4">${items}</div></div>`).join('')}
-            <div class="ai-strip mt8"><div class="ic">🤖</div>
+            <div class="ai-strip mt8"><div class="ic">${ICO('advisor',15)}</div>
               <div class="t-sm">ราคาหมูสับจากตลาดคลองเตยขึ้น 8% ใน 3 วัน — แนะนำเทียบราคากับซัพพลายเออร์รายที่ 2
                 ก่อนสั่งล็อตหน้า อาจประหยัดได้ ${U.baht(1450)}/เดือน</div></div>
           </div>
@@ -129,7 +130,7 @@
 
   function poModal(items) {
     const rows = items.map(i => ({ ...i, order: Math.max(i.gap || 0, (i.min || 0) * 1.5 - i.stock) }));
-    U.modal({ title:'ใบสั่งซื้อวัตถุดิบ', icon:'🛒', sub:'สำหรับรอบส่งพรุ่งนี้ 05:30', wide:true, okText:'ยืนยันรายการสั่งซื้อ',
+    U.modal({ title:'ใบสั่งซื้อวัตถุดิบ', icon:ICO('stock'), sub:'สำหรับรอบส่งพรุ่งนี้ 05:30', wide:true, okText:'ยืนยันรายการสั่งซื้อ',
       body:`<div class="card" style="overflow:hidden"><table class="tbl">
         <thead><tr><th>วัตถุดิบ</th><th class="r">คงเหลือ</th><th class="r">ต้องใช้พรุ่งนี้</th>
           <th class="r">สั่งเพิ่ม</th><th class="r">ราคาประมาณ</th></tr></thead>
@@ -142,7 +143,7 @@
         <tr style="background:var(--surface-2)"><td colspan="4"><b>รวมทั้งสิ้น</b></td>
           <td class="r num b8">${U.baht(rows.reduce((s,i)=>s+Math.ceil(i.order*10)/10*i.cost,0))}</td></tr>
         </tbody></table></div>
-        <div class="ai-strip mt16"><div class="ic">🤖</div><div class="t-sm">
+        <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
           <b>คำแนะนำก่อนสั่ง</b> — สั่งหมูสับเผื่อไว้ 15% เพราะพรุ่งนี้เป็นวันพฤหัสบดีซึ่งยอดขายสูงกว่าเฉลี่ย 6%
           และควรล็อกราคากับซัพพลายเออร์ล่วงหน้า 1 สัปดาห์เพื่อกันต้นทุนผันผวน</div></div>`,
       onOk(){ U.toast('สร้างใบสั่งซื้อแล้ว — ส่งให้ซัพพลายเออร์ตอน 20:00','ok'); } });
@@ -153,8 +154,8 @@
      ============================================================ */
   window.PAGES.customers = function (el, actions) {
     let seg = 'all';
-    actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="cExp">⬇️ Export รายชื่อ</button>
-      <button class="btn btn-primary btn-sm" id="cCam">🎁 สร้าง Campaign เรียกลูกค้ากลับ</button>`;
+    actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="cExp">${ICO('download',16)} Export รายชื่อ</button>
+      <button class="btn btn-primary btn-sm" id="cCam">${ICO('promotion',16)} สร้าง Campaign เรียกลูกค้ากลับ</button>`;
     actions.querySelector('#cCam').onclick = () => A.go('promotion?goal=winback');
     actions.querySelector('#cExp').onclick = () => {
       const rows = [['ชื่อลูกค้า','กลุ่ม','จำนวนออเดอร์','ยอดสะสม (บาท)','ค่าเฉลี่ยต่อบิล (บาท)','ซื้อครั้งล่าสุด','เมนูโปรด']];
@@ -170,19 +171,19 @@
 
     el.innerHTML = `
       <div class="grid g-4 mb16">
-        ${U.kpi({ label:'ลูกค้าทั้งหมด', icon:'👥', value:U.nf(D.crm.total),
+        ${U.kpi({ label:'ลูกค้าทั้งหมด', icon:ICO('customers'), value:U.nf(D.crm.total),
           foot:U.delta(8.4) + ' <span class="t-xs muted">เทียบเดือนก่อน</span>' })}
-        ${U.kpi({ label:'ลูกค้าใหม่ (30 วัน)', icon:'✨', iconBg:'var(--info-soft)', value:U.nf(D.crm.new30),
+        ${U.kpi({ label:'ลูกค้าใหม่ (30 วัน)', icon:ICO('advisor'), iconBg:'var(--info-soft)', value:U.nf(D.crm.new30),
           foot:`<span class="t-xs muted">CAC ${U.baht(D.marketing.cac,0)}/คน</span>` })}
-        ${U.kpi({ label:'ลูกค้าซื้อซ้ำ', icon:'🔁', iconBg:'var(--good-soft)', value:U.nf(D.crm.repeat),
+        ${U.kpi({ label:'ลูกค้าซื้อซ้ำ', icon:ICO('analytics'), iconBg:'var(--good-soft)', value:U.nf(D.crm.repeat),
           foot:`<span class="badge badge-good">Repeat rate ${U.pc(D.crm.repeatRate)}</span>` })}
-        ${U.kpi({ label:'ลูกค้าที่หายไป', icon:'💔', iconBg:'var(--bad-soft)', value:U.nf(D.crm.lost),
+        ${U.kpi({ label:'ลูกค้าที่หายไป', icon:ICO('alert'), iconBg:'var(--bad-soft)', value:U.nf(D.crm.lost),
           foot:`<span class="t-xs muted">ไม่กลับมาเกิน 30 วัน</span>` })}
       </div>
 
       <div class="ai-card mb16"><div class="in">
         <div class="between wrap g12">
-          <span class="ai-badge">🤖 AI Insight — Customer</span>
+          <span class="ai-badge">${ICO('advisor',16)} AI Insight — Customer</span>
           <button class="btn btn-ai btn-sm" id="aiCam">สร้าง Campaign เรียกลูกค้ากลับมา →</button></div>
         <h3 class="mt16">มีลูกค้า <b style="color:var(--bad)">${D.crm.lost} คน</b> ที่ไม่ได้กลับมาซื้อเกิน 30 วัน</h3>
         <p class="muted t-sm mt8">กลุ่มนี้เคยซื้อเฉลี่ย 4.2 ครั้ง/คน มูลค่าเฉลี่ย ${U.baht(120)}/เดือน/คน
@@ -204,8 +205,8 @@
           <div class="card-h"><h4>Customer Segments</h4><span class="badge">แบ่งอัตโนมัติจากพฤติกรรมการซื้อ</span></div>
           <div class="card-b col g14">
             ${D.segments.map(s=>`<button class="choice" data-seg="${s.key}" style="padding:12px">
-              <span class="ci" style="background:${s.color}22;color:${s.color}">${
-                {new:'✨',regular:'🔁',vip:'👑',risk:'⚠️',inactive:'😴'}[s.key]}</span>
+              <span class="ci" style="background:${s.color}1f;color:${s.color}">${ICO(
+                {new:'plus',regular:'analytics',vip:'money',risk:'alert',inactive:'clock'}[s.key], 18)}</span>
               <span class="grow" style="text-align:left">
                 <span class="between"><b class="t-sm">${s.label}</b>
                   <b class="num">${U.nf(s.n)} คน</b></span>
@@ -265,7 +266,7 @@
           <td class="r">${c.seg==='risk'||c.seg==='inactive'
             ? `<button class="btn btn-xs btn-primary" data-win="${U.esc(c.name)}">ส่งคูปอง</button>`
             : `<button class="btn btn-xs btn-soft" data-view="${U.esc(c.name)}">ดูประวัติ</button>`}</td></tr>`;
-      }).join('') : `<tr><td colspan="7">${U.empty('👥','ไม่มีลูกค้าในกลุ่มนี้','')}</td></tr>`;
+      }).join('') : `<tr><td colspan="7">${U.empty(ICO('customers',34),'ไม่มีลูกค้าในกลุ่มนี้','')}</td></tr>`;
 
       el.querySelectorAll('[data-win]').forEach(b => b.onclick = () => {
         U.toast('เตรียมคูปองสำหรับ ' + b.dataset.win + ' แล้ว','ok'); A.go('promotion?goal=winback'); });
@@ -278,7 +279,7 @@
   function custModal(name) {
     const c = D.customers.find(x => x.name === name); if (!c) return;
     const m = D.mi(c.fav), sg = D.segments.find(s => s.key === c.seg);
-    U.modal({ title:c.name, icon:'👤', sub:sg.label + ' · ลูกค้าตั้งแต่ 12 มิ.ย. 2569', foot:false,
+    U.modal({ title:c.name, icon:ICO('user',20), sub:sg.label + ' · ลูกค้าตั้งแต่ 12 มิ.ย. 2569', foot:false,
       body:`<div class="grid g-2" style="gap:12px">
         ${[['จำนวนออเดอร์', c.orders+' ครั้ง'],['ยอดสะสม', U.baht(c.spend)],
            ['ค่าเฉลี่ยต่อบิล', U.baht(c.spend/c.orders,0)],['ซื้อครั้งล่าสุด', c.last]]
@@ -288,7 +289,7 @@
       <div class="mt16"><div class="up muted mb8">เมนูโปรด</div>
         <div class="row g10 tile">${m?`<span style="font-size:24px">${m.emoji}</span>
           <div><b>${U.esc(m.name)}</b><div class="t-xs muted">สั่งบ่อยที่สุด ${Math.round(c.orders*0.6)} ครั้ง</div></div>`:'—'}</div></div>
-      <div class="ai-strip mt16"><div class="ic">🤖</div><div class="t-sm">
+      <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
         ${c.seg==='vip' ? `ลูกค้ากลุ่ม VIP — แนะนำให้สิทธิพิเศษ เช่น ไข่ดาวฟรีทุกบิล เพื่อรักษาไว้
           เพราะกลุ่มนี้ทำรายได้ ${U.pc(28)} ของทั้งร้าน`
         : c.seg==='risk' ? `ห่างหายไป ${parseInt(c.last)} วัน — แนะนำส่งคูปองลด 20 บาทพร้อมชื่อเมนูโปรด
@@ -300,7 +301,7 @@
      MARKETING
      ============================================================ */
   window.PAGES.marketing = function (el, actions) {
-    actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="mkAi">🤖 ถาม AI เรื่องงบโฆษณา</button>
+    actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="mkAi">${ICO('advisor',16)} ถาม AI เรื่องงบโฆษณา</button>
       <button class="btn btn-primary btn-sm" id="mkNew">+ สร้าง Campaign</button>`;
     actions.querySelector('#mkNew').onclick = () => A.go('promotion');
     actions.querySelector('#mkAi').onclick = () => A.aiAsk('ถ้ามีงบโฆษณา 10,000 บาทควรยิงอะไร?');
@@ -310,19 +311,19 @@
 
     el.innerHTML = `
       <div class="grid g-5 mb16">
-        ${U.kpi({ label:'Ad Spend', icon:'💳', value:U.baht(M.spend), foot:`<span class="t-xs muted">MTD ${D.month.days} วัน</span>` })}
-        ${U.kpi({ label:'Revenue from Ads', icon:'💵', iconBg:'var(--good-soft)', value:U.baht(M.revenue),
+        ${U.kpi({ label:'Ad Spend', icon:ICO('money'), value:U.baht(M.spend), foot:`<span class="t-xs muted">MTD ${D.month.days} วัน</span>` })}
+        ${U.kpi({ label:'Revenue from Ads', icon:ICO('money'), iconBg:'var(--good-soft)', value:U.baht(M.revenue),
           foot:`<span class="t-xs muted">${U.pc(M.revenue/D.month.revenue*100)} ของยอดขายเดือนนี้</span>` })}
-        ${U.kpi({ label:'ROAS', icon:'📈', iconBg:'var(--info-soft)', value:U.nf(M.roas,2)+'x',
+        ${U.kpi({ label:'ROAS', icon:ICO('analytics'), iconBg:'var(--info-soft)', value:U.nf(M.roas,2)+'x',
           foot:`<span class="badge badge-good">คุ้มค่า (จุดคุ้มทุน 2.70x)</span>` })}
-        ${U.kpi({ label:'CAC', icon:'🎯', iconBg:'var(--warn-soft)', value:U.baht(M.cac,0),
+        ${U.kpi({ label:'CAC', icon:ICO('analytics'), iconBg:'var(--warn-soft)', value:U.baht(M.cac,0),
           foot:`<span class="t-xs muted">CLV ${U.baht(D.crm.clv)} → คุ้ม ${U.nf(D.crm.clv/M.cac,1)} เท่า</span>` })}
-        ${U.kpi({ label:'New Customers', icon:'✨', value:U.nf(M.newCust),
+        ${U.kpi({ label:'New Customers', icon:ICO('advisor'), value:U.nf(M.newCust),
           foot:`<span class="t-xs muted">Conversion ${U.pc(M.conversion)}</span>` })}
       </div>
 
       <div class="ai-card mb16"><div class="in">
-        <div class="between wrap g12"><span class="ai-badge">🤖 AI Recommendation — Marketing</span>
+        <div class="between wrap g12"><span class="ai-badge">${ICO('advisor',16)} AI Recommendation — Marketing</span>
           <div class="row g8">
             <button class="btn btn-ghost btn-sm" id="mvBudget">ย้ายงบตามคำแนะนำ</button>
             <button class="btn btn-ai btn-sm" id="boost20">เพิ่มงบ Campaign ที่ดีที่สุด +20%</button></div></div>
@@ -439,17 +440,17 @@
   window.PAGES.promotion = function (el, actions, q) {
     const W = { step:1, goal:q.goal || '', menus:[], type:'', disc:20, days:7, name:'' };
     const GOALS = [
-      { k:'sales',   ic:'💰', t:'ยอดขาย',         d:'ดันยอดรวมให้ถึงเป้าเดือนนี้' },
-      { k:'newcust', ic:'✨', t:'ลูกค้าใหม่',      d:'ให้คนที่ยังไม่เคยซื้อ ลองเป็นครั้งแรก' },
-      { k:'repeat',  ic:'🔁', t:'ลูกค้าซื้อซ้ำ',   d:'ให้ลูกค้าเดิมกลับมาถี่ขึ้น' },
-      { k:'winback', ic:'💔', t:'เรียกลูกค้าเก่า',  d:`ดึงลูกค้า ${D.crm.lost} คนที่หายไปเกิน 30 วัน` },
-      { k:'clear',   ic:'📦', t:'ระบายเมนู',       d:'ดันเมนูที่ขายไม่ออกหรือวัตถุดิบใกล้หมดอายุ' }
+      { k:'sales',   ic:'money', t:'ยอดขาย',         d:'ดันยอดรวมให้ถึงเป้าเดือนนี้' },
+      { k:'newcust', ic:'plus', t:'ลูกค้าใหม่',      d:'ให้คนที่ยังไม่เคยซื้อ ลองเป็นครั้งแรก' },
+      { k:'repeat',  ic:'analytics', t:'ลูกค้าซื้อซ้ำ',   d:'ให้ลูกค้าเดิมกลับมาถี่ขึ้น' },
+      { k:'winback', ic:'alert', t:'เรียกลูกค้าเก่า',  d:`ดึงลูกค้า ${D.crm.lost} คนที่หายไปเกิน 30 วัน` },
+      { k:'clear',   ic:'box', t:'ระบายเมนู',       d:'ดันเมนูที่ขายไม่ออกหรือวัตถุดิบใกล้หมดอายุ' }
     ];
     const TYPES = [
-      { k:'discount', ic:'🏷️', t:'Discount',     d:'ลดราคาเป็นบาทหรือเปอร์เซ็นต์' },
-      { k:'bogo',     ic:'🎁', t:'Buy 1 Get 1',  d:'ซื้อ 1 แถม 1 เหมาะกับเครื่องดื่ม' },
-      { k:'bundle',   ic:'🍱', t:'Bundle',       d:'จับคู่เมนูขายเป็นเซ็ตราคาพิเศษ' },
-      { k:'coupon',   ic:'🎟️', t:'Coupon',       d:'คูปองส่งให้ลูกค้าเฉพาะกลุ่ม' }
+      { k:'discount', ic:'promotion', t:'Discount',     d:'ลดราคาเป็นบาทหรือเปอร์เซ็นต์' },
+      { k:'bogo',     ic:'promotion', t:'Buy 1 Get 1',  d:'ซื้อ 1 แถม 1 เหมาะกับเครื่องดื่ม' },
+      { k:'bundle',   ic:'box', t:'Bundle',       d:'จับคู่เมนูขายเป็นเซ็ตราคาพิเศษ' },
+      { k:'coupon',   ic:'receipt', t:'Coupon',       d:'คูปองส่งให้ลูกค้าเฉพาะกลุ่ม' }
     ];
 
     actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="pList">ดู Promotion ทั้งหมด</button>`;
@@ -481,9 +482,9 @@
         <p class="muted mt8">AI จะออกแบบโปรโมชันให้ตรงกับเป้าหมายนี้ พร้อมคำนวณผลที่คาดว่าจะได้</p>
         <div class="grid g-3 mt24" style="gap:12px">
           ${GOALS.map(g=>`<button class="choice choice-c ${W.goal===g.k?'on':''}" data-g="${g.k}">
-            <span class="ci">${g.ic}</span><span><b>${g.t}</b><br><span class="t-xs muted">${g.d}</span></span></button>`).join('')}
+            <span class="ci">${ICO(g.ic,18)}</span><span><b>${g.t}</b><br><span class="t-xs muted">${g.d}</span></span></button>`).join('')}
         </div>
-        ${W.goal ? `<div class="ai-strip mt20"><div class="ic">🤖</div><div class="t-sm">${goalNote()}</div></div>` : ''}
+        ${W.goal ? `<div class="ai-strip mt20"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">${goalNote()}</div></div>` : ''}
         ${nav(false,true)}</div>`;
       stage().querySelectorAll('[data-g]').forEach(b => b.onclick = () => { W.goal = b.dataset.g; s1(); });
       bind();
@@ -511,7 +512,7 @@
               <span class="t-xs muted">${U.baht(m.price)} · margin ${U.pc(m.margin)}</span></span>
             ${sug.includes(m.id)?'<span class="badge badge-ai">AI</span>':''}</button>`).join('')}
         </div>
-        <div class="ai-strip mt20"><div class="ic">🤖</div><div class="t-sm">
+        <div class="ai-strip mt20"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
           เลือกแล้ว ${W.menus.length} เมนู · margin เฉลี่ยของกลุ่มนี้
           <b>${U.pc(W.menus.length ? W.menus.reduce((s,id)=>s+(st().menu.find(m=>m.id===id)||{margin:0}).margin,0)/W.menus.length : 0)}</b>
           — ควรเหลือ margin หลังลดราคาไม่ต่ำกว่า 20% เพื่อไม่ให้ขายแล้วขาดทุน</div></div>
@@ -530,7 +531,7 @@
         <h2 class="mt12">เลือกรูปแบบโปรโมชัน</h2>
         <div class="grid g-4 mt24" style="gap:12px">
           ${TYPES.map(t=>`<button class="choice choice-c ${W.type===t.k?'on':''}" data-t="${t.k}">
-            <span class="ci">${t.ic}</span><span><b>${t.t}</b><br><span class="t-xs muted">${t.d}</span></span></button>`).join('')}
+            <span class="ci">${ICO(t.ic,18)}</span><span><b>${t.t}</b><br><span class="t-xs muted">${t.d}</span></span></button>`).join('')}
         </div>
         <div class="grid g-2 mt20" style="gap:16px">
           <div class="field"><label class="label">ส่วนลด (บาทต่อบิล)</label>
@@ -552,7 +553,7 @@
             <b class="num" style="color:${after>0?'var(--good)':'var(--bad)'}">${U.baht(after)}</b></div>
           <div class="bar mt8 ${after>0?'bar-good':'bar-bad'}"><i style="width:${Math.max(3,Math.min(100,mg*2))}%"></i></div>
           <div class="t-xs mt8 ${after>0?'muted':''}" style="${after<=0?'color:var(--bad);font-weight:700':''}">
-            ${after>0 ? `margin หลังโปร ${U.pc(mg)} — ยังมีกำไร` : '⚠️ ลดมากเกินไป จะขายขาดทุนทุกบิล'}</div>`;
+            ${after>0 ? `margin หลังโปร ${U.pc(mg)} — ยังมีกำไร` : 'ลดมากเกินไป จะขายขาดทุนทุกบิล'}</div>`;
       };
       stage().querySelectorAll('[data-t]').forEach(b => b.onclick = () => { W.type = b.dataset.t; s3(); });
       stage().querySelector('#pDisc').oninput = impact; impact(); bind();
@@ -644,7 +645,7 @@
                   <b class="num" style="font-size:${i>=4?'18px':'15px'};${c?'color:'+c:''}">${v}</b></div>`).join('')}
               <div class="bar bar-lg mt4"><i style="width:${Math.min(100,cvr*100*3)}%"></i></div>
               <div class="t-xs muted">คำนวณจากกำไรเฉลี่ยต่อบิลจริง ${U.baht(billProfit,0)} และพฤติกรรมลูกค้าในระบบ 19 วันที่ผ่านมา</div>
-              ${expProfit<=0 ? `<div class="ai-strip mt4" style="padding:11px 13px"><div class="ic" style="width:24px;height:24px;font-size:12px">💡</div>
+              ${expProfit<=0 ? `<div class="ai-strip mt4" style="padding:11px 13px"><div class="ic" style="width:24px;height:24px">${ICO('advisor',13)}</div>
                 <div class="t-sm">ส่วนลด ${U.baht(W.disc)} ทำให้ <b>บิลแรกแทบไม่เหลือกำไร</b> — ให้มองเป็น
                 <b>ต้นทุนดึงลูกค้ากลับ ${U.baht(W.disc)}/คน</b> ซึ่งยังถูกกว่าค่าหาลูกค้าใหม่ (CAC ${U.baht(D.marketing.cac,0)})
                 ${U.nf(D.marketing.cac/W.disc,1)} เท่า และคุ้มทันทีที่ลูกค้ากลับมาซื้อครั้งที่ 2<br>
@@ -652,7 +653,7 @@
             </div>
           </div>
           <div class="ai-card"><div class="in">
-            <span class="ai-badge">🤖 ข้อควรระวัง</span>
+            <span class="ai-badge">${ICO('advisor',16)} ข้อควรระวัง</span>
             <div class="col g10 mt16">
               ${[`หลังจบโปรโมชัน ให้ดูว่าลูกค้ากลุ่มนี้กลับมาซื้อในราคาเต็มหรือไม่ ถ้าไม่ แสดงว่าโปรดึงแต่คนล่าส่วนลด`,
                  `ส่วนลด ${U.baht(W.disc)} ทำให้ margin ของ ${U.esc(first.name)} เหลือ ${U.pc(Math.max(0,(first.profit-W.disc)/(first.price-W.disc)*100))}` +

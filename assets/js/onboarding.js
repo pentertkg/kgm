@@ -161,7 +161,7 @@
 
       <div class="calc-box mt24">
         <div class="between wrap g12">
-          <div class="row g8"><span style="font-size:19px">🎯</span>
+          <div class="row g8">${(window.ICON||(()=>""))("analytics",18)}
             <b>ถ้าอยากได้ <span class="num" id="goalEcho"></span> บาท/เดือน คุณต้องทำได้เท่านี้</b></div>
           <span class="badge" style="background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.18)">คำนวณจาก 30 วัน</span>
         </div>
@@ -198,7 +198,7 @@
         : c.orders <= 200 ? 'ต้องมีผู้ช่วยอย่างน้อย 1 คน และควรเตรียมวัตถุดิบล่วงหน้าช่วงเช้า'
         : c.orders <= 300 ? 'ต้องมีทีม 3 คนขึ้นไป + ระบบครัวชัดเจน (Kitchen Display จะช่วยมาก)'
         : 'เป้านี้สูงมากสำหรับ 1 จุดขาย ควรพิจารณาเพิ่มสาขาหรือช่องทาง Delivery';
-      document.getElementById('feasNote').textContent = '💡 ' + note;
+      document.getElementById('feasNote').textContent = note;
     };
     paint();
 
@@ -286,17 +286,17 @@
     const avgC = s.length ? s.reduce((a,m)=>a+m.cost,0)/s.length : 0;
     const avgM = avgP ? (avgP-avgC)/avgP*100 : 0;
     document.getElementById('menuSum').innerHTML = [
-      ['จำนวนเมนูที่เปิดขาย', U.nf(s.length) + ' รายการ', '🍽️'],
-      ['ราคาขายเฉลี่ย', U.baht(avgP,0), '💵'],
-      ['Margin เฉลี่ย', U.pc(avgM), '📊']
+      ['จำนวนเมนูที่เปิดขาย', U.nf(s.length) + ' รายการ', 'menu'],
+      ['ราคาขายเฉลี่ย', U.baht(avgP,0), 'money'],
+      ['Margin เฉลี่ย', U.pc(avgM), 'analytics']
     ].map(([l,v,ic])=>`<div class="tile row g12">
-      <span style="font-size:22px">${ic}</span>
+      ${(window.ICON||(()=>''))(ic,20)}
       <div><div class="t-xs muted b6">${l}</div><div class="num b8" style="font-size:19px">${v}</div></div></div>`).join('');
 
     const low = s.filter(m => m.price && (m.price-m.cost)/m.price*100 < 30);
     const best = s.slice().sort((a,b)=>((b.price-b.cost)/b.price)-((a.price-a.cost)/a.price))[0];
     document.getElementById('menuAi').innerHTML = `
-      <div class="ic">🤖</div>
+      <div class="ic">AI</div>
       <div class="t-sm">
         <b>AI ตรวจเมนูให้แล้ว</b><br>
         ${low.length
@@ -310,7 +310,7 @@
 
   function addMenuModal(){
     U.modal({
-      title:'เพิ่มเมนูของร้าน', icon:'🍽️', okText:'เพิ่มเมนูนี้', cancelText:'ยกเลิก',
+      title:'เพิ่มเมนูของร้าน', icon:(window.ICON||(()=>''))('menu',20), okText:'เพิ่มเมนูนี้', cancelText:'ยกเลิก',
       body:`<div class="grid g-2" style="gap:14px">
         <div class="field" style="grid-column:1/-1"><label class="label">ชื่อเมนู *</label>
           <input class="input" id="n_name" placeholder="เช่น กะเพราเนื้อ"></div>
@@ -362,7 +362,7 @@
 
     stage.innerHTML = `
     <div class="ctr mb24">
-      <div style="font-size:52px">🎉</div>
+      
       <h2 class="mt8">ร้านของคุณพร้อมเปิดแล้ว</h2>
       <p class="muted mt8">ตรวจสอบข้อมูลอีกครั้ง แล้วเข้าสู่ Dashboard เพื่อเริ่มรับออเดอร์</p>
     </div>
@@ -407,7 +407,7 @@
         </div>
         <div class="ai-card">
           <div class="in">
-            <span class="ai-badge">🤖 AI เตรียมงานวันแรกให้แล้ว</span>
+            <span class="ai-badge">AI เตรียมงานวันแรกให้แล้ว</span>
             <div class="col g10 mt16">
               ${[`เตรียมวัตถุดิบสำหรับ ~${dishesPerDay} จาน/วัน โดยเผื่อไว้ 15% สำหรับวันที่ลูกค้าเยอะ`,
                  `เมนูราคา ${U.baht(avgP,0)} ต้องขาย ${U.nf(c.orders)} บิล/วัน ช่วงเที่ยง (11:00–13:00) จะกินสัดส่วนราว 45% ของทั้งวัน`,

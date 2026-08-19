@@ -4,6 +4,7 @@
 (function () {
   'use strict';
   const D = window.DB, U = window.UI, A = window.APP;
+  const ICO = (n, s2) => (window.ICON ? window.ICON(n, s2) : '');
   const st = () => A.state;
 
   /* ============================================================
@@ -16,19 +17,19 @@
       <div class="tabs" id="rTabs">
         <button data-r="7">7 วัน</button><button data-r="30" class="on">30 วัน</button>
         <button data-r="mtd">เดือนนี้</button></div>
-      <button class="btn btn-ghost btn-sm" id="anExp">⬇️ Export</button>`;
+      <button class="btn btn-ghost btn-sm" id="anExp">${ICO('download',16)} Export</button>`;
     actions.querySelector('#anExp').onclick = () => exportTab();
     actions.querySelectorAll('[data-r]').forEach(b => b.onclick = () => {
       range = b.dataset.r === 'mtd' ? 'mtd' : +b.dataset.r;
       actions.querySelectorAll('[data-r]').forEach(x=>x.classList.toggle('on',x===b)); paint(); });
 
     el.innerHTML = `<div class="underline-tabs mb24" id="anTabs"></div><div id="anBody"></div>`;
-    const TABS = [['sales','Sales','💵'],['product','Product','🍽️'],['customer','Customer','👥'],
-                  ['marketing','Marketing','📣'],['profit','Profit','💰']];
+    const TABS = [['sales','Sales','money'],['product','Product','menu'],['customer','Customer','customers'],
+                  ['marketing','Marketing','marketing'],['profit','Profit','analytics']];
 
     const paint = () => {
       el.querySelector('#anTabs').innerHTML = TABS.map(([k,l,ic])=>`
-        <button data-t="${k}" class="${tab===k?'on':''}">${ic} ${l}</button>`).join('');
+        <button data-t="${k}" class="${tab===k?'on':''}">${ICO(ic,16)} ${l}</button>`).join('');
       el.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { tab = b.dataset.t; paint(); });
       el.querySelector('#anBody').innerHTML = ({ sales:vSales, product:vProduct, customer:vCustomer,
         marketing:vMarketing, profit:vProfit })[tab]();
@@ -98,13 +99,13 @@
       const s = sums();
       return `
       <div class="grid g-4 mb16">
-        ${U.kpi({ label:'Revenue', icon:'💵', value:U.baht(s.revenue),
+        ${U.kpi({ label:'Revenue', icon:ICO('money'), value:U.baht(s.revenue),
           foot:U.delta(6.8)+' <span class="t-xs muted">เทียบช่วงก่อน</span>' })}
-        ${U.kpi({ label:'Orders', icon:'🧾', value:U.nf(s.orders),
+        ${U.kpi({ label:'Orders', icon:ICO('receipt'), value:U.nf(s.orders),
           foot:U.delta(5.2)+` <span class="t-xs muted">${U.nf(s.orders/s.days,0)} บิล/วัน</span>` })}
-        ${U.kpi({ label:'Average Order Value', icon:'🧮', value:U.baht(s.revenue/s.orders,0),
+        ${U.kpi({ label:'Average Order Value', icon:ICO('report'), value:U.baht(s.revenue/s.orders,0),
           foot:U.delta(1.5)+' <span class="t-xs muted">เป้า ฿73</span>' })}
-        ${U.kpi({ label:'ยอดขายเฉลี่ย/วัน', icon:'📅', value:U.baht(s.revenue/s.days),
+        ${U.kpi({ label:'ยอดขายเฉลี่ย/วัน', icon:ICO('clock'), value:U.baht(s.revenue/s.days),
           foot:`<span class="badge ${s.revenue/s.days>=D.month.dailyTarget?'badge-good':'badge-warn'}">เป้า ${U.baht(D.month.dailyTarget)}</span>` })}
       </div>
       <div class="card mb16">
@@ -127,7 +128,7 @@
         <div class="card"><div class="card-h"><h4>ช่วงเวลาที่ขายดี (วัน × ชั่วโมง)</h4>
           <span class="badge">ยิ่งเข้ม = ยิ่งคึกคัก</span></div>
           <div class="card-b"><div data-heat></div>
-            <div class="ai-strip mt16"><div class="ic">🤖</div><div class="t-sm">
+            <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
               วันศุกร์–เสาร์เย็น (17:00–19:00) เป็นช่วงที่โตเร็วที่สุด (+18% ใน 2 สัปดาห์)
               แต่ร้านปิด 20:00 — ถ้ายืดเป็น 21:00 คาดว่าจะได้เพิ่มราว ${U.baht(1400)}/สัปดาห์
               <button class="btn btn-xs btn-ai mt8" data-ask="ควรทำ Promotion อะไร?">ถาม AI ต่อ</button></div></div></div></div>
@@ -146,13 +147,13 @@
 
       return `
       <div class="grid g-4 mb16">
-        ${U.kpi({ label:'Best Seller วันนี้', icon:'🏆', value:lines[0].emoji+' '+U.nf(lines[0].units),
+        ${U.kpi({ label:'Best Seller วันนี้', icon:ICO('analytics'), value:lines[0].emoji+' '+U.nf(lines[0].units),
           foot:`<span class="t-xs muted">${U.esc(lines[0].name)} · ${U.baht(lines[0].revenue)}</span>` })}
-        ${U.kpi({ label:'Worst Seller', icon:'🥀', iconBg:'var(--bad-soft)', value:'0 จาน',
+        ${U.kpi({ label:'Worst Seller', icon:ICO('alert'), iconBg:'var(--bad-soft)', value:'0 จาน',
           foot:`<span class="t-xs muted">กะเพราทะเล (วัตถุดิบหมด)</span>` })}
-        ${U.kpi({ label:'กำไรต่อจานสูงสุด', icon:'💎', iconBg:'var(--good-soft)', value:U.baht(byProfit[0].profit),
+        ${U.kpi({ label:'กำไรต่อจานสูงสุด', icon:ICO('money'), iconBg:'var(--good-soft)', value:U.baht(byProfit[0].profit),
           foot:`<span class="t-xs muted">${U.esc(byProfit[0].name)}</span>` })}
-        ${U.kpi({ label:'Margin ต่ำสุด', icon:'⚠️', iconBg:'var(--warn-soft)', value:U.pc(byMargin[0].margin),
+        ${U.kpi({ label:'Margin ต่ำสุด', icon:ICO('alert'), iconBg:'var(--warn-soft)', value:U.pc(byMargin[0].margin),
           foot:`<span class="t-xs muted">${U.esc(byMargin[0].name)} — ควรทบทวนราคา</span>` })}
       </div>
       <div class="grid g-2 mb16">
@@ -187,7 +188,7 @@
                     <text class="chart-ax" x="${x}" y="${y-11-l.units/22}" text-anchor="middle" font-size="10">${l.emoji}</text>`;});
               s+=`<text class="chart-ax" x="${(W+PL)/2}" y="${H-6}" text-anchor="middle">จำนวนที่ขายได้วันนี้ (จาน) →</text></svg>`;
               return s; })()}
-            <div class="ai-strip mt12"><div class="ic">🤖</div><div class="t-sm">
+            <div class="ai-strip mt12"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
               กะเพราหมูกรอบอยู่ขวาล่าง (ขายเยอะ กำไรต่อจานน้อย) — เป็นเมนูที่ <b>ขึ้นราคาได้ผลที่สุด</b>
               ขณะที่ชาเย็นอยู่ซ้ายบน (กำไรดี ขายน้อย) — ควรดันด้วย Bundle
               <button class="btn btn-xs btn-ai mt8" data-go="menu">ไปที่ Menu & Cost</button></div></div>
@@ -198,12 +199,12 @@
     function vCustomer(){
       return `
       <div class="grid g-4 mb16">
-        ${U.kpi({ label:'New Customers (30 วัน)', icon:'✨', value:U.nf(D.crm.new30), foot:U.delta(12.6) })}
-        ${U.kpi({ label:'Repeat Rate', icon:'🔁', iconBg:'var(--good-soft)', value:U.pc(D.crm.repeatRate),
+        ${U.kpi({ label:'New Customers (30 วัน)', icon:ICO('advisor'), value:U.nf(D.crm.new30), foot:U.delta(12.6) })}
+        ${U.kpi({ label:'Repeat Rate', icon:ICO('analytics'), iconBg:'var(--good-soft)', value:U.pc(D.crm.repeatRate),
           foot:`<span class="badge badge-good">สูงกว่าค่าเฉลี่ยร้านตามสั่ง (42%)</span>` })}
-        ${U.kpi({ label:'Customer Lifetime Value', icon:'💎', value:U.baht(D.crm.clv),
+        ${U.kpi({ label:'Customer Lifetime Value', icon:ICO('money'), value:U.baht(D.crm.clv),
           foot:`<span class="t-xs muted">CAC ${U.baht(D.marketing.cac,0)} → คุ้ม ${U.nf(D.crm.clv/D.marketing.cac,1)} เท่า</span>` })}
-        ${U.kpi({ label:'ลูกค้าที่หายไป', icon:'💔', iconBg:'var(--bad-soft)', value:U.nf(D.crm.lost),
+        ${U.kpi({ label:'ลูกค้าที่หายไป', icon:ICO('alert'), iconBg:'var(--bad-soft)', value:U.nf(D.crm.lost),
           foot:`<span class="t-xs muted">มูลค่าที่เสีย ${U.baht(D.crm.lost*120)}/เดือน</span>` })}
       </div>
       <div class="grid g-2 mb16">
@@ -218,7 +219,7 @@
             ], { h:220, bars:'revenue', lines:['profit'], colors:{revenue:'var(--c2)',profit:'var(--c3)'} })}
             <div class="legend mt12"><span class="lk"><i class="sw" style="background:var(--c1)"></i>ลูกค้าใหม่ (คน)</span>
               <span class="lk"><i class="sw" style="background:var(--c3)"></i>ลูกค้าซื้อซ้ำ (คน)</span></div>
-            <div class="ai-strip mt12"><div class="ic">🤖</div><div class="t-sm">
+            <div class="ai-strip mt12"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
               ลูกค้าใหม่ลดลงต่อเนื่อง 3 สัปดาห์ (64 → 48) แต่ลูกค้าซื้อซ้ำเพิ่มขึ้น — ฐานลูกค้าประจำแข็งแรง
               แต่ <b>ปากท่อลูกค้าใหม่ตีบ</b> ควรเพิ่มงบโฆษณาที่ ROAS สูงสุด
               <button class="btn btn-xs btn-ai mt8" data-go="marketing">ไปที่ Marketing</button></div></div>
@@ -230,10 +231,10 @@
       const M = D.marketing;
       return `
       <div class="grid g-4 mb16">
-        ${U.kpi({ label:'Ad Spend', icon:'💳', value:U.baht(M.spend), foot:`<span class="t-xs muted">${U.pc(M.spend/D.month.revenue*100)} ของยอดขาย</span>` })}
-        ${U.kpi({ label:'ROAS', icon:'📈', iconBg:'var(--good-soft)', value:U.nf(M.roas,2)+'x', foot:`<span class="badge badge-good">จุดคุ้มทุน 2.70x</span>` })}
-        ${U.kpi({ label:'CAC', icon:'🎯', value:U.baht(M.cac,0), foot:U.delta(-6.4,{invert:true})+' <span class="t-xs muted">ถูกลง</span>' })}
-        ${U.kpi({ label:'Conversion', icon:'🔗', value:U.pc(M.conversion), foot:`<span class="t-xs muted">${U.nf(M.clicks)} คลิก → ${U.nf(M.newCust)} ลูกค้าใหม่</span>` })}
+        ${U.kpi({ label:'Ad Spend', icon:ICO('money'), value:U.baht(M.spend), foot:`<span class="t-xs muted">${U.pc(M.spend/D.month.revenue*100)} ของยอดขาย</span>` })}
+        ${U.kpi({ label:'ROAS', icon:ICO('analytics'), iconBg:'var(--good-soft)', value:U.nf(M.roas,2)+'x', foot:`<span class="badge badge-good">จุดคุ้มทุน 2.70x</span>` })}
+        ${U.kpi({ label:'CAC', icon:ICO('analytics'), value:U.baht(M.cac,0), foot:U.delta(-6.4,{invert:true})+' <span class="t-xs muted">ถูกลง</span>' })}
+        ${U.kpi({ label:'Conversion', icon:ICO('analytics'), value:U.pc(M.conversion), foot:`<span class="t-xs muted">${U.nf(M.clicks)} คลิก → ${U.nf(M.newCust)} ลูกค้าใหม่</span>` })}
       </div>
       <div class="grid g-2 mb16">
         <div class="card"><div class="card-h"><h4>ROAS แต่ละ Campaign</h4>
@@ -250,7 +251,7 @@
           </div></div>
       </div>
       <div class="ai-card"><div class="in">
-        <span class="ai-badge">🤖 สรุป Marketing</span>
+        <span class="ai-badge">${ICO('advisor',16)} สรุป Marketing</span>
         <h3 class="mt16">ทุก 1 บาทที่จ่ายค่าโฆษณา ได้ยอดขายกลับมา ${U.nf(M.roas,2)} บาท</h3>
         <p class="muted t-sm mt8">แต่ถ้าคิดเป็น "กำไร" ไม่ใช่ "ยอดขาย" — ที่ margin เฉลี่ย ${U.pc(D.month.grossProfit/D.month.revenue*100)}
           หมายความว่าได้กำไรกลับมา ${U.baht(M.roas*D.month.grossProfit/D.month.revenue)} ต่อ 1 บาท
@@ -281,13 +282,13 @@
       ];
       return `
       <div class="grid g-4 mb16">
-        ${U.kpi({ label:'Revenue (MTD)', icon:'💵', value:U.baht(m.revenue),
+        ${U.kpi({ label:'Revenue (MTD)', icon:ICO('money'), value:U.baht(m.revenue),
           foot:`<span class="t-xs muted">${m.days} วัน · เฉลี่ย ${U.baht(m.revenue/m.days)}/วัน</span>` })}
-        ${U.kpi({ label:'Gross Profit', icon:'📊', iconBg:'var(--info-soft)', value:U.baht(m.grossProfit),
+        ${U.kpi({ label:'Gross Profit', icon:ICO('dashboard'), iconBg:'var(--info-soft)', value:U.baht(m.grossProfit),
           foot:`<span class="badge badge-good">${U.pc(m.grossProfit/m.revenue*100)} ของยอดขาย</span>` })}
-        ${U.kpi({ label:'Net Profit', icon:'💰', iconBg:'var(--good-soft)', value:U.baht(m.netProfit),
+        ${U.kpi({ label:'Net Profit', icon:ICO('money'), iconBg:'var(--good-soft)', value:U.baht(m.netProfit),
           foot:`<span class="badge ${m.netMargin>=10?'badge-good':'badge-warn'}">Net margin ${U.pc(m.netMargin)}</span>` })}
-        ${U.kpi({ label:'คาดการณ์สิ้นเดือน', icon:'🔮', iconBg:'var(--ai-soft)', value:U.baht(m.projected),
+        ${U.kpi({ label:'คาดการณ์สิ้นเดือน', icon:ICO('advisor'), iconBg:'var(--ai-soft)', value:U.baht(m.projected),
           foot:`<span class="badge ${m.projected>=D.store.goalMonth?'badge-good':'badge-warn'}">เป้า ${U.baht(D.store.goalMonth)}</span>` })}
       </div>
 
@@ -314,7 +315,7 @@
                 <td><div class="bar bar-good"><i style="width:${m.netMargin}%"></i></div></td></tr>
             </tbody></table></div>
           <div class="card-f"><div class="t-sm muted">
-            💡 ร้านตามสั่งที่บริหารดีมักมี Net margin 10–15% — ร้านคุณอยู่ที่ ${U.pc(m.netMargin)} ถือว่าอยู่ในเกณฑ์ดี
+            ร้านตามสั่งที่บริหารดีมักมี Net margin 10–15% — ร้านคุณอยู่ที่ ${U.pc(m.netMargin)} ถือว่าอยู่ในเกณฑ์ดี
             แต่ Food cost ${U.pc(m.foodCost/m.revenue*100)} สูงกว่าค่าแนะนำ (55–60%)</div></div>
         </div>
 
@@ -331,7 +332,7 @@
               ], { center:U.pc(m.netMargin,0), sub:'Net margin', size:190 })}
             </div></div>
           <div class="ai-card"><div class="in">
-            <span class="ai-badge">🤖 ทางเพิ่มกำไร 3 ทาง</span>
+            <span class="ai-badge">${ICO('advisor',16)} ทางเพิ่มกำไร 3 ทาง</span>
             <div class="col g10 mt16">
               ${[[`ลด Food cost 3% → กำไรเพิ่ม ${U.baht(m.revenue*0.03)}`,'เจรจาราคาหมูกับซัพพลายเออร์รายที่ 2 หรือลดขนาดพอร์ชันเมนู margin ต่ำ'],
                  [`ขึ้นราคาเมนู margin ต่ำ → กำไรเพิ่ม ${U.baht(11160)}`,'กะเพราหมูกรอบ 65 → 69 บาท (ขายดีสุด margin ต่ำสุด)'],
@@ -351,7 +352,7 @@
      AI ADVISOR
      ============================================================ */
   window.PAGES.advisor = function (el, actions) {
-    actions.innerHTML = `<span class="badge badge-ai badge-lg">🤖 อ่านข้อมูล 11 โมดูลแล้ว</span>
+    actions.innerHTML = `<span class="badge badge-ai badge-lg">${ICO('advisor',16)} อ่านข้อมูล 11 โมดูลแล้ว</span>
       <button class="btn btn-ai btn-sm" id="adChat">เปิดแชทถาม AI</button>`;
     actions.querySelector('#adChat').onclick = () => A.aiOpen(true);
 
@@ -360,7 +361,7 @@
     <!-- วันนี้ควรทำอะไร -->
     <div class="ai-card mb16"><div class="in">
       <div class="between wrap g12">
-        <div><span class="ai-badge">🤖 แผนงานวันนี้</span>
+        <div><span class="ai-badge">${ICO('advisor',16)} แผนงานวันนี้</span>
           <h2 class="mt12">มี 3 เรื่องที่ควรทำวันนี้</h2>
           <p class="muted t-sm mt8">เรียงตามผลกระทบต่อกำไร มากไปน้อย</p></div>
         <div class="tile" style="min-width:190px">
@@ -388,12 +389,12 @@
       <div class="between mb16 wrap g12"><div><h4>AI ทำงานอย่างไร</h4>
         <div class="t-sm muted mt4">ทุกคำแนะนำต้องอ้างอิงตัวเลขจริงในระบบ ไม่ใช่คำแนะนำทั่วไป</div></div></div>
       <div class="grid g-4">
-        ${[['1. Data','📊','อ่านข้อมูลจริง',`ยอดขาย ${U.baht(t.revenue)} · ${t.orders} บิล · ต้นทุนหมู +8% · Stock หมูเหลือ 3.2 kg`],
-           ['2. Insight','🔍','หาความสัมพันธ์','ยอดขายขึ้นแต่กำไรลง เพราะเมนูที่ขายดีที่สุดคือเมนูที่ margin ต่ำที่สุด'],
-           ['3. Recommendation','💡','เสนอทางเลือกพร้อมตัวเลข','ขึ้นราคา 4 บาท (+฿372/วัน) หรือทำ Bundle (+฿2,272/วัน)'],
-           ['4. Action','⚡','กดทำได้ทันที','ปุ่ม "ทำเลย" พาไปหน้าที่แก้ไขได้จริง ไม่ต้องหาเอง']]
+        ${[['1. Data','dashboard','อ่านข้อมูลจริง',`ยอดขาย ${U.baht(t.revenue)} · ${t.orders} บิล · ต้นทุนหมู +8% · Stock หมูเหลือ 3.2 kg`],
+           ['2. Insight','search','หาความสัมพันธ์','ยอดขายขึ้นแต่กำไรลง เพราะเมนูที่ขายดีที่สุดคือเมนูที่ margin ต่ำที่สุด'],
+           ['3. Recommendation','advisor','เสนอทางเลือกพร้อมตัวเลข','ขึ้นราคา 4 บาท (+฿372/วัน) หรือทำ Bundle (+฿2,272/วัน)'],
+           ['4. Action','check','กดทำได้ทันที','ปุ่ม "ทำเลย" พาไปหน้าที่แก้ไขได้จริง ไม่ต้องหาเอง']]
           .map(([s,ic,t2,d])=>`<div class="tile">
-            <div class="row g10"><span style="font-size:20px">${ic}</span><b class="t-sm">${s}</b></div>
+            <div class="row g10">${ICO(ic,18)}<b class="t-sm">${s}</b></div>
             <div class="b7 mt8 t-sm">${t2}</div>
             <div class="t-sm muted mt4" style="line-height:1.6">${d}</div></div>`).join('')}
       </div>
@@ -429,28 +430,28 @@
       'ถ้ามีงบโฆษณา 10,000 บาทควรยิงอะไร?','ทำไมกำไรลด?','เมนูไหนควรหยุดขาย?',
       'ควรทำ Promotion อะไร?','เดือนนี้จะถึงเป้าไหม?'];
     el.querySelector('#qList').innerHTML = QS.map(q=>`<button class="choice" data-q="${U.esc(q)}" style="padding:13px">
-      <span class="ci" style="width:32px;height:32px;font-size:15px;background:var(--ai-soft)">💬</span>
+      <span class="ci" style="width:32px;height:32px;background:var(--brand-soft);color:var(--brand-ink)">${ICO('advisor',16)}</span>
       <span class="grow b6 t-sm" style="text-align:left">${U.esc(q)}</span></button>`).join('');
     el.querySelectorAll('[data-q]').forEach(b => b.onclick = () => A.aiAsk(b.dataset.q));
 
     /* module insights */
     const MODS = [
-      { ic:'📊', mod:'Dashboard', to:'dashboard', head:D.ai.headline,
+      { ic:'dashboard', mod:'Dashboard', to:'dashboard', head:D.ai.headline,
         body:`เกินเป้ารายวัน ${U.pc(t.revenue/m.dailyTarget*100-100)} แต่กำไรสวนทาง — ปัญหาอยู่ที่โครงสร้างต้นทุน ไม่ใช่ยอดขาย` },
-      { ic:'🍽️', mod:'Menu & Cost', to:'menu', head:`3 เมนูมี Margin ต่ำกว่าเป้า 35%`,
+      { ic:'menu', mod:'Menu & Cost', to:'menu', head:`3 เมนูมี Margin ต่ำกว่าเป้า 35%`,
         body:`กะเพราหมูกรอบ (${U.pc(D.mi('m1').margin)}) เป็นเมนูขายดีที่สุดแต่กำไรน้อยสุด ขึ้นราคา 4 บาท = +${U.baht(D.todayUnits.m1*4)}/วัน` },
-      { ic:'📦', mod:'Stock', to:'stock', head:`หมูสับจะไม่พอขายพรุ่งนี้`,
+      { ic:'stock', mod:'Stock', to:'stock', head:`หมูสับจะไม่พอขายพรุ่งนี้`,
         body:`ต้องใช้ 7.8 kg แต่มี 3.2 kg — ถ้าไม่สั่งวันนี้ จะขายได้ถึงประมาณ 12:40 เท่านั้น` },
-      { ic:'👥', mod:'Customers', to:'customers', head:`ลูกค้า ${D.crm.lost} คนหายไปเกิน 30 วัน`,
+      { ic:'customers', mod:'Customers', to:'customers', head:`ลูกค้า ${D.crm.lost} คนหายไปเกิน 30 วัน`,
         body:`มูลค่าที่เสียราว ${U.baht(D.crm.lost*120)}/เดือน ต้นทุนดึงกลับถูกกว่าหาลูกค้าใหม่ ${U.nf(D.marketing.cac/20,1)} เท่า` },
-      { ic:'📣', mod:'Marketing', to:'marketing', head:`1 Campaign ROAS ต่ำกว่าจุดคุ้มทุน`,
+      { ic:'marketing', mod:'Marketing', to:'marketing', head:`1 Campaign ROAS ต่ำกว่าจุดคุ้มทุน`,
         body:`"Boost เมนูใหม่ กะเพราทะเล" ROAS 1.69x — ย้ายงบไป "กะเพรามื้อเที่ยง" (5.92x) จะได้เพิ่ม ${U.baht(7872)}` },
-      { ic:'💰', mod:'Analytics — Profit', to:'analytics?tab=profit', head:`Food cost ${U.pc(m.foodCost/m.revenue*100)} สูงกว่าค่าแนะนำ`,
+      { ic:'analytics', mod:'Analytics — Profit', to:'analytics?tab=profit', head:`Food cost ${U.pc(m.foodCost/m.revenue*100)} สูงกว่าค่าแนะนำ`,
         body:`Net margin ${U.pc(m.netMargin)} ยังอยู่ในเกณฑ์ดี แต่ถ้าลด Food cost ลง 3% จะได้กำไรเพิ่ม ${U.baht(m.revenue*0.03)}/เดือน` }
     ];
     el.querySelector('#modIn').innerHTML = MODS.map(x=>`
       <div class="card card-p card-hover" data-to="${x.to}" style="cursor:pointer">
-        <div class="between"><div class="row g10"><span style="font-size:19px">${x.ic}</span>
+        <div class="between"><div class="row g10">${ICO(x.ic,18)}
           <span class="badge">${x.mod}</span></div><span class="muted">→</span></div>
         <h4 class="mt12" style="line-height:1.45">${U.esc(x.head)}</h4>
         <p class="t-sm muted mt8" style="line-height:1.65">${U.esc(x.body)}</p></div>`).join('');
@@ -462,10 +463,10 @@
      ============================================================ */
   window.PAGES.settings = function (el, actions, q) {
     let tab = q.tab || 'store';
-    const TABS = [['account','บัญชีและความยินยอม','🔑'],
-      ['store','Store Profile','🏪'],['users','Users','👤'],['staff','Staff','👥'],
-      ['roles','Roles & Permissions','🔐'],['payment','Payment','💳'],['noti','Notification','🔔'],
-      ['integrations','Integrations','🔌'],['subscription','Subscription','💎']];
+    const TABS = [['account','บัญชีและความยินยอม','key'],
+      ['store','Store Profile','store'],['users','Users','user'],['staff','Staff','customers'],
+      ['roles','Roles & Permissions','key'],['payment','Payment','money'],['noti','Notification','bell'],
+      ['integrations','Integrations','settings'],['subscription','Subscription','money']];
     actions.innerHTML = `<button class="btn btn-primary btn-sm" id="sSave">บันทึกการตั้งค่า</button>`;
     actions.querySelector('#sSave').onclick = () => U.toast('บันทึกการตั้งค่าแล้ว (Prototype)','ok');
 
@@ -477,7 +478,7 @@
     const paint = () => {
       el.querySelector('#sNav').innerHTML = TABS.map(([k,l,ic])=>`
         <button class="nav-i ${tab===k?'on':''}" data-t="${k}" style="width:100%;text-align:left">
-          <span class="ni">${ic}</span><span>${l}</span></button>`).join('');
+          <span class="ni">${ICO(ic,18)}</span><span>${l}</span></button>`).join('');
       el.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { tab = b.dataset.t; paint(); });
       el.querySelector('#sBody').innerHTML = ({ account:vAccount, store:vStore, users:vUsers, staff:vStaff,
         roles:vRoles, payment:vPayment, noti:vNoti, integrations:vInteg, subscription:vSub })[tab]();
@@ -499,7 +500,7 @@
       if (!signedIn) {
         return card('บัญชีและความยินยอม', configured ? 'กำลังดูในโหมดเดโม' : 'ยังไม่ได้ตั้งค่าฐานข้อมูล', `
           <div class="ai-strip" style="background:var(--warn-soft);border-color:var(--warn-line)">
-            <div class="ic" style="background:var(--warn)">!</div>
+            <div class="ic" style="background:var(--warn-soft);color:var(--warn-ink)">${ICO('alert',15)}</div>
             <div class="t-sm"><b>ยังไม่ได้เข้าสู่ระบบ</b><br>
             <span class="muted">${configured
               ? 'ตอนนี้ใช้ข้อมูลตัวอย่างในเครื่อง ไม่มีบัญชีผู้ใช้และไม่บันทึกอะไรลงฐานข้อมูล เข้าสู่ระบบเพื่อใช้ข้อมูลจริงและจัดการความยินยอม'
@@ -508,7 +509,7 @@
             <a class="btn btn-primary" href="login.html">เข้าสู่ระบบด้วยอีเมล</a>
             <a class="btn btn-ghost" href="privacy.html" target="_blank" rel="noopener">อ่านคำชี้แจงการเก็บข้อมูล</a>
           </div>
-          <div class="ai-strip mt16"><div class="ic">📧</div>
+          <div class="ai-strip mt16"><div class="ic">${ICO('bell',15)}</div>
             <div class="t-sm">ระบบเก็บข้อมูลส่วนบุคคลเพียง <b>อีเมล</b> อย่างเดียว และไม่มีรหัสผ่าน</div></div>`);
       }
       return card('บัญชีของคุณ','ข้อมูลส่วนบุคคลที่ระบบเก็บมีเพียงอีเมลเท่านั้น', `
@@ -518,7 +519,7 @@
             <div class="tile"><div class="t-xs muted b6">วิธีเข้าสู่ระบบ</div>
               <div class="b7 mt4" style="font-size:15.5px">รหัสทางอีเมล (ไม่มีรหัสผ่าน)</div></div>
           </div>
-          <div class="ai-strip mt16"><div class="ic">🔒</div>
+          <div class="ai-strip mt16"><div class="ic">${ICO('key',15)}</div>
             <div class="t-sm">ระบบไม่เก็บรหัสผ่าน ชื่อ เบอร์โทร ที่อยู่ IP หรือพฤติกรรมการใช้งาน —
               <a href="privacy.html" target="_blank" rel="noopener">อ่านคำชี้แจง</a></div></div>`) +
         card('ความยินยอม','ถอนได้ง่ายเท่ากับตอนให้ ผลมีทันที', `<div id="consentBox">
@@ -568,7 +569,7 @@
                 : `<button class="btn btn-xs btn-primary" data-gr="${p.id}">ยินยอม</button>`}
             </div></div>`;
         }).join('') + `</div>
-          <div class="ai-strip mt12"><div class="ic">ℹ️</div>
+          <div class="ai-strip mt12"><div class="ic">${ICO('alert',15)}</div>
             <div class="t-sm">ข้อที่จำเป็นถอนไม่ได้จากหน้านี้ เพราะถอนแล้วจะใช้ระบบไม่ได้ —
               ถ้าต้องการยุติทั้งหมด ให้ใช้ปุ่ม <b>ลบบัญชีของฉัน</b> ด้านล่าง
               ซึ่งเป็นการถอนความยินยอมทุกข้อพร้อมลบข้อมูล</div></div>`;
@@ -590,7 +591,7 @@
         await A.signOut(); location.replace('login.html');
       };
       root.querySelector('#delAcct').onclick = () => {
-        U.modal({ title:'ลบบัญชีของคุณ', icon:'⚠️', okText:'ลบบัญชีถาวร', cancelText:'ไม่ลบ',
+        U.modal({ title:'ลบบัญชีของคุณ', icon:ICO('alert'), okText:'ลบบัญชีถาวร', cancelText:'ไม่ลบ',
           body:`<p>พิมพ์คำว่า <b>ลบบัญชี</b> เพื่อยืนยัน — การลบมีผลทันทีและกู้คืนไม่ได้</p>
             <div class="field mt16"><label class="label" for="confirmDel">ยืนยัน</label>
               <input class="input" id="confirmDel" placeholder="ลบบัญชี" autocomplete="off"></div>
@@ -660,7 +661,7 @@
             <tr style="background:var(--surface-2)"><td colspan="3"><b>ค่าแรงรวมวันนี้</b></td>
               <td class="r num b8">${U.baht(1600)}</td><td></td></tr>
           </tbody></table></div>
-        <div class="ai-strip mt16"><div class="ic">🤖</div><div class="t-sm">
+        <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
           ค่าแรงคิดเป็น ${U.pc(D.month.labor/D.month.revenue*100)} ของยอดขาย ซึ่งอยู่ในเกณฑ์ดี (ค่าแนะนำ 15–20%)
           ช่วง 14:00–16:00 ยอดขายต่ำสุดของวัน — ถ้าลดคนช่วงนั้นลง 1 คน จะประหยัดได้ราว ${U.baht(3400)}/เดือน</div></div>`);
     }
@@ -677,6 +678,9 @@
     }
     function vPayment(){
       return card('ช่องทางรับเงิน','เปิด/ปิดช่องทางที่ร้านรับได้', `
+        <div class="tile mb12" style="border-left:3px solid var(--warn);background:var(--warn-soft)">
+          <b class="t-sm">หมายเหตุ:</b> <span class="t-sm">การตั้งค่านี้ใช้บันทึกช่องทางรับเงินเพื่อการรายงานเท่านั้น
+          ระบบยังไม่มีการตัดเงินออนไลน์ (Payment Gateway) — จะเปิดใช้เมื่อจดทะเบียนนิติบุคคลและผ่าน KYC กับผู้ให้บริการชำระเงินแล้ว</span></div>
         <div class="col g10">
           ${[['เงินสด','รับเงินสดหน้าร้าน',1],['พร้อมเพย์ / QR Code','สแกนจ่ายผ่านธนาคาร',1],
              ['บัตรเครดิต/เดบิต','ต้องมีเครื่อง EDC',0],['LINE MAN / Grab / Robinhood','รับผ่านแอปส่งอาหาร',1],
@@ -685,7 +689,7 @@
               <div><b class="t-sm">${n}</b><div class="t-xs muted">${d}</div></div>
               <button class="switch ${on?'on':''}"></button></div>`).join('')}
         </div>
-        <div class="ai-strip mt16"><div class="ic">🤖</div><div class="t-sm">
+        <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
           ลูกค้า ${U.pc(58)} จ่ายผ่าน QR Code แล้ว — การเปิดบัตรเครดิตอาจไม่คุ้มค่าธรรมเนียม
           สำหรับบิลเฉลี่ย ${U.baht(D.today.aov,0)}</div></div>`);
     }
@@ -707,24 +711,24 @@
     function vInteg(){
       return card('Integrations','เชื่อมต่อบริการภายนอก — ยังไม่เปิดใช้งานทั้งหมดใน Prototype นี้', `
         <div class="ai-strip mb16" style="background:var(--warn-soft);border-color:var(--warn-line)">
-          <div class="ic" style="background:var(--warn)">!</div>
+          <div class="ic" style="background:var(--warn-soft);color:var(--warn-ink)">${ICO('alert',15)}</div>
           <div class="t-sm"><b>ทุกรายการด้านล่างยังไม่ได้เชื่อมต่อจริง</b><br>
           <span class="muted">Prototype นี้ไม่มีการต่อ Backend, API หรือบริการภายนอกใดๆ
           รายการนี้แสดงไว้เพื่อให้เห็นขอบเขตของงานในเฟสถัดไปเท่านั้น</span></div>
         </div>
         <div class="grid g-2" style="gap:12px">
-          ${[['🛵','LINE MAN','ดึงออเดอร์เข้าระบบอัตโนมัติ','ยังไม่เชื่อมต่อ','badge'],
-             ['🟢','Grab Food','ซิงก์เมนูและสถานะร้าน','ยังไม่เชื่อมต่อ','badge'],
-             ['💬','LINE OA','ส่งโปรโมชันหาลูกค้า','ยังไม่เชื่อมต่อ','badge'],
-             ['📘','Facebook Page','ดึงข้อมูลโฆษณาและ ROAS','ยังไม่เชื่อมต่อ','badge'],
-             ['🧾','FlowAccount','ส่งข้อมูลบัญชี/ภาษี','ยังไม่เชื่อมต่อ','badge'],
-             ['🖨️','เครื่องพิมพ์ใบเสร็จ','พิมพ์บิลอัตโนมัติ','ยังไม่เชื่อมต่อ','badge']]
+          ${[['LM','LINE MAN','ดึงออเดอร์เข้าระบบอัตโนมัติ','ยังไม่เชื่อมต่อ','badge'],
+             ['GF','Grab Food','ซิงก์เมนูและสถานะร้าน','ยังไม่เชื่อมต่อ','badge'],
+             ['OA','LINE OA','ส่งโปรโมชันหาลูกค้า','ยังไม่เชื่อมต่อ','badge'],
+             ['FB','Facebook Page','ดึงข้อมูลโฆษณาและ ROAS','ยังไม่เชื่อมต่อ','badge'],
+             ['FA','FlowAccount','ส่งข้อมูลบัญชี/ภาษี','ยังไม่เชื่อมต่อ','badge'],
+             ['PR','เครื่องพิมพ์ใบเสร็จ','พิมพ์บิลอัตโนมัติ','ยังไม่เชื่อมต่อ','badge']]
             .map(([ic,n,d,s,c])=>`<div class="tile">
-              <div class="between"><div class="row g10"><span style="font-size:20px">${ic}</span><b class="t-sm">${n}</b></div>
+              <div class="between"><div class="row g10"><span class="mono-chip">${ic}</span><b class="t-sm">${n}</b></div>
                 <span class="badge ${c}">${s}</span></div>
               <div class="t-xs muted mt8">${d}</div></div>`).join('')}
         </div>
-        <div class="ai-strip mt16"><div class="ic">ℹ️</div><div class="t-sm">
+        <div class="ai-strip mt16"><div class="ic">${ICO('alert',15)}</div><div class="t-sm">
           Prototype นี้ไม่มีการเชื่อมต่อ Backend, Database, API หรือ External Service ใดๆ
           สถานะที่เห็นเป็น Mock Data ทั้งหมด</div></div>`);
     }

@@ -28,6 +28,34 @@
 <link rel="canonical" href="https://streetfood-os.vercel.app/">
 <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "SoftwareApplication",
+   "name": "StreetFood OS",
+   "url": "https://streetfood-os.vercel.app/",
+   "applicationCategory": "BusinessApplication",
+   "operatingSystem": "Web",
+   "inLanguage": "th",
+   "description": "ระบบผู้ช่วยบริหารร้าน Street Food ที่รวมเมนู ต้นทุน ออเดอร์ ลูกค้า Stock และ Marketing ไว้ในที่เดียว พร้อม AI ช่วยวิเคราะห์และแนะนำสิ่งที่ควรทำ",
+   "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "THB",
+    "description": "ทดลองใช้ฟรีช่วง Beta — ยังไม่เปิดขายแพ็กเกจ"
+   }
+  },
+  {
+   "@type": "WebSite",
+   "name": "StreetFood OS",
+   "url": "https://streetfood-os.vercel.app/",
+   "inLanguage": "th"
+  }
+ ]
+}
+</script>
 <link rel="stylesheet" href="assets/css/styles.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🌿</text></svg>">
 </head>
@@ -123,9 +151,9 @@
           <h3 class="mt4">Data → Insight → Recommendation → Action</h3>
         </div>
         <div class="insight-chain">
-          <span class="step">📉 ยอดขายลด 12%</span><span class="arw">→</span>
-          <span class="step">🔍 ลูกค้าเก่าลดลง</span><span class="arw">→</span>
-          <span class="step badge-ai" style="border-color:var(--ai-line)">🤖 AI แนะนำ Campaign</span><span class="arw">→</span>
+          <span class="step"><b class="num" style="color:var(--bad)">−12%</b> ยอดขาย</span><span class="arw">→</span>
+          <span class="step">ลูกค้าเก่าลดลง</span><span class="arw">→</span>
+          <span class="step" style="background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand-ink)">AI แนะนำ Campaign</span><span class="arw">→</span>
           <span class="step" style="background:var(--brand);color:#fff;border-color:var(--brand)">สร้าง Campaign</span>
         </div>
       </div>
@@ -146,7 +174,7 @@
 <section class="section" id="ai" style="background:linear-gradient(180deg,var(--surface),var(--bg))">
   <div class="wrapx grid g-2" style="align-items:center;gap:44px">
     <div>
-      <span class="ai-badge">🤖 AI Advisor</span>
+      <span class="ai-badge">AI Advisor</span>
       <h2 class="mt16">ถามได้เหมือนคุยกับผู้จัดการร้าน</h2>
       <p class="muted mt12" style="font-size:16.5px;line-height:1.75">
         AI อ่านข้อมูลร้านคุณทั้งเมนู ต้นทุน ออเดอร์ ลูกค้า Stock และโฆษณา
@@ -194,6 +222,7 @@
 </footer>
 
 <script src="assets/js/data.js"></script>
+<script src="assets/js/icons.js"></script>
 <script src="assets/js/ui.js"></script>
 <script src="assets/js/landing.js"></script>
 </body>

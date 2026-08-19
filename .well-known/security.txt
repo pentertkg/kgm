@@ -1,0 +1,5 @@
+# StreetFood OS — security contact (RFC 9116)
+Contact: mailto:juggrit@efinancethai.com
+Expires: 2027-08-19T00:00:00.000Z
+Preferred-Languages: th, en
+Canonical: https://streetfood-os.vercel.app/.well-known/security.txt

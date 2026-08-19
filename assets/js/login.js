@@ -71,7 +71,7 @@
       <p class="muted mt8">เลือกได้ว่าจะยินยอมเรื่องใด ข้อที่ไม่บังคับปฏิเสธได้และยังใช้ระบบได้ปกติ</p>
 
       <div class="tile mt16" style="background:var(--surface-2)">
-        <div class="row g10"><span style="font-size:18px">📧</span>
+        <div class="row g10">${(window.ICON||(()=>''))('bell',17)}
           <div class="t-sm"><b>ข้อมูลที่ระบบเก็บ: อีเมลของคุณเท่านั้น</b><br>
             <span class="muted">ไม่เก็บชื่อ เบอร์โทร ที่อยู่ IP หรือพฤติกรรมการใช้งาน
             และไม่ส่งต่อให้ใคร — <a href="privacy.html" target="_blank" rel="noopener">อ่านรายละเอียด</a></span></div></div>

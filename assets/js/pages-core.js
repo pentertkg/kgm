@@ -5,6 +5,7 @@ window.PAGES = window.PAGES || {};
 (function () {
   'use strict';
   const D = window.DB, U = window.UI, A = window.APP;
+  const ICO = (n, s2) => (window.ICON ? window.ICON(n, s2) : '');
   const st = () => A.state;
 
   /* ============================================================
@@ -18,7 +19,7 @@ window.PAGES = window.PAGES || {};
 
     actions.innerHTML = `
       <span class="badge badge-lg"><span class="dot dot-live"></span> เปิดร้าน · ${D.store.open}–${D.store.close}</span>
-      <button class="btn btn-ghost btn-sm" id="dRep">📄 ดูรายงาน</button>
+      <button class="btn btn-ghost btn-sm" id="dRep">${ICO('report',16)} ดูรายงาน</button>
       <button class="btn btn-primary btn-sm" id="dNew">+ รับออเดอร์</button>`;
     actions.querySelector('#dNew').onclick = A.newOrderModal;
     actions.querySelector('#dRep').onclick = () => A.go('analytics');
@@ -30,7 +31,7 @@ window.PAGES = window.PAGES || {};
         <div class="row g14">
           <div class="logo" style="width:48px;height:48px;font-size:24px">${D.store.emoji}</div>
           <div>
-            <h3>สวัสดี ${U.esc(D.store.name)} 👋</h3>
+            <h3>สวัสดี ${U.esc(D.store.name)}</h3>
             <div class="t-sm muted">${U.fullToday()} · ${U.esc(D.store.location)}</div>
           </div>
         </div>
@@ -54,16 +55,16 @@ window.PAGES = window.PAGES || {};
 
     <!-- KPI -->
     <div class="grid g-4 mb16">
-      ${U.kpi({ label:'ยอดขายวันนี้', icon:'💵', iconBg:'var(--brand-soft)', value:U.baht(t.revenue),
+      ${U.kpi({ label:'ยอดขายวันนี้', icon:ICO('money'), iconBg:'var(--brand-soft)', value:U.baht(t.revenue),
         spark:D.trend7.map(r=>r.revenue), sparkColor:'var(--c1)',
         foot:U.delta(c.revenue) + ' <span class="t-xs muted">เทียบเมื่อวาน ' + U.baht(D.trend7[5].revenue) + '</span>' })}
-      ${U.kpi({ label:'Orders', icon:'🧾', iconBg:'var(--info-soft)', value:U.nf(t.orders),
+      ${U.kpi({ label:'Orders', icon:ICO('receipt'), iconBg:'var(--info-soft)', value:U.nf(t.orders),
         spark:D.trend7.map(r=>r.orders), sparkColor:'var(--c2)',
         foot:U.delta(c.orders) + ' <span class="t-xs muted">' + U.nf(t.orders/12,1) + ' บิล/ชม.</span>' })}
-      ${U.kpi({ label:'Average Order', icon:'🧮', iconBg:'var(--ai-soft)', value:U.baht(t.aov,0),
+      ${U.kpi({ label:'Average Order', icon:ICO('report'), iconBg:'var(--ai-soft)', value:U.baht(t.aov,0),
         spark:D.trend7.map(r=>r.revenue/r.orders), sparkColor:'var(--c4)',
         foot:U.delta(c.aov) + ' <span class="t-xs muted">เป้า ฿73 (Bundle)</span>' })}
-      ${U.kpi({ label:'กำไรโดยประมาณ', icon:'📈', iconBg:'var(--good-soft)', value:U.baht(t.profit),
+      ${U.kpi({ label:'กำไรโดยประมาณ', icon:ICO('analytics'), iconBg:'var(--good-soft)', value:U.baht(t.profit),
         spark:D.trend7.map(r=>r.profit), sparkColor:'var(--c3)',
         foot:U.delta(c.profit) + ' <span class="t-xs muted">margin ' + U.pc(t.profit/t.revenue*100) + '</span>' })}
     </div>
@@ -72,17 +73,17 @@ window.PAGES = window.PAGES || {};
     <div class="ai-card mb16">
       <div class="in">
         <div class="between wrap g12">
-          <div class="row g10"><span class="ai-badge">🤖 AI แนะนำวันนี้</span>
+          <div class="row g10"><span class="ai-badge">${ICO('advisor',16)} AI แนะนำวันนี้</span>
             <span class="badge">อัปเดต 5 นาทีที่แล้ว</span></div>
           <button class="btn btn-ghost btn-sm" id="aiMore">ดูรายละเอียด →</button>
         </div>
         <h3 class="mt16" style="max-width:820px;line-height:1.45">${U.esc(D.ai.headline)}</h3>
         <p class="muted t-md mt8" style="max-width:820px">${U.esc(D.ai.detail)}</p>
         <div class="insight-chain mt16">
-          <span class="step">📊 ยอดขาย +12%</span><span class="arw">→</span>
-          <span class="step">🔍 ต้นทุนหมู +8%</span><span class="arw">→</span>
-          <span class="step">📉 กำไร −4%</span><span class="arw">→</span>
-          <span class="step" style="background:var(--ai-soft);border-color:var(--ai-line);color:#4c33cf">🤖 3 คำแนะนำ</span>
+          <span class="step"><b class="num">+12.0%</b> ยอดขาย</span><span class="arw">→</span>
+          <span class="step"><b class="num">+8%</b> ต้นทุนหมู</span><span class="arw">→</span>
+          <span class="step"><b class="num" style="color:var(--bad)">−4.0%</b> กำไร</span><span class="arw">→</span>
+          <span class="step" style="background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand-ink)">${ICO('advisor',15)} 3 คำแนะนำ</span>
         </div>
         <div class="grid g-3 mt16">
           ${D.ai.recs.map((r,i)=>`
@@ -141,7 +142,7 @@ window.PAGES = window.PAGES || {};
         </div>
         <div class="card-f">
           <div class="ai-strip" style="padding:10px 12px">
-            <div class="ic" style="width:24px;height:24px;font-size:12px;border-radius:7px">🤖</div>
+            <div class="ic" style="width:24px;height:24px;border-radius:7px">${ICO('advisor',13)}</div>
             <div class="t-sm">เมนูอันดับ 1 ทำรายได้สูงสุดแต่ margin ต่ำสุด (${U.pc(top[0].margin)})
               — ขึ้นราคา 4 บาทจะได้กำไรเพิ่ม ${U.baht(top[0].units*4)}/วัน</div>
           </div>
@@ -191,15 +192,15 @@ window.PAGES = window.PAGES || {};
 
     /* quick actions */
     const QA = [
-      { ic:'🧾', t:'รับออเดอร์',      d:'สร้างบิลใหม่',        fn:A.newOrderModal },
-      { ic:'🍽️', t:'เพิ่มเมนู',        d:'ตั้งราคาจากต้นทุน',   fn:()=>A.go('menu?new=1') },
-      { ic:'💸', t:'เพิ่มค่าใช้จ่าย',   d:'บันทึกรายจ่ายวันนี้', fn:expenseModal },
-      { ic:'🎁', t:'สร้าง Promotion',  d:'ตอบ 5 คำถาม',       fn:()=>A.go('promotion') },
-      { ic:'📄', t:'ดูรายงาน',         d:'ยอดขาย/กำไร',        fn:()=>A.go('analytics') }
+      { ic:'receipt', t:'รับออเดอร์',      d:'สร้างบิลใหม่',        fn:A.newOrderModal },
+      { ic:'menu', t:'เพิ่มเมนู',        d:'ตั้งราคาจากต้นทุน',   fn:()=>A.go('menu?new=1') },
+      { ic:'expense', t:'เพิ่มค่าใช้จ่าย',   d:'บันทึกรายจ่ายวันนี้', fn:expenseModal },
+      { ic:'promotion', t:'สร้าง Promotion',  d:'ตอบ 5 คำถาม',       fn:()=>A.go('promotion') },
+      { ic:'report', t:'ดูรายงาน',         d:'ยอดขาย/กำไร',        fn:()=>A.go('analytics') }
     ];
     const qa = el.querySelector('#qa');
     qa.innerHTML = QA.map((q,i)=>`<button class="choice choice-c" data-qa="${i}">
-      <span class="ci">${q.ic}</span><span><b class="t-sm">${q.t}</b><br>
+      <span class="ci">${ICO(q.ic,18)}</span><span><b class="t-sm">${q.t}</b><br>
       <span class="t-xs muted">${q.d}</span></span></button>`).join('');
     qa.querySelectorAll('[data-qa]').forEach(b => b.onclick = () => QA[+b.dataset.qa].fn());
 
@@ -213,7 +214,7 @@ window.PAGES = window.PAGES || {};
   };
 
   function expenseModal(){
-    U.modal({ title:'เพิ่มค่าใช้จ่าย', icon:'💸', okText:'บันทึกรายจ่าย',
+    U.modal({ title:'เพิ่มค่าใช้จ่าย', icon:ICO('expense'), okText:'บันทึกรายจ่าย',
       body:`<div class="grid g-2" style="gap:14px">
         <div class="field"><label class="label">ประเภท</label>
           <select class="select">${['วัตถุดิบ','ค่าแรง/พนักงาน','ค่าเช่าที่','ค่าแก๊ส/ไฟ/น้ำ','ค่าโฆษณา','บรรจุภัณฑ์','อื่นๆ'].map(x=>`<option>${x}</option>`).join('')}</select></div>
@@ -224,7 +225,7 @@ window.PAGES = window.PAGES || {};
         <div class="field" style="grid-column:1/-1"><label class="label">วันที่</label>
           <input class="input" type="date" value="2026-08-19"></div>
       </div>
-      <div class="ai-strip mt16"><div class="ic">🤖</div>
+      <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div>
         <div class="t-sm">ค่าใช้จ่ายจะถูกนำไปคำนวณกำไรสุทธิในหน้า Analytics → Profit อัตโนมัติ</div></div>`,
       onOk(){ U.toast('บันทึกรายจ่ายแล้ว (Prototype: ไม่แก้ตัวเลข Mock กลาง)','ok'); } });
   }
@@ -235,7 +236,7 @@ window.PAGES = window.PAGES || {};
   window.PAGES.orders = function (el, actions, q) {
     let tab = q.tab || 'all';
     actions.innerHTML = `
-      <button class="btn btn-ghost btn-sm" id="oKds">👨‍🍳 เปิด Kitchen Display</button>
+      <button class="btn btn-ghost btn-sm" id="oKds">${ICO('kitchen',16)} เปิด Kitchen Display</button>
       <button class="btn btn-primary btn-sm" id="oNew">+ รับออเดอร์</button>`;
     actions.querySelector('#oNew').onclick = A.newOrderModal;
     actions.querySelector('#oKds').onclick = () => A.go('kitchen');
@@ -266,16 +267,16 @@ window.PAGES = window.PAGES || {};
 
       const live = all.filter(o => o.st === 'new' || o.st === 'preparing' || o.st === 'ready');
       el.querySelector('#oKpi').innerHTML = `
-        ${U.kpi({ label:'ออเดอร์วันนี้', icon:'🧾', value:U.nf(D.today.orders), foot:U.delta(D.cmpYesterday.orders) })}
-        ${U.kpi({ label:'กำลังดำเนินการ', icon:'⏳', iconBg:'var(--warn-soft)', value:U.nf(live.length),
+        ${U.kpi({ label:'ออเดอร์วันนี้', icon:ICO('receipt'), value:U.nf(D.today.orders), foot:U.delta(D.cmpYesterday.orders) })}
+        ${U.kpi({ label:'กำลังดำเนินการ', icon:ICO('clock'), iconBg:'var(--warn-soft)', value:U.nf(live.length),
           foot:`<span class="t-xs muted">ใหม่ ${all.filter(o=>o.st==='new').length} · ทำอยู่ ${all.filter(o=>o.st==='preparing').length} · พร้อม ${all.filter(o=>o.st==='ready').length}</span>` })}
-        ${U.kpi({ label:'ยอดขายวันนี้', icon:'💵', value:U.baht(D.today.revenue), foot:U.delta(D.cmpYesterday.revenue) })}
-        ${U.kpi({ label:'Average Order', icon:'🧮', value:U.baht(D.today.aov,0),
+        ${U.kpi({ label:'ยอดขายวันนี้', icon:ICO('money'), value:U.baht(D.today.revenue), foot:U.delta(D.cmpYesterday.revenue) })}
+        ${U.kpi({ label:'Average Order', icon:ICO('report'), value:U.baht(D.today.aov,0),
           foot:`<span class="t-xs muted">บิลสูงสุดวันนี้ ${U.baht(Math.max(...all.map(o=>o.total)))}</span>` })}`;
 
       let rows = all.filter(o => (tab === 'all' || o.st === tab) && (ch === 'all' || o.ch === ch));
       const list = el.querySelector('#oList');
-      if (!rows.length) { list.innerHTML = `<div class="card">${U.empty('🧾','ยังไม่มีออเดอร์ในสถานะนี้','เมื่อมีลูกค้าสั่ง ออเดอร์จะขึ้นที่นี่ทันที',
+      if (!rows.length) { list.innerHTML = `<div class="card">${U.empty(ICO('receipt',34),'ยังไม่มีออเดอร์ในสถานะนี้','เมื่อมีลูกค้าสั่ง ออเดอร์จะขึ้นที่นี่ทันที',
         `<button class="btn btn-primary" id="eNew">+ รับออเดอร์</button>`)}</div>`;
         const b = list.querySelector('#eNew'); if (b) b.onclick = A.newOrderModal; return; }
 
@@ -284,17 +285,17 @@ window.PAGES = window.PAGES || {};
         return `<div class="ord">
           <div class="between">
             <div class="row g10"><span class="ord-id">${o.id}</span>
-              <span class="badge ${ch2.cls}">${ch2.icon} ${ch2.label}</span></div>
+              <span class="badge ${ch2.cls}">${ch2.label}</span></div>
             <span class="badge ${s.cls}">${s.label}</span>
           </div>
           <div class="between t-xs muted">
-            <span>🕐 ${o.t} · ${U.esc(o.cust)}</span><span>${o.qty} รายการ</span></div>
+            <span>${ICO('clock',13)} ${o.t} · ${U.esc(o.cust)}</span><span>${o.qty} รายการ</span></div>
           <div class="ord-items">
             ${o.lines.map(l=>`<div class="ord-item"><span class="q">${l.qty}</span>
               <span class="grow">${l.menu.emoji} ${U.esc(l.menu.name)}</span>
               <span class="num b6">${U.baht(l.sum)}</span></div>`).join('')}
           </div>
-          ${o.note ? `<div class="ord-note">📝 ${U.esc(o.note)}</div>` : ''}
+          ${o.note ? `<div class="ord-note">${ICO('report',13)} ${U.esc(o.note)}</div>` : ''}
           <div class="between">
             <div><div class="t-xs muted">ยอดรวม</div>
               <div class="num b8" style="font-size:19px">${U.baht(o.total)}</div>
@@ -302,7 +303,7 @@ window.PAGES = window.PAGES || {};
             <div class="row g6">
               ${o.st==='new'||o.st==='preparing' ? `<button class="btn btn-ghost btn-sm" data-cancel="${o.id}">ยกเลิก</button>`:''}
               ${s.next ? `<button class="btn ${o.st==='ready'?'btn-good':'btn-primary'} btn-sm" data-next="${o.id}">${s.nextLabel} →</button>`
-                       : `<button class="btn btn-soft btn-sm" data-print="${o.id}">🧾 ใบเสร็จ</button>`}
+                       : `<button class="btn btn-soft btn-sm" data-print="${o.id}">${ICO('receipt',16)} ใบเสร็จ</button>`}
             </div>
           </div>
         </div>`; }).join('')}</div>`;
@@ -317,7 +318,7 @@ window.PAGES = window.PAGES || {};
 
   function receipt(id){
     const o = st().orders.find(x => x.id === id); if (!o) return;
-    U.modal({ title:'ใบเสร็จ ' + o.id, icon:'🧾', foot:false,
+    U.modal({ title:'ใบเสร็จ ' + o.id, icon:ICO('receipt'), foot:false,
       body:`<div class="ctr mb16"><div class="logo" style="width:44px;height:44px;font-size:22px;margin:0 auto">${D.store.emoji}</div>
         <h4 class="mt8">${U.esc(D.store.name)}</h4>
         <div class="t-xs muted">${U.esc(D.store.location)}<br>${U.fullToday()} · ${o.t}</div></div>
@@ -326,7 +327,7 @@ window.PAGES = window.PAGES || {};
           <span class="num">${U.baht(l.sum)}</span></div>`).join('')}</div>
         <div class="between mt12"><b>รวมทั้งสิ้น</b><b class="num" style="font-size:20px">${U.baht(o.total)}</b></div>
         <div class="between t-xs muted"><span>ช่องทาง ${D.CH[o.ch].label}</span><span>${U.esc(o.cust)}</span></div>
-        <div class="ctr t-xs muted mt16">ขอบคุณที่อุดหนุนครับ 🙏<br>Prototype — ไม่มีการเชื่อมต่อเครื่องพิมพ์จริง</div>` });
+        <div class="ctr t-xs muted mt16">ขอบคุณที่อุดหนุนครับ<br>Prototype — ไม่มีการเชื่อมต่อเครื่องพิมพ์จริง</div>` });
   }
 
   /* ============================================================
@@ -341,9 +342,9 @@ window.PAGES = window.PAGES || {};
     actions.querySelector('#kOrd').onclick = () => A.go('orders');
 
     const COLS = [
-      { k:'new',       t:'New',     ic:'🆕', cls:'kds-new',   badge:'badge-info', act:'เริ่มทำ' },
-      { k:'preparing', t:'Cooking', ic:'🔥', cls:'kds-cook',  badge:'badge-warn', act:'พร้อมเสิร์ฟ' },
-      { k:'ready',     t:'Ready',   ic:'✅', cls:'kds-ready', badge:'badge-good', act:'เสร็จแล้ว' }
+      { k:'new',       t:'New',     ic:'plus',    cls:'kds-new',   badge:'badge-info', act:'เริ่มทำ' },
+      { k:'preparing', t:'Cooking', ic:'fire',    cls:'kds-cook',  badge:'badge-warn', act:'พร้อมเสิร์ฟ' },
+      { k:'ready',     t:'Ready',   ic:'check',   cls:'kds-ready', badge:'badge-good', act:'เสร็จแล้ว' }
     ];
     const mins = t => { const [h,m] = t.split(':').map(Number); return Math.max(0, (11*60+58) - (h*60+m)) + 2; };
 
@@ -352,36 +353,36 @@ window.PAGES = window.PAGES || {};
       <div class="grid g-4 mb16">
         ${COLS.map(c=>U.kpi({ label:c.t, icon:c.ic, value:U.nf(st().orders.filter(o=>o.st===c.k).length),
           foot:`<span class="t-xs muted">${c.k==='new'?'รอเริ่มทำ':c.k==='preparing'?'อยู่บนเตา':'รอลูกค้ารับ'}</span>` })).join('')}
-        ${U.kpi({ label:'เวลาทำเฉลี่ย', icon:'⏱️', iconBg:'var(--good-soft)', value:'6:20',
+        ${U.kpi({ label:'เวลาทำเฉลี่ย', icon:ICO('clock'), iconBg:'var(--good-soft)', value:'6:20',
           foot:`<span class="badge badge-good">เร็วกว่าเป้า 8:00</span>` })}
       </div>
       <div class="kds">
         ${COLS.map(c=>{
           const rows = st().orders.filter(o=>o.st===c.k);
           return `<div class="kds-col">
-            <div class="kds-h"><span class="t">${c.ic} ${c.t}
+            <div class="kds-h"><span class="t">${ICO(c.ic,17)} ${c.t}
               <span class="badge ${c.badge}">${rows.length}</span></span></div>
             ${rows.length ? rows.map(o=>{
               const late = mins(o.t) > 8;
               return `<div class="kds-card ${c.cls}">
                 <div class="between">
                   <span class="no">${o.id}</span>
-                  <span class="timer ${late?'late':''}">${late?'⚠ ':''}${mins(o.t)} นาที</span></div>
+                  <span class="timer ${late?'late':''}">${late?'! ':''}${mins(o.t)} นาที</span></div>
                 <div class="between t-xs muted mb8">
-                  <span>${D.CH[o.ch].icon} ${D.CH[o.ch].label}</span><span>สั่ง ${o.t}</span></div>
+                  <span>${D.CH[o.ch].label}</span><span>สั่ง ${o.t}</span></div>
                 <div style="border-top:1px dashed var(--line);padding-top:10px">
                   ${o.lines.map(l=>`<div class="it"><span class="q">${l.qty}</span>
                     <span>${U.esc(l.menu.name)}</span></div>`).join('')}
                 </div>
-                ${o.note ? `<div class="ord-note mt8">📝 ${U.esc(o.note)}</div>` : ''}
+                ${o.note ? `<div class="ord-note mt8">${ICO('report',13)} ${U.esc(o.note)}</div>` : ''}
                 <button class="btn ${c.k==='ready'?'btn-good':'btn-dark'} btn-block mt12" data-next="${o.id}">${c.act} →</button>
               </div>`;
-            }).join('') : `<div class="ctr t-sm muted" style="padding:26px 10px">ว่าง 🎉</div>`}
+            }).join('') : `<div class="ctr t-sm muted" style="padding:26px 10px">ไม่มีออเดอร์ค้าง</div>`}
           </div>`;
         }).join('')}
       </div>
       <div class="ai-strip mt16">
-        <div class="ic">🤖</div>
+        <div class="ic">${ICO('advisor',15)}</div>
         <div class="t-sm"><b>AI เตือนครัว</b> — ช่วง 11:00–13:00 คือพีคของร้าน (คิดเป็น 34% ของยอดทั้งวัน)
           แนะนำเตรียมหมูกรอบทอดล่วงหน้า 40 ชิ้น และหั่นเครื่องกะเพราให้พร้อมก่อน 10:45
           ${(function(){ const out = D.ingredients.filter(i=>D.stockStatus(i)==='out');
@@ -400,8 +401,8 @@ window.PAGES = window.PAGES || {};
     let view = 'table', cat = 'all';
     actions.innerHTML = `
       <div class="tabs" id="vTabs">
-        <button data-v="table" class="on">☰ ตาราง</button>
-        <button data-v="card">▦ การ์ด</button></div>
+        <button data-v="table" class="on">ตาราง</button>
+        <button data-v="card">การ์ด</button></div>
       <button class="btn btn-primary btn-sm" id="mNew">+ เพิ่มเมนู</button>`;
     actions.querySelector('#mNew').onclick = () => menuEditor(null);
     actions.querySelectorAll('[data-v]').forEach(b => b.onclick = () => {
@@ -420,13 +421,13 @@ window.PAGES = window.PAGES || {};
       const sold = D.todayLines.filter(l=>l.units>0).length;
 
       el.querySelector('#mKpi').innerHTML = `
-        ${U.kpi({ label:'เมนูทั้งหมด', icon:'🍽️', value:U.nf(M.length),
+        ${U.kpi({ label:'เมนูทั้งหมด', icon:ICO('menu'), value:U.nf(M.length),
           foot:`<span class="t-xs muted">ขายได้วันนี้ ${sold} เมนู · ไม่ขยับ ${M.length-sold} เมนู</span>` })}
-        ${U.kpi({ label:'Margin เฉลี่ย', icon:'📊', iconBg:'var(--good-soft)', value:U.pc(avgM),
+        ${U.kpi({ label:'Margin เฉลี่ย', icon:ICO('dashboard'), iconBg:'var(--good-soft)', value:U.pc(avgM),
           foot:`<span class="badge ${avgM>=35?'badge-good':'badge-warn'}">${avgM>=35?'สูงกว่าเป้า':'ต่ำกว่าเป้า 35%'}</span>` })}
-        ${U.kpi({ label:'เมนู Margin ต่ำ', icon:'⚠️', iconBg:'var(--warn-soft)', value:U.nf(low.length),
+        ${U.kpi({ label:'เมนู Margin ต่ำ', icon:ICO('alert'), iconBg:'var(--warn-soft)', value:U.nf(low.length),
           foot:`<span class="t-xs muted">${low.slice(0,2).map(m=>U.esc(m.name)).join(', ')}${low.length>2?' +'+(low.length-2):''}</span>` })}
-        ${U.kpi({ label:'ราคาเฉลี่ย/ต้นทุนเฉลี่ย', icon:'🧮', value:U.baht(M.reduce((s,m)=>s+m.price,0)/M.length,0),
+        ${U.kpi({ label:'ราคาเฉลี่ย/ต้นทุนเฉลี่ย', icon:ICO('report'), value:U.baht(M.reduce((s,m)=>s+m.price,0)/M.length,0),
           foot:`<span class="t-xs muted">ต้นทุนเฉลี่ย ${U.baht(M.reduce((s,m)=>s+m.cost,0)/M.length,0)}</span>` })}`;
 
       el.querySelector('#cTabs').innerHTML = cats.map(c=>`<button data-c="${c}" class="${cat===c?'on':''}">
@@ -456,7 +457,7 @@ window.PAGES = window.PAGES || {};
               <td>${u===0 && !m.custom ? '<span class="badge badge-bad">ไม่ขยับ</span>' : '<span class="badge badge-good">ขายอยู่</span>'}</td>
               <td class="r"><button class="btn btn-xs btn-soft" data-edit="${m.id}">แก้ไข</button></td></tr>`;
           }).join('')}</tbody></table></div></div>
-          <div class="ai-strip mt16"><div class="ic">🤖</div>
+          <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div>
             <div class="t-sm"><b>AI Warning</b> — ${low.length} เมนูมี Margin ต่ำกว่าเป้า 35%:
               ${low.map(m=>`<b>${U.esc(m.name)}</b> (${U.pc(m.margin)})`).join(', ')}<br>
               <span class="muted">กลุ่มนี้กินสัดส่วนยอดขาย ${U.pc(low.reduce((s,m)=>s+(D.todayUnits[m.id]||0)*m.price,0)/D.today.revenue*100)}
@@ -520,13 +521,13 @@ window.PAGES = window.PAGES || {};
               <div class="bar mt8"><i style="width:${Math.min(100,u*m.price/D.today.revenue*100*3).toFixed(0)}%"></i></div>
               <div class="t-xs muted mt4">${U.pc(u*m.price/D.today.revenue*100)} ของยอดขายวันนี้</div></div>
           </div>
-          ${m.margin < 35 ? `<div class="ai-strip mt16"><div class="ic">⚠️</div>
+          ${m.margin < 35 ? `<div class="ai-strip mt16"><div class="ic">${ICO('alert',15)}</div>
             <div class="t-sm"><b>Margin ต่ำกว่าค่าเป้าหมาย (35%)</b><br>
             <span class="muted">ที่ต้นทุน ${U.baht(m.cost)} ควรตั้งราคาอย่างน้อย
             <b>${U.baht(Math.ceil(m.cost/0.65))}</b> เพื่อให้ได้ margin 35%
             (ตอนนี้ ${U.baht(m.price)} → margin ${U.pc(m.margin)})</span></div></div>`
           : `<div class="ai-strip mt16" style="background:var(--good-soft);border-color:var(--good-line)">
-            <div class="ic" style="background:var(--good)">✓</div>
+            <div class="ic" style="background:var(--good-soft);color:var(--good-ink)">${ICO('check',15)}</div>
             <div class="t-sm"><b>Margin อยู่ในเกณฑ์ดี</b><br>
             <span class="muted">เมนูนี้กำไรต่อจาน ${U.baht(m.profit)} ควรดันให้ขายมากขึ้นด้วย Bundle หรือป้ายหน้าร้าน</span></div></div>`}
         </div></div>`,
@@ -560,7 +561,7 @@ window.PAGES = window.PAGES || {};
             <div class="input-prefix"><span>฿</span><input class="input num" id="e_price" type="number" min="0" value="${price}"></div></div>
           <div class="field"><label class="label">รูปอาหาร</label>
             <div class="tile ctr" style="border-style:dashed;cursor:pointer" id="e_img">
-              <div style="font-size:26px">🖼️</div>
+              <div>${ICO('report',26)}</div>
               <div class="t-sm muted mt4">อัปโหลดรูป (Prototype — ยังไม่เชื่อมต่อที่เก็บไฟล์)</div></div></div>
         </div>
 
@@ -580,7 +581,7 @@ window.PAGES = window.PAGES || {};
               <input class="input input-sm" value="${U.esc(r.name)}" data-in="${i}" placeholder="ชื่อวัตถุดิบ">
               <div class="input-prefix"><span style="font-size:12px">฿</span>
                 <input class="input input-sm num" style="padding-left:26px" type="number" min="0" step="0.5" value="${r.cost}" data-ic="${i}"></div>
-              <button class="btn btn-xs btn-soft" data-idel="${i}" title="ลบ">✕</button>
+              <button class="btn btn-xs btn-soft" data-idel="${i}" title="ลบวัตถุดิบนี้" aria-label="ลบ">&times;</button>
             </div>`).join('');
           const cost = rows.reduce((s,r)=>s+(+r.cost||0),0);
           price = +el.querySelector('#e_price').value || 0;
@@ -600,13 +601,13 @@ window.PAGES = window.PAGES || {};
               <span>กำไร ${U.pc(Math.max(0,margin),0)}</span></div>`;
 
           el.querySelector('#warnBox').innerHTML = margin < 35
-            ? `<div class="ai-strip"><div class="ic">⚠️</div><div class="t-sm">
+            ? `<div class="ai-strip"><div class="ic">${ICO('alert',15)}</div><div class="t-sm">
                 <b>AI Warning — Margin ต่ำกว่าค่าเป้าหมาย</b><br>
                 <span class="muted">เป้าของร้านคือ 35% แต่เมนูนี้ได้ ${U.pc(margin)}<br>
                 ทางเลือก: ขึ้นราคาเป็น <b>${U.baht(Math.ceil(cost/0.65))}</b>
                 หรือลดต้นทุนลง <b>${U.baht(Math.max(0,cost - price*0.65))}</b></span></div></div>`
             : `<div class="ai-strip" style="background:var(--good-soft);border-color:var(--good-line)">
-                <div class="ic" style="background:var(--good)">✓</div><div class="t-sm">
+                <div class="ic" style="background:var(--good-soft);color:var(--good-ink)">${ICO('check',15)}</div><div class="t-sm">
                 <b>โครงสร้างราคาดี</b><br><span class="muted">Margin ${U.pc(margin)} สูงกว่าเป้า 35% ของร้าน</span></div></div>`;
 
           el.querySelectorAll('[data-in]').forEach(i2 => i2.oninput = e => { rows[+i2.dataset.in].name = e.target.value; });

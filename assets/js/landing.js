@@ -29,7 +29,7 @@
         {w:420,h:96,pad:10,lines:['profit']})}
     </div>
     <div class="ai-strip" style="padding:9px 11px;gap:9px">
-      <div class="ic" style="width:22px;height:22px;font-size:11px;border-radius:7px">🤖</div>
+      <div class="ic" style="width:22px;height:22px;border-radius:7px">${(window.ICON||(()=>''))("advisor",12)}</div>
       <div style="font-size:10.5px;line-height:1.5"><b>AI แนะนำวันนี้</b><br>
         <span class="muted">ยอดขาย +12% แต่กำไร −4% เพราะต้นทุนหมูขึ้น 8% → แนะนำปรับราคากะเพราหมูกรอบ 65 → 69 บาท</span></div>
     </div>`;
@@ -37,30 +37,30 @@
   /* ---- metric strip ---- */
   document.getElementById('strip').innerHTML = [
     ['⚡','ตั้งร้านเสร็จใน','4 ขั้นตอน','ชื่อร้าน → เป้า → เมนู → เปิดร้าน'],
-    ['🧮','คำนวณต้นทุนต่อจาน','อัตโนมัติ','ใส่วัตถุดิบ ระบบคิด Margin ให้'],
-    ['🤖','AI Insight ในทุกหน้า','11 โมดูล','ไม่ใช่แค่ Chatbot แยกต่างหาก'],
-    ['📱','ใช้งานได้ทุกจอ','ครัว/หน้าร้าน','แท็บเล็ตในครัว มือถือหน้าร้าน']
+    ['menu','คำนวณต้นทุนต่อจาน','อัตโนมัติ','ใส่วัตถุดิบ ระบบคิด Margin ให้'],
+    ['advisor','AI Insight ในทุกหน้า','11 โมดูล','ไม่ใช่แค่ Chatbot แยกต่างหาก'],
+    ['dashboard','ใช้งานได้ทุกจอ','ครัว/หน้าร้าน','แท็บเล็ตในครัว มือถือหน้าร้าน']
   ].map(([ic,l,v,s])=>`<div class="row-t g12">
-      <div class="ki" style="width:38px;height:38px;font-size:18px;border-radius:11px;background:var(--brand-soft);display:grid;place-items:center;flex:none">${ic}</div>
+      <div class="ki" style="width:38px;height:38px;font-size:18px;border-radius:11px;background:var(--brand-soft);display:grid;place-items:center;flex:none">${(window.ICON||(()=>''))(ic,18)}</div>
       <div><div class="t-xs muted b6">${l}</div><div class="b8" style="font-size:17px">${v}</div>
       <div class="t-xs muted mt4">${s}</div></div></div>`).join('');
 
   /* ---- 4 core values ---- */
   document.getElementById('values').innerHTML = [
-    { ic:'🗺️', bg:'var(--info-soft)', t:'วางแผนร้าน', s:'ก่อนเปิดร้าน',
+    { ic:'analytics', bg:'var(--info-soft)', t:'วางแผนร้าน', s:'ก่อนเปิดร้าน',
       d:'ตั้งเป้ายอดขาย แล้วระบบแตกให้เป็นเป้ารายวัน จำนวนออเดอร์ และ AOV ที่ต้องทำได้',
       li:['คำนวณเป้าจากยอดขายที่อยากได้','ออกแบบเมนูและตั้งราคาจากต้นทุนจริง','รู้ก่อนเปิดว่าต้องขายวันละกี่จาน'] },
-    { ic:'🍳', bg:'var(--brand-soft)', t:'บริหารร้าน', s:'ทุกวันที่เปิดขาย',
+    { ic:'menu', bg:'var(--brand-soft)', t:'บริหารร้าน', s:'ทุกวันที่เปิดขาย',
       d:'รับออเดอร์ ส่งเข้าครัว จัดการ Stock วัตถุดิบ ครบในจอเดียว ใช้บนแท็บเล็ตได้',
       li:['Order + Kitchen Display แยกจอ','เตือนวัตถุดิบใกล้หมดอัตโนมัติ','คาดการณ์ของที่ต้องซื้อพรุ่งนี้'] },
-    { ic:'📣', bg:'var(--ai-soft)', t:'เพิ่มยอดขาย', s:'เมื่ออยากโต',
+    { ic:'marketing', bg:'var(--ai-soft)', t:'เพิ่มยอดขาย', s:'เมื่ออยากโต',
       d:'สร้างโปรโมชันจากเป้าหมาย ไม่ใช่จากการเดา และวัด ROAS ของทุกแคมเปญได้',
       li:['Promotion Builder แบบตอบคำถาม','CRM แบ่งกลุ่มลูกค้าให้อัตโนมัติ','เรียกลูกค้าที่หายไปกลับมา'] },
-    { ic:'💰', bg:'var(--good-soft)', t:'วิเคราะห์กำไร', s:'ทุกสิ้นวัน/สิ้นเดือน',
+    { ic:'money', bg:'var(--good-soft)', t:'วิเคราะห์กำไร', s:'ทุกสิ้นวัน/สิ้นเดือน',
       d:'เห็นกำไรจริงหลังหักต้นทุน ค่าแรง ค่าเช่า ค่าโฆษณา ไม่ใช่แค่ยอดขายสวยๆ',
       li:['P&L อ่านง่ายแบบ Waterfall','เมนูไหนกำไรดี/ขาดทุน','เตือนเมื่อ Margin ต่ำกว่าเป้า'] }
   ].map(v=>`<div class="val-card">
-      <div class="val-ic" style="background:${v.bg}">${v.ic}</div>
+      <div class="val-ic" style="background:${v.bg}">${(window.ICON||(()=>''))(v.ic,20)}</div>
       <span class="badge">${v.s}</span>
       <h3 class="mt12">${v.t}</h3>
       <p class="muted t-md mt8" style="line-height:1.7">${v.d}</p>
@@ -69,31 +69,31 @@
 
   /* ---- flow ---- */
   const flow = [
-    { n:'Plan',   ic:'🗺️', t:'วางแผน',   d:'สร้างร้าน ตั้งเป้า เพิ่มเมนู คำนวณต้นทุนและราคาขาย', href:'onboarding.html' },
-    { n:'Sell',   ic:'🧾', t:'ขาย',      d:'รับออเดอร์หน้าร้าน/Delivery ส่งเข้าครัวทันที', href:'app.html?demo=1#/orders' },
-    { n:'Manage', ic:'📦', t:'บริหาร',   d:'คุม Stock ต้นทุน พนักงาน และข้อมูลลูกค้า', href:'app.html?demo=1#/stock' },
-    { n:'Grow',   ic:'📈', t:'ทำให้โต',  d:'อ่าน Analytics ฟัง AI แล้วยิงโปรโมชัน/โฆษณา', href:'app.html?demo=1#/analytics' }
+    { n:'Plan',   ic:'analytics', t:'วางแผน',   d:'สร้างร้าน ตั้งเป้า เพิ่มเมนู คำนวณต้นทุนและราคาขาย', href:'onboarding.html' },
+    { n:'Sell',   ic:'receipt', t:'ขาย',      d:'รับออเดอร์หน้าร้าน/Delivery ส่งเข้าครัวทันที', href:'app.html?demo=1#/orders' },
+    { n:'Manage', ic:'box', t:'บริหาร',   d:'คุม Stock ต้นทุน พนักงาน และข้อมูลลูกค้า', href:'app.html?demo=1#/stock' },
+    { n:'Grow',   ic:'analytics', t:'ทำให้โต',  d:'อ่าน Analytics ฟัง AI แล้วยิงโปรโมชัน/โฆษณา', href:'app.html?demo=1#/analytics' }
   ];
   document.getElementById('flowline').innerHTML = flow.map((f,i)=>`
     <a class="flow-node card-hover" href="${f.href}">
-      <div class="between"><span class="badge badge-brand">${i+1}. ${f.n}</span><span style="font-size:22px">${f.ic}</span></div>
+      <div class="between"><span class="badge badge-brand">${i+1}. ${f.n}</span>${(window.ICON||(()=>''))(f.ic,20)}</div>
       <h4 class="mt12">${f.t}</h4>
       <p class="t-sm muted mt4" style="line-height:1.65">${f.d}</p>
     </a>${i<flow.length-1?'<div class="flow-arw">→</div>':''}`).join('');
 
   /* ---- features ---- */
   document.getElementById('features').innerHTML = [
-    ['📊','Dashboard','เห็นภาพร้านวันนี้ใน 5 วินาที ยอดขาย ออเดอร์ AOV กำไร พร้อมเทียบกับเมื่อวาน','app.html?demo=1#/dashboard'],
-    ['🧾','Orders','แยกสถานะ ใหม่ → กำลังทำ → พร้อมเสิร์ฟ → เสร็จแล้ว ครบทุกช่องทาง','app.html?demo=1#/orders'],
-    ['🍽️','Menu & Cost','ใส่วัตถุดิบทีละอย่าง ระบบคิดต้นทุน กำไร และ Margin ให้ทันที','app.html?demo=1#/menu'],
-    ['👨‍🍳','Kitchen Display','จอสำหรับครัว ตัวใหญ่ อ่านง่าย มีตัวจับเวลาต่อออเดอร์','app.html?demo=1#/kitchen'],
-    ['📦','Stock','เตือนวัตถุดิบต่ำ และคาดการณ์ปริมาณที่ต้องใช้พรุ่งนี้','app.html?demo=1#/stock'],
-    ['👥','Customers','แบ่งกลุ่มลูกค้า VIP/ประจำ/ใกล้หาย พร้อมเมนูโปรดของแต่ละคน','app.html?demo=1#/customers'],
-    ['📣','Marketing','วัด ROAS และ CAC ของทุกแคมเปญ รู้ว่าควรเพิ่มหรือหยุดงบ','app.html?demo=1#/marketing'],
-    ['🎁','Promotion Builder','ตอบ 5 คำถาม ได้โปรโมชันที่ตรงกับเป้าหมายจริง','app.html?demo=1#/promotion'],
-    ['📈','Analytics','ยอดขาย สินค้า ลูกค้า การตลาด และกำไรสุทธิ ในที่เดียว','app.html?demo=1#/analytics']
+    ['dashboard','Dashboard','เห็นภาพร้านวันนี้ใน 5 วินาที ยอดขาย ออเดอร์ AOV กำไร พร้อมเทียบกับเมื่อวาน','app.html?demo=1#/dashboard'],
+    ['receipt','Orders','แยกสถานะ ใหม่ → กำลังทำ → พร้อมเสิร์ฟ → เสร็จแล้ว ครบทุกช่องทาง','app.html?demo=1#/orders'],
+    ['menu','Menu & Cost','ใส่วัตถุดิบทีละอย่าง ระบบคิดต้นทุน กำไร และ Margin ให้ทันที','app.html?demo=1#/menu'],
+    ['kitchen','Kitchen Display','จอสำหรับครัว ตัวใหญ่ อ่านง่าย มีตัวจับเวลาต่อออเดอร์','app.html?demo=1#/kitchen'],
+    ['stock','Stock','เตือนวัตถุดิบต่ำ และคาดการณ์ปริมาณที่ต้องใช้พรุ่งนี้','app.html?demo=1#/stock'],
+    ['customers','Customers','แบ่งกลุ่มลูกค้า VIP/ประจำ/ใกล้หาย พร้อมเมนูโปรดของแต่ละคน','app.html?demo=1#/customers'],
+    ['marketing','Marketing','วัด ROAS และ CAC ของทุกแคมเปญ รู้ว่าควรเพิ่มหรือหยุดงบ','app.html?demo=1#/marketing'],
+    ['promotion','Promotion Builder','ตอบ 5 คำถาม ได้โปรโมชันที่ตรงกับเป้าหมายจริง','app.html?demo=1#/promotion'],
+    ['analytics','Analytics','ยอดขาย สินค้า ลูกค้า การตลาด และกำไรสุทธิ ในที่เดียว','app.html?demo=1#/analytics']
   ].map(([ic,t,d,h])=>`<a class="card card-p card-hover" href="${h}">
-      <div class="row g10"><span style="font-size:21px">${ic}</span><h4>${t}</h4></div>
+      <div class="row g10">${(window.ICON||(()=>''))(ic,19)}<h4>${t}</h4></div>
       <p class="t-sm muted mt8" style="line-height:1.65">${d}</p>
       <div class="t-sm b7 mt12" style="color:var(--brand)">เปิดดู →</div></a>`).join('');
 
@@ -134,7 +134,7 @@
       li:['ไม่จำกัดสาขา','เทียบผลงานระหว่างสาขา','Roles & Permissions','Supplier + ใบสั่งซื้อ','ผู้ช่วยดูแลบัญชีรายเดือน'], cta:'คุยกับทีมงาน', hot:false }
   ].map(t=>`<div class="card card-p ${t.hot?'':''}" style="${t.hot?'border-color:var(--brand);box-shadow:var(--sh-2);position:relative':''}">
       ${t.hot?'<span class="badge badge-brand" style="position:absolute;top:-12px;left:22px">แนะนำ</span>':''}
-      <div class="between"><h4>${t.n}</h4>${t.hot?'<span style="font-size:20px">🔥</span>':''}</div>
+      <div class="between"><h4>${t.n}</h4>${t.hot?'<span class="badge badge-brand">แนะนำ</span>':''}</div>
       <div class="row g6 mt12" style="align-items:baseline">
         <span class="num b8" style="font-size:32px;letter-spacing:-.03em">${t.p}</span>
         <span class="muted t-sm b6">${t.s}</span></div>

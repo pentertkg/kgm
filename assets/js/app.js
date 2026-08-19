@@ -14,25 +14,27 @@ window.APP = (function () {
     aiLog: []
   };
 
+  /* ไอคอนเป็น SVG ที่วาดเอง ไม่ใช้ emoji ในส่วน interface — ดู assets/js/icons.js */
   const NAV = [
     { g:'ดำเนินงาน', items:[
-      { id:'dashboard', t:'Dashboard',   ic:'📊' },
-      { id:'orders',    t:'Orders',      ic:'🧾', badge:()=>state.orders.filter(o=>o.st==='new').length },
-      { id:'menu',      t:'Menu & Cost', ic:'🍽️' },
-      { id:'kitchen',   t:'Kitchen',     ic:'👨‍🍳', badge:()=>state.orders.filter(o=>o.st==='new'||o.st==='preparing').length },
-      { id:'stock',     t:'Stock',       ic:'📦', badge:()=>D.ingredients.filter(i=>D.stockStatus(i)!=='ok').length }
+      { id:'dashboard', t:'Dashboard',   ic:'dashboard' },
+      { id:'orders',    t:'Orders',      ic:'orders',    badge:()=>state.orders.filter(o=>o.st==='new').length },
+      { id:'menu',      t:'Menu & Cost', ic:'menu' },
+      { id:'kitchen',   t:'Kitchen',     ic:'kitchen',   badge:()=>state.orders.filter(o=>o.st==='new'||o.st==='preparing').length },
+      { id:'stock',     t:'Stock',       ic:'stock',     badge:()=>D.ingredients.filter(i=>D.stockStatus(i)!=='ok').length }
     ]},
     { g:'เติบโต', items:[
-      { id:'customers', t:'Customers',   ic:'👥' },
-      { id:'marketing', t:'Marketing',   ic:'📣' },
-      { id:'promotion', t:'Promotion',   ic:'🎁' },
-      { id:'analytics', t:'Analytics',   ic:'📈' }
+      { id:'customers', t:'Customers',   ic:'customers' },
+      { id:'marketing', t:'Marketing',   ic:'marketing' },
+      { id:'promotion', t:'Promotion',   ic:'promotion' },
+      { id:'analytics', t:'Analytics',   ic:'analytics' }
     ]},
     { g:'ผู้ช่วย', items:[
-      { id:'advisor',   t:'AI Advisor',  ic:'🤖', soft:true },
-      { id:'settings',  t:'Settings',    ic:'⚙️' }
+      { id:'advisor',   t:'AI Advisor',  ic:'advisor', soft:true },
+      { id:'settings',  t:'Settings',    ic:'settings' }
     ]}
   ];
+  const ico = (n, s) => (window.ICON ? window.ICON(n, s) : '');
   const FLAT = NAV.flatMap(g => g.items);
   const TITLES = {
     dashboard:['Dashboard','ภาพรวมร้านวันนี้ และสิ่งที่ควรทำต่อ'],
@@ -117,15 +119,17 @@ window.APP = (function () {
 
       <div class="main">
         <header class="topbar">
-          <button class="burger" id="burger" aria-label="เมนู">☰</button>
+          <button class="burger" id="burger" aria-label="เปิดเมนู">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3.5 6h13M3.5 10h13M3.5 14h13"/></svg>
+          </button>
           <label class="search">
-            <span>🔍</span>
+            ${ico('search', 17)}
             <input id="gsearch" placeholder="ค้นหาเมนู ออเดอร์ ลูกค้า หรือถาม AI…" aria-label="ค้นหา">
             <kbd>⌘K</kbd>
           </label>
           <div class="row g8" style="margin-left:auto">
-            <button class="btn-icon" id="storeTop" title="เลือกร้าน">🏪</button>
-            <button class="btn-icon bell" id="bellBtn" title="การแจ้งเตือน">🔔</button>
+            <button class="btn-icon" id="storeTop" title="เลือกร้าน" aria-label="เลือกร้าน">${ico('store', 18)}</button>
+            <button class="btn-icon bell" id="bellBtn" title="การแจ้งเตือน" aria-label="การแจ้งเตือน">${ico('bell', 18)}</button>
             <button class="avatar" id="profileBtn" title="โปรไฟล์">สม</button>
           </div>
         </header>
@@ -137,14 +141,14 @@ window.APP = (function () {
 
     <nav class="bottom-nav" id="bnav"></nav>
 
-    <button class="fab" id="fab"><span class="fi">🤖</span><span>ถาม AI</span><span class="fd"></span></button>
+    <button class="fab" id="fab"><span class="fi">${ico('advisor', 18)}</span><span>ถาม AI</span><span class="fd"></span></button>
 
     <div class="ai-panel" id="aiPanel">
       <div class="ai-head">
-        <div class="fi" style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:16px">🤖</div>
+        <div class="fi" style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center">${ico('advisor', 18)}</div>
         <div class="grow"><b>AI Advisor</b>
           <div class="t-xs" style="color:#d9d2ff">อ่านข้อมูลร้าน ${U.esc(D.store.name)} แล้ว</div></div>
-        <button class="btn-icon" id="aiClose" style="border-color:rgba(255,255,255,.25);color:#fff">✕</button>
+        <button class="btn-icon" id="aiClose" style="border-color:rgba(255,255,255,.25);color:#fff" aria-label="ปิด">&times;</button>
       </div>
       <div class="ai-body" id="aiBody"></div>
       <div class="ai-foot">
@@ -200,14 +204,14 @@ window.APP = (function () {
       ${g.items.map(i => {
         const n = i.badge ? i.badge() : 0;
         return `<a class="nav-i" href="#/${i.id}" data-nav="${i.id}">
-          <span class="ni">${i.ic}</span><span>${i.t}</span>
+          <span class="ni">${ico(i.ic)}</span><span>${i.t}</span>
           ${n ? `<span class="nb ${i.soft ? 'nb-soft' : ''}">${n}</span>` : ''}</a>`;
       }).join('')}`).join('');
 
     const bn = ['dashboard','orders','kitchen','menu','advisor'];
     document.getElementById('bnav').innerHTML = bn.map(id => {
       const it = FLAT.find(x => x.id === id);
-      return `<a class="bn-i" href="#/${id}" data-bnav="${id}"><span class="bi">${it.ic}</span><span>${it.t.split(' ')[0]}</span></a>`;
+      return `<a class="bn-i" href="#/${id}" data-bnav="${id}"><span class="bi">${ico(it.ic, 22)}</span><span>${it.t.split(' ')[0]}</span></a>`;
     }).join('');
     markActive(current());
   }
@@ -261,7 +265,7 @@ window.APP = (function () {
   }
   function cancelOrder(id) {
     const o = state.orders.find(x => x.id === id); if (!o) return;
-    U.modal({ title:'ยกเลิกออเดอร์ ' + id, icon:'⚠️', okText:'ยืนยันยกเลิก', cancelText:'ไม่ยกเลิก',
+    U.modal({ title:'ยกเลิกออเดอร์ ' + id, icon:ico('alert',20), okText:'ยืนยันยกเลิก', cancelText:'ไม่ยกเลิก',
       body:`<p>ยอด ${U.baht(o.total)} จะถูกตัดออกจากยอดขายวันนี้ (Prototype: ไม่กระทบตัวเลข Mock กลาง)</p>`,
       onOk(){ o.st = 'cancelled'; U.toast(id + ' ถูกยกเลิก', 'warn'); refresh(); } });
   }
@@ -290,7 +294,7 @@ window.APP = (function () {
             <input class="input" id="o_note" placeholder="เช่น ไม่ใส่พริก / แยกข้าว"></div>
         </div>
       </div>`;
-    const el = U.modal({ title:'รับออเดอร์ใหม่', icon:'🧾', wide:true, okText:'ส่งเข้าครัว', cancelText:'ยกเลิก',
+    const el = U.modal({ title:'รับออเดอร์ใหม่', icon:ico('receipt',20), wide:true, okText:'ส่งเข้าครัว', cancelText:'ยกเลิก',
       body: body(),
       onMount(m){ bind(m); paint(m); },
       onOk(m){
@@ -351,7 +355,7 @@ window.APP = (function () {
   function aiSeed() {
     document.getElementById('aiChips').innerHTML = SUGGEST.slice(0,4).map(s=>`<button class="chip">${s}</button>`).join('');
     document.querySelectorAll('#aiChips .chip').forEach(c => c.onclick = () => aiAsk(c.textContent));
-    aiPush('ai', `สวัสดีครับ 👋 ผมอ่านข้อมูลร้าน <b>${U.esc(D.store.name)}</b> วันนี้แล้ว<br>
+    aiPush('ai', `สวัสดีครับ ผมอ่านข้อมูลร้าน <b>${U.esc(D.store.name)}</b> วันนี้แล้ว<br>
       ยอดขาย <b class="num">${U.baht(D.today.revenue)}</b> · ${U.nf(D.today.orders)} ออเดอร์ · กำไร <b class="num">${U.baht(D.today.profit)}</b><br>
       <span class="muted t-sm">มี 3 เรื่องที่ควรทำวันนี้ — ลองพิมพ์ถามหรือกดปุ่มด้านล่างได้เลย</span>`);
   }
@@ -497,7 +501,7 @@ window.APP = (function () {
          ขณะที่ชาเย็นขายได้แค่ 14 แก้วแต่ margin ${U.pc(D.mi('m10').margin)} — ควรดันเครื่องดื่มเพิ่ม`,
         actions:[{label:'ดู Menu & Cost',to:'menu'}] };
 
-    return { html: `ผมยังไม่มีข้อมูลพอสำหรับคำถามนี้ใน Prototype ครับ 🙏<br>
+    return { html: `ผมยังไม่มีข้อมูลพอสำหรับคำถามนี้ใน Prototype ครับ<br>
       <span class="t-sm muted">ลองถามเรื่องเหล่านี้ได้เลย:</span>
       <div class="chips mt8">${SUGGEST.slice(0,5).map(s=>`<span class="chip">${s}</span>`).join('')}</div>` };
   }
@@ -506,22 +510,22 @@ window.APP = (function () {
      TOP-BAR MODALS
      ============================================================ */
   function notiModal() {
-    U.modal({ title:'การแจ้งเตือน', icon:'🔔', sub:'4 รายการใหม่', foot:false,
+    U.modal({ title:'การแจ้งเตือน', icon:ico('bell',20), sub:'4 รายการใหม่', foot:false,
       body:`<div class="col g10">${D.notis.map(n=>`
         <div class="row-t g12 tile card-hover" style="cursor:pointer">
-          <span class="badge ${n.cls}" style="width:34px;height:34px;border-radius:11px;justify-content:center;font-size:16px">${n.ic}</span>
+          <span class="badge ${n.cls}" style="width:34px;height:34px;border-radius:11px;justify-content:center">${ico(n.ic,16)}</span>
           <div class="grow"><div class="b7 t-sm">${U.esc(n.t)}</div>
             <div class="t-sm muted">${U.esc(n.d)}</div>
             <div class="t-xs muted-2 mt4">${U.esc(n.time)}</div></div></div>`).join('')}</div>` });
   }
   function storeModal() {
-    U.modal({ title:'เลือกร้าน', icon:'🏪', sub:'บัญชีนี้มี 1 ร้าน (Multi-store อยู่ใน P2)', foot:false,
+    U.modal({ title:'เลือกร้าน', icon:ico('store',20), sub:'บัญชีนี้มี 1 ร้าน (Multi-store อยู่ใน P2)', foot:false,
       body:`<div class="col g10">
         <button class="choice on"><span class="ci">${D.store.emoji}</span>
           <span class="grow" style="text-align:left"><b>${U.esc(D.store.name)}</b><br>
             <span class="t-xs muted">${U.esc(D.store.format)} · ${U.esc(D.store.location)}</span></span>
           <span class="badge badge-good">กำลังใช้</span></button>
-        <button class="choice" id="addStore"><span class="ci">➕</span>
+        <button class="choice" id="addStore"><span class="ci">${ico('plus',18)}</span>
           <span class="grow" style="text-align:left"><b>เพิ่มสาขาใหม่</b><br>
             <span class="t-xs muted">ต้องใช้แพ็กเกจ Multi-store</span></span></button></div>`,
       onMount(el){ el.querySelector('#addStore').onclick = () => { U.closeModal(); go('settings?tab=subscription'); }; } });
@@ -530,16 +534,16 @@ window.APP = (function () {
     const A = window.SFOS_AUTH;
     const signedIn = !!(A && A.ready && A.isSignedIn());
     const who = signedIn ? A.email() : 'โหมดเดโม (ยังไม่ได้ล็อกอิน)';
-    U.modal({ title: signedIn ? 'บัญชีของคุณ' : 'สมชาย เจ้าของร้าน', icon:'👤', sub: who, foot:false,
+    U.modal({ title: signedIn ? 'บัญชีของคุณ' : 'สมชาย เจ้าของร้าน', icon:ico('user',20), sub: who, foot:false,
       body:`<div class="col g8">
-        ${[['⚙️','ตั้งค่าร้าน','settings'],['👥','ผู้ใช้และพนักงาน','settings?tab=staff'],
-           ['💳','แพ็กเกจและการชำระเงิน','settings?tab=subscription'],['🤖','AI Advisor','advisor']]
-          .map(([ic,t,to])=>`<button class="choice" data-to="${to}"><span class="ci">${ic}</span>
+        ${[['settings','ตั้งค่าร้าน','settings'],['customers','ผู้ใช้และพนักงาน','settings?tab=staff'],
+           ['money','แพ็กเกจและการชำระเงิน','settings?tab=subscription'],['advisor','AI Advisor','advisor']]
+          .map(([ic,t,to])=>`<button class="choice" data-to="${to}"><span class="ci">${ico(ic,18)}</span>
             <span class="grow b6" style="text-align:left">${t}</span><span class="muted">→</span></button>`).join('')}
         ${signedIn
-          ? `<button class="choice" id="doSignOut"><span class="ci">🚪</span>
+          ? `<button class="choice" id="doSignOut"><span class="ci">${ico('logout', 18)}</span>
               <span class="grow b6" style="text-align:left">ออกจากระบบ</span></button>`
-          : `<a class="choice" href="login.html"><span class="ci">🔑</span>
+          : `<a class="choice" href="login.html"><span class="ci">${ico('key', 18)}</span>
               <span class="grow b6" style="text-align:left">เข้าสู่ระบบด้วยอีเมล</span></a>`}
         </div>`,
       onMount(el){
@@ -553,7 +557,7 @@ window.APP = (function () {
       } });
   }
   function searchModal() {
-    const el = U.modal({ title:'ค้นหาทั่วระบบ', icon:'🔍', sub:'เมนู · ออเดอร์ · ลูกค้า · หน้าต่างๆ', foot:false,
+    const el = U.modal({ title:'ค้นหาทั่วระบบ', icon:ico('search',20), sub:'เมนู · ออเดอร์ · ลูกค้า · หน้าต่างๆ', foot:false,
       body:`<input class="input" id="sq" placeholder="พิมพ์เพื่อค้นหา… เช่น กะเพรา, #1284, สมชาย" autocomplete="off">
             <div class="mt16" id="sres"></div>` });
     const inp = el.querySelector('#sq'); inp.focus();
@@ -563,7 +567,7 @@ window.APP = (function () {
       if (!q) {
         res.innerHTML = `<div class="up muted mb8">ไปที่หน้า</div><div class="col g6">` +
           FLAT.map(i=>`<button class="choice" data-to="${i.id}" style="padding:9px 12px">
-            <span class="ci" style="width:30px;height:30px;font-size:15px">${i.ic}</span>
+            <span class="ci" style="width:30px;height:30px">${ico(i.ic, 17)}</span>
             <span class="grow b6 t-sm" style="text-align:left">${i.t}</span></button>`).join('') + `</div>`;
       } else {
         const menus = state.menu.filter(m => m.name.toLowerCase().includes(q));
@@ -577,17 +581,17 @@ window.APP = (function () {
             <span class="grow t-sm" style="text-align:left"><b>${U.esc(m.name)}</b><br>
             <span class="t-xs muted">${U.baht(m.price)} · margin ${U.pc(m.margin)}</span></span></button>`) +
           group('ออเดอร์', ords, o=>`<button class="choice" data-to="orders" style="padding:9px 12px">
-            <span class="ci" style="width:30px;height:30px;font-size:14px">🧾</span>
+            <span class="ci" style="width:30px;height:30px">${ico('receipt',15)}</span>
             <span class="grow t-sm" style="text-align:left"><b>${o.id}</b> ${U.esc(o.cust)}<br>
             <span class="t-xs muted">${U.baht(o.total)} · ${D.ST[o.st].label}</span></span></button>`) +
           group('ลูกค้า', custs, c=>`<button class="choice" data-to="customers" style="padding:9px 12px">
-            <span class="ci" style="width:30px;height:30px;font-size:14px">👤</span>
+            <span class="ci" style="width:30px;height:30px">${ico('user',15)}</span>
             <span class="grow t-sm" style="text-align:left"><b>${U.esc(c.name)}</b><br>
             <span class="t-xs muted">${c.orders} ออเดอร์ · ${U.baht(c.spend)}</span></span></button>`) +
           group('หน้า', pages, i=>`<button class="choice" data-to="${i.id}" style="padding:9px 12px">
-            <span class="ci" style="width:30px;height:30px;font-size:15px">${i.ic}</span>
+            <span class="ci" style="width:30px;height:30px">${ico(i.ic, 17)}</span>
             <span class="grow b6 t-sm" style="text-align:left">${i.t}</span></button>`) +
-          `<div class="mt16"><button class="btn btn-ai btn-block" id="askAi">🤖 ถาม AI ว่า “${U.esc(inp.value)}”</button></div>`;
+          `<div class="mt16"><button class="btn btn-ai btn-block" id="askAi">${ico('advisor',15)} ถาม AI ว่า “${U.esc(inp.value)}”</button></div>`;
         const ai = res.querySelector('#askAi');
         if (ai) ai.onclick = () => { const v = inp.value; U.closeModal(); aiAsk(v); };
       }
@@ -597,13 +601,13 @@ window.APP = (function () {
     document.getElementById('gsearch').blur();
   }
   function welcomeModal() {
-    U.modal({ title:'ยินดีต้อนรับสู่ StreetFood OS 🎉', icon:'🌿', okText:'เริ่มรับออเดอร์', cancelText:'ดูรอบๆ ก่อน',
+    U.modal({ title:'ยินดีต้อนรับสู่ StreetFood OS', icon:D.store.emoji, okText:'เริ่มรับออเดอร์', cancelText:'ดูรอบๆ ก่อน',
       body:`<p>ร้าน <b>${U.esc(D.store.name)}</b> ถูกสร้างเรียบร้อยแล้ว ข้อมูลใน Prototype นี้เป็น Mock Data ที่ผูกกันทุกหน้า</p>
         <div class="col g8 mt16">
-          ${[['📊','Dashboard บอกว่าวันนี้ร้านเป็นอย่างไร และควรทำอะไรต่อ'],
-             ['🧾','กด "รับออเดอร์" เพื่อสร้างบิล แล้วไปดูที่ Kitchen Display'],
-             ['🤖','ปุ่ม "ถาม AI" มุมขวาล่าง ตอบได้ทุกเรื่องจากข้อมูลร้าน']]
-            .map(([ic,t])=>`<div class="row-t g10"><span style="font-size:18px">${ic}</span><span class="t-sm">${t}</span></div>`).join('')}
+          ${[['dashboard','Dashboard บอกว่าวันนี้ร้านเป็นอย่างไร และควรทำอะไรต่อ'],
+             ['receipt','กด "รับออเดอร์" เพื่อสร้างบิล แล้วไปดูที่ Kitchen Display'],
+             ['advisor','ปุ่ม "ถาม AI" มุมขวาล่าง ตอบได้ทุกเรื่องจากข้อมูลร้าน']]
+            .map(([ic,t])=>`<div class="row-t g10">${ico(ic,16)}<span class="t-sm">${t}</span></div>`).join('')}
         </div>`,
       onOk(){ newOrderModal(); } });
   }
