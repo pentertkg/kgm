@@ -435,7 +435,8 @@
     </div>`;
 
     document.getElementById('back4').onclick = () => go(3);
-    document.getElementById('finish').onclick = () => {
+    document.getElementById('finish').onclick = async () => {
+      const btn = document.getElementById('finish');
       try{
         localStorage.setItem('sfos_store', JSON.stringify({
           name:S.name, emoji:S.emoji, format:S.format, type:S.type, location:S.location,
@@ -445,6 +446,40 @@
           S.menu.filter(m => m.on && m.custom).map(m => ({ name:m.name, price:m.price, cost:m.cost, cat:m.cat, emoji:m.emoji }))
         ));
       }catch(e){}
+
+      /* ล็อกอินอยู่ + ตั้งค่า Supabase แล้ว → บันทึกร้านลงฐานข้อมูลจริง */
+      const L = window.SFOS_LIVE, AU = window.SFOS_AUTH;
+      if (L && L.enabled && AU && AU.ready && AU.isSignedIn()) {
+        btn.disabled = true; btn.textContent = 'กำลังบันทึกร้าน...';
+        try {
+          const mine = await L.select('store_members', { select:'store_id', limit:1 });
+          if (mine && mine.length) {
+            U.toast('บัญชีนี้มีร้านอยู่แล้ว — กำลังพาไปที่ร้านของคุณ','warn');
+            setTimeout(()=>{ location.href = 'app.html#/dashboard'; }, 700);
+            return;
+          }
+          await L.createStore({ name:S.name, emoji:S.emoji, format:S.format, type:S.type,
+            location:S.location, open:S.open, close:S.close,
+            staff:parseInt(S.staff,10)||1, goal:S.goal });
+          const act = S.menu.filter(m => m.on);
+          let done = 0;
+          for (const m of act) {
+            btn.textContent = `กำลังบันทึกเมนู ${++done}/${act.length}...`;
+            /* ต้นทุนจาก onboarding เป็นตัวเลขเหมา — เก็บเป็นวัตถุดิบ 1 รายการ
+               ไปแตกสูตรละเอียดต่อได้ที่หน้า Menu & Cost */
+            await L.saveMenuFull({ name:m.name, emoji:m.emoji, category:m.cat, price:m.price },
+                                 [{ name:'ต้นทุนรวม — '+m.name, cost:m.cost }]);
+          }
+          U.toast('สร้างร้าน "'+S.name+'" และบันทึกลงบัญชีของคุณแล้ว','ok');
+          setTimeout(()=>{ location.href = 'app.html#/dashboard?welcome=1'; }, 700);
+        } catch (e) {
+          btn.disabled = false; btn.textContent = 'เข้าสู่ Dashboard →';
+          U.toast('บันทึกไม่สำเร็จ: ' + e.message, 'warn');
+        }
+        return;
+      }
+
+      /* โหมดพรีวิว (ยังไม่ตั้งค่า Supabase) — เก็บในเครื่องอย่างเดียว */
       U.toast('สร้างร้าน "'+S.name+'" สำเร็จ','ok');
       setTimeout(()=>{ location.href = 'app.html#/dashboard?welcome=1'; }, 500);
     };

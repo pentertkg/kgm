@@ -88,8 +88,9 @@ window.APP = (function () {
     return r.ok;
   }
 
-  function boot() {
+  async function boot(mode) {
     installErrorGuard();
+    if (mode === 'live') await loadLiveData();
     document.body.innerHTML = `
     <a class="skip-link" href="#page">ข้ามไปเนื้อหาหลัก</a>
     <div class="shell">
@@ -182,10 +183,12 @@ window.APP = (function () {
       const A = window.SFOS_AUTH, b = document.getElementById('modeBadge');
       if (!A || !b) return;
       if (A.ready && A.isSignedIn()) {
-        b.textContent = 'เชื่อมฐานข้อมูล';
+        b.textContent = state.liveStore ? 'ข้อมูลจริง' : 'เชื่อมฐานข้อมูล';
         b.className = 'badge badge-good';
         b.style.cssText = 'margin-left:auto;font-size:10.5px;height:21px;padding:0 8px';
-        b.title = 'ล็อกอินแล้ว: ' + (A.email() || '');
+        b.title = state.liveStore
+          ? 'ร้านและเมนูมาจากฐานข้อมูลจริง (' + (A.email() || '') + ') — ยอดขาย/ออเดอร์ยังเป็นตัวอย่าง'
+          : 'ล็อกอินแล้ว: ' + (A.email() || '');
       } else if (A.ready && A.isDemo()) {
         b.textContent = 'โหมดเดโม';
         b.className = 'badge badge-warn';
@@ -196,6 +199,44 @@ window.APP = (function () {
     })();
     window.addEventListener('hashchange', route);
     route();
+  }
+
+  /* ── โหมดจริง: ดึงร้าน + เมนูจาก Supabase มาแทนข้อมูลตัวอย่าง ──
+     ขั้นนี้ต่อเฉพาะ "ร้าน + เมนู + ต้นทุน" ก่อน — ยอดขาย/ออเดอร์/สต๊อก
+     ยังเป็นตัวอย่างจนกว่าจะต่อครบ (แผนถัดไป: Orders → Dashboard) */
+  async function loadLiveData() {
+    const L = window.SFOS_LIVE;
+    if (!L || !L.enabled) return;
+    try {
+      const st2 = await L.store();
+      if (!st2) return;
+      D.store.name  = st2.name;
+      D.store.emoji = st2.emoji || D.store.emoji;
+      if (st2.location)   D.store.location = st2.location;
+      if (st2.open_time)  D.store.open  = String(st2.open_time).slice(0, 5);
+      if (st2.close_time) D.store.close = String(st2.close_time).slice(0, 5);
+      const rows = await L.menus();
+      if (rows && rows.length) {
+        state.menu = rows.map(v => ({
+          id: v.menu_id, name: v.name, emoji: v.emoji, cat: v.category,
+          price: +v.price, cost: +v.cost, profit: +v.profit, margin: +v.margin_pct,
+          desc: v.description || '', active: v.is_active !== false, live: true,
+          recipe: Array.from({ length: Math.max(1, v.ingredient_count | 0) }, () => ['live', '', 0])
+        }));
+        state.liveMenu = true;
+      }
+      state.liveStore = true;
+    } catch (e) {
+      if (e.status === 401) { window.SFOS_AUTH.signOut(); location.replace('login.html'); return; }
+      state.liveError = e.message;
+      /* บัญชียังไม่มีร้าน → ชวนไปสร้าง */
+      if (/ยังไม่มีร้าน/.test(e.message)) {
+        U.modal({ title: 'ยังไม่มีร้านในบัญชีนี้', icon: ico('store', 20),
+          okText: 'ไปสร้างร้าน', cancelText: 'ดูข้อมูลตัวอย่างก่อน',
+          body: '<p class="t-sm muted" style="line-height:1.7">บัญชีของคุณล็อกอินสำเร็จแล้ว แต่ยังไม่ได้สร้างร้าน — สร้างร้านก่อนเพื่อให้เมนู ต้นทุน และข้อมูลทั้งหมดเป็นของร้านคุณจริงๆ</p>',
+          onOk() { location.href = 'onboarding.html'; } });
+      }
+    }
   }
 
   function paintNav() {
@@ -270,6 +311,7 @@ window.APP = (function () {
       onOk(){ o.st = 'cancelled'; U.toast(id + ' ถูกยกเลิก', 'warn'); refresh(); } });
   }
   function newOrderModal() {
+    const gm = k => state.menu.find(x => x.id === k) || D.mi(k);
     const cart = {};
     const body = () => `
       <div class="grid g-2" style="gap:16px">
@@ -301,7 +343,7 @@ window.APP = (function () {
         const ids = Object.keys(cart).filter(k => cart[k] > 0);
         if (!ids.length) { U.toast('เลือกเมนูอย่างน้อย 1 รายการ','warn'); return false; }
         const id = '#' + (1284 + state.orders.length - D.orders.length + 1);
-        const lines = ids.map(k => { const mm = D.mi(k); return { menu:mm, qty:cart[k], sum:mm.price*cart[k], profit:mm.profit*cart[k] }; });
+        const lines = ids.map(k => { const mm = gm(k); return { menu:mm, qty:cart[k], sum:mm.price*cart[k], profit:mm.profit*cart[k] }; });
         state.orders.unshift({
           id, t: new Date().toTimeString().slice(0,5), ch: m.querySelector('#o_ch').value, st:'new',
           cust: m.querySelector('#o_ch').value === 'walkin' ? 'ลูกค้าหน้าร้าน' : 'ลูกค้าใหม่',
@@ -319,9 +361,9 @@ window.APP = (function () {
       const ids = Object.keys(cart).filter(k => cart[k] > 0);
       const box = m.querySelector('#cartBox');
       if (!ids.length) { box.innerHTML = `<div class="t-sm muted ctr" style="padding:18px 0">ยังไม่มีรายการ<br>กดเลือกเมนูด้านซ้าย</div>`; return; }
-      const total = ids.reduce((s,k)=>s + D.mi(k).price*cart[k], 0);
-      const cost  = ids.reduce((s,k)=>s + D.mi(k).cost*cart[k], 0);
-      box.innerHTML = ids.map(k => { const mm = D.mi(k); return `
+      const total = ids.reduce((s,k)=>s + gm(k).price*cart[k], 0);
+      const cost  = ids.reduce((s,k)=>s + gm(k).cost*cart[k], 0);
+      box.innerHTML = ids.map(k => { const mm = gm(k); return `
         <div class="between" style="padding:6px 0">
           <span class="t-sm b6">${mm.emoji} ${U.esc(mm.name)}</span>
           <span class="row g6"><button class="btn btn-xs btn-soft" data-mi="${k}">−</button>
@@ -616,9 +658,11 @@ window.APP = (function () {
 })();
 document.addEventListener('DOMContentLoaded', async () => {
   const A = window.SFOS_AUTH;
+  let mode = 'demo';
   if (A && A.ready) {
     const r = await A.requireAuth();
     if (!r.ok) return;                            // กำลังพาไปหน้า login
+    mode = r.mode;
   }
-  window.APP.boot();
+  window.APP.boot(mode);
 });

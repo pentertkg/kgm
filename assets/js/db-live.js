@@ -202,6 +202,33 @@ window.SFOS_LIVE = (function () {
       store_id: await resolveStore(), expense_type: e.type, amount: e.amount,
       note: e.note || null, spent_on: e.date || today() }]))[0],
 
+    /* อ่านสูตรของเมนู (สำหรับ Cost Calculator) */
+    menuRecipe: async (menuId) =>
+      select('menu_recipes', { select: 'qty,note,ingredients(id,name,cost_per_unit)', menu_id: eq(menuId) }),
+
+    /* บันทึกเมนู + แทนที่สูตรทั้งชุด
+       แต่ละบรรทัดใน Cost Calculator = วัตถุดิบ 1 ตัว (unit 'ต่อจาน', qty 1)
+       วัตถุดิบ match กันด้วยชื่อ (unique ต่อร้าน) — แก้ราคา "ข้าวสวย" ที่เมนูเดียว
+       margin ของทุกเมนูที่ใช้ข้าวสวยจะขยับตาม ซึ่งเป็นพฤติกรรมที่ตั้งใจ */
+    async saveMenuFull(m, lines) {
+      const sid = await resolveStore();
+      const menu = await api.saveMenu(m);
+      await remove('menu_recipes', { menu_id: eq(menu.id) });
+      for (const l of (lines || []).filter(l => l.name && l.name.trim())) {
+        const nm = l.name.trim(), cost = +l.cost || 0;
+        let ing = (await select('ingredients', {
+          select: 'id,cost_per_unit', store_id: eq(sid), name: eq(nm), limit: 1 }))[0];
+        if (!ing) {
+          ing = (await insert('ingredients', [{
+            store_id: sid, name: nm, unit: 'ต่อจาน', cost_per_unit: cost }]))[0];
+        } else if (+ing.cost_per_unit !== cost) {
+          await update('ingredients', { id: eq(ing.id) }, { cost_per_unit: cost });
+        }
+        await insert('menu_recipes', [{ menu_id: menu.id, ingredient_id: ing.id, qty: 1, note: nm }]);
+      }
+      return menu;
+    },
+
     async createStore(s) {
       const [store] = await insert('stores', [{
         name: s.name, emoji: s.emoji, format: s.format, food_type: s.type,

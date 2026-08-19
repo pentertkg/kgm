@@ -256,7 +256,8 @@ window.UI = (function () {
         </div>`}
       </div>`;
     document.body.appendChild(modalEl);
-    requestAnimationFrame(() => modalEl.classList.add('on'));
+    { const el0 = modalEl;   // กันเคสปิด modal ก่อน frame แรก (modalEl ถูกล้างเป็น null แล้ว)
+      requestAnimationFrame(() => { if (el0.isConnected) el0.classList.add('on'); }); }
     modalEl.querySelectorAll('[data-x]').forEach(b => b.onclick = () => closeModal());
     modalEl.addEventListener('click', e => { if (e.target === modalEl) closeModal(); });
     const ok = modalEl.querySelector('[data-ok]');

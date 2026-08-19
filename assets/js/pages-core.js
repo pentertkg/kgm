@@ -535,11 +535,23 @@ window.PAGES = window.PAGES || {};
   }
 
   /* ---------- Menu editor + Cost calculator ---------- */
-  function menuEditor(id) {
-    const m = id ? (D.mi(id) || st().menu.find(x=>x.id===id)) : null;
-    const rows = m ? m.recipe.map(r=>({ name:r[1], cost:r[2] }))
-                   : [{ name:'หมู', cost:30 },{ name:'ข้าว', cost:7 },{ name:'เครื่องปรุง', cost:4 },
-                      { name:'ไข่', cost:5 },{ name:'Packaging', cost:3 }];
+  async function menuEditor(id) {
+    const m = id ? (st().menu.find(x=>x.id===id) || D.mi(id)) : null;
+    const LIVE = window.SFOS_LIVE, isLive = !!(st().liveMenu && LIVE && LIVE.enabled);
+    let rows;
+    if (m && m.live) {
+      /* เมนูจริง — โหลดสูตรจากฐานข้อมูล */
+      try {
+        rows = (await LIVE.menuRecipe(m.id)).map(r => ({
+          name: r.note || (r.ingredients && r.ingredients.name) || '',
+          cost: (+r.qty || 1) * ((r.ingredients && +r.ingredients.cost_per_unit) || 0) }));
+      } catch (e) { rows = []; }
+      if (!rows.length) rows = [{ name: 'ต้นทุนรวม — ' + m.name, cost: m.cost }];
+    } else {
+      rows = m ? m.recipe.map(r=>({ name:r[1], cost:r[2] }))
+               : [{ name:'หมู', cost:30 },{ name:'ข้าว', cost:7 },{ name:'เครื่องปรุง', cost:4 },
+                  { name:'ไข่', cost:5 },{ name:'Packaging', cost:3 }];
+    }
     let price = m ? m.price : 69;
 
     U.modal({
@@ -624,19 +636,31 @@ window.PAGES = window.PAGES || {};
         if (!name) { U.toast('กรุณาใส่ชื่อเมนู','warn'); return false; }
         const cost = rows.reduce((s,r)=>s+(+r.cost||0),0);
         const p = +el.querySelector('#e_price').value || 0;
+        const emoji = el.querySelector('#e_emoji').value, cat2 = el.querySelector('#e_cat').value;
+        const desc = el.querySelector('#e_desc').value.trim();
+        const lines = rows.filter(r=>r.name);
         if (m) {
           m.name = name; m.price = p; m.cost = cost; m.profit = p-cost; m.margin = p?(p-cost)/p*100:0;
-          m.cat = el.querySelector('#e_cat').value; m.emoji = el.querySelector('#e_emoji').value;
-          m.desc = el.querySelector('#e_desc').value.trim();
-          m.recipe = rows.filter(r=>r.name).map(r=>['custom', r.name, +r.cost||0]);
-          U.toast('บันทึก "'+name+'" แล้ว','ok');
+          m.cat = cat2; m.emoji = emoji; m.desc = desc;
+          m.recipe = lines.map(r=>['custom', r.name, +r.cost||0]);
         } else {
-          st().menu.push({ id:'n'+Date.now(), name, emoji:el.querySelector('#e_emoji').value,
-            cat:el.querySelector('#e_cat').value, price:p, cost, profit:p-cost,
-            margin: p?(p-cost)/p*100:0, active:true, custom:true,
-            desc:el.querySelector('#e_desc').value.trim(),
-            recipe: rows.filter(r=>r.name).map(r=>['custom', r.name, +r.cost||0]) });
-          U.toast('เพิ่มเมนู "'+name+'" แล้ว','ok');
+          var added = { id:'n'+Date.now(), name, emoji, cat:cat2, price:p, cost, profit:p-cost,
+            margin: p?(p-cost)/p*100:0, active:true, custom:true, desc,
+            recipe: lines.map(r=>['custom', r.name, +r.cost||0]) };
+          st().menu.push(added);
+        }
+        if (isLive) {
+          /* บันทึกลง Supabase — อัปเดตหน้าจอก่อน (optimistic) แล้วยืนยันด้วย toast */
+          window.SFOS_LIVE.saveMenuFull(
+            { id: (m && m.live) ? m.id : null, name, emoji, category: cat2, price: p, description: desc },
+            lines
+          ).then(saved => {
+            const t = m || added;
+            t.id = saved.id; t.live = true;
+            U.toast('บันทึก "'+name+'" ลงฐานข้อมูลแล้ว','ok');
+          }).catch(e => U.toast('บันทึกลงฐานข้อมูลไม่สำเร็จ: '+e.message,'warn'));
+        } else {
+          U.toast((m?'บันทึก "':'เพิ่มเมนู "')+name+'" แล้ว','ok');
         }
         A.refresh();
       }
