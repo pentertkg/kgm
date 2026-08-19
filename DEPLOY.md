@@ -9,6 +9,7 @@
 | ต้องมี API Key ไหม | **ไม่ต้องเลย** — ไม่มี key/secret/token ในโปรเจกต์ |
 | มีค่าใช้จ่ายรายเดือนไหม | **ไม่มี** — ไม่เรียกใช้บริการที่คิดเงินเลยแม้แต่ตัวเดียว |
 | ต้อง build / npm install ไหม | **ไม่ต้อง** — static ล้วน อัปโหลดโฟลเดอร์แล้วใช้ได้ |
+| Vercel แพ็ก Hobby พอไหม | **พอ** — static ไม่มี serverless function ไม่มี bandwidth cost ในทางปฏิบัติ |
 
 ## สิ่งที่ตัดออกไปแล้ว เพื่อให้ไม่พึ่งบริการภายนอก
 
@@ -25,32 +26,62 @@ grep -rnoE "https?://" --include="*.html" --include="*.js" --include="*.css" . |
 ```
 (ต้องไม่มีผลลัพธ์ — `w3.org` คือ XML namespace ของ SVG ไม่ใช่การเรียกเน็ต)
 
-## Deploy (เลือกอย่างใดอย่างหนึ่ง — ฟรีทั้งหมด)
+## Deploy — Vercel (แพ็ก Hobby ฟรี)
 
-**Cloudflare Pages** (แนะนำ — bandwidth ไม่จำกัดในแพ็กฟรี + อ่านไฟล์ `_headers` ที่แนบมาให้เลย)
+รันจากในโฟลเดอร์โปรเจกต์ ไม่ต้องผ่าน GitHub ก็ได้:
+
 ```bash
-npx wrangler pages deploy streetfood-os --project-name streetfood-os
+npx vercel login
+```
+```bash
+npx vercel --prod
 ```
 
-**Netlify** (อ่านไฟล์ `_headers` เหมือนกัน)
+ครั้งแรก CLI จะถามไม่กี่ข้อ — ตอบตามนี้:
+
+| คำถาม | ตอบ |
+|---|---|
+| Set up and deploy? | `Y` |
+| Which scope? | บัญชีของคุณ |
+| Link to existing project? | `N` |
+| Project name? | `streetfood-os` (หรือกด Enter) |
+| In which directory is your code located? | `./` |
+| Want to modify these settings? | `N` — Vercel จะตรวจว่าเป็น static site เอง ไม่มี build command |
+
+ครั้งต่อไปแก้โค้ดแล้ว deploy ซ้ำด้วย `npx vercel --prod` คำสั่งเดียว
+
+**ตรวจหลัง deploy ว่า header ติดจริง:**
 ```bash
-npx netlify-cli deploy --prod --dir streetfood-os
+curl -sI https://<โดเมนที่ได้>.vercel.app | grep -iE "content-security-policy|x-frame-options|cache-control"
 ```
 
-**GitHub Pages** (ฟรี แต่ตั้ง security header ไม่ได้)
-```bash
-git init && git add . && git commit -m "StreetFood OS prototype"
-git branch -M main && git remote add origin <repo-url> && git push -u origin main
-# แล้วเปิด Settings → Pages → Deploy from branch: main / root
-```
+### ⚠️ Vercel ไม่อ่านไฟล์ `_headers`
+
+`_headers` เป็นรูปแบบของ Cloudflare Pages / Netlify — Vercel ใช้ **`vercel.json`** แทน
+ซึ่งเตรียมไว้ให้แล้วโดยตั้ง header ชุดเดียวกัน (CSP, X-Frame-Options, nosniff, Permissions-Policy)
+บวก cache 1 ปีสำหรับฟอนต์ · ไฟล์ `_headers` ยังอยู่ในโปรเจกต์เพื่อให้ย้ายไป Cloudflare/Netlify ได้ทันที
+และถูกใส่ใน `.vercelignore` ไม่ให้อัปโหลดไปเปล่าๆ
 
 ไม่ต้องตั้ง rewrite rule ใดๆ เพราะระบบใช้ **hash routing** (`app.html#/orders`) ซึ่งเบราว์เซอร์จัดการเองทั้งหมด
+และตั้ง `cleanUrls: false` ไว้ตั้งใจ เพื่อให้ลิงก์ภายในที่เขียนเป็น `onboarding.html` / `app.html` ทำงานตรงๆ ไม่มี redirect
+
+### ทางเลือกอื่น (ฟรีเหมือนกัน)
+
+**Cloudflare Pages** — bandwidth ไม่จำกัดในแพ็กฟรี · อ่าน `_headers` ให้อัตโนมัติ
+```bash
+npx wrangler pages deploy . --project-name streetfood-os
+```
+
+**GitHub Pages** — ฟรี แต่ตั้ง security header ไม่ได้ (ไม่อ่านทั้ง `_headers` และ `vercel.json`)
+push ขึ้น repo แล้วเปิด Settings → Pages → Deploy from branch: `main` / `(root)`
 
 ## ไฟล์สำหรับ prod ที่เตรียมไว้ให้แล้ว
 
 | ไฟล์ | หน้าที่ |
 |---|---|
-| `_headers` | CSP + `X-Frame-Options` + `nosniff` + cache 1 ปีสำหรับฟอนต์ (Cloudflare Pages / Netlify อ่านอัตโนมัติ) |
+| `vercel.json` | CSP + security header + cache สำหรับ **Vercel** |
+| `_headers` | เนื้อหาเดียวกัน สำหรับ **Cloudflare Pages / Netlify** (Vercel ไม่อ่านไฟล์นี้) |
+| `.vercelignore` | ไม่อัปโหลด `.claude/`, `.git/`, `_headers` ขึ้น Vercel |
 | `robots.txt` | เปิดให้ index หน้า Landing · กัน `app.html` ไม่ให้ถูก index |
 | `sitemap.xml` | สำหรับ Search Console |
 | meta ในทุกหน้า | `description`, `og:*`, `twitter:*`, `theme-color`, และ `noindex` บนหน้า app |
