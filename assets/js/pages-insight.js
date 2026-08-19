@@ -586,11 +586,17 @@
         </div>`);
     }
     function vInteg(){
-      return card('Integrations','เชื่อมต่อบริการภายนอก (P2 — ยังไม่เปิดใช้ใน Prototype)', `
+      return card('Integrations','เชื่อมต่อบริการภายนอก — ยังไม่เปิดใช้งานทั้งหมดใน Prototype นี้', `
+        <div class="ai-strip mb16" style="background:var(--warn-soft);border-color:var(--warn-line)">
+          <div class="ic" style="background:var(--warn)">!</div>
+          <div class="t-sm"><b>ทุกรายการด้านล่างยังไม่ได้เชื่อมต่อจริง</b><br>
+          <span class="muted">Prototype นี้ไม่มีการต่อ Backend, API หรือบริการภายนอกใดๆ
+          รายการนี้แสดงไว้เพื่อให้เห็นขอบเขตของงานในเฟสถัดไปเท่านั้น</span></div>
+        </div>
         <div class="grid g-2" style="gap:12px">
-          ${[['🛵','LINE MAN','ดึงออเดอร์เข้าระบบอัตโนมัติ','เชื่อมต่อแล้ว','badge-good'],
-             ['🟢','Grab Food','ซิงก์เมนูและสถานะร้าน','เชื่อมต่อแล้ว','badge-good'],
-             ['💬','LINE OA','ส่งโปรโมชันหาลูกค้า','เชื่อมต่อแล้ว','badge-good'],
+          ${[['🛵','LINE MAN','ดึงออเดอร์เข้าระบบอัตโนมัติ','ยังไม่เชื่อมต่อ','badge'],
+             ['🟢','Grab Food','ซิงก์เมนูและสถานะร้าน','ยังไม่เชื่อมต่อ','badge'],
+             ['💬','LINE OA','ส่งโปรโมชันหาลูกค้า','ยังไม่เชื่อมต่อ','badge'],
              ['📘','Facebook Page','ดึงข้อมูลโฆษณาและ ROAS','ยังไม่เชื่อมต่อ','badge'],
              ['🧾','FlowAccount','ส่งข้อมูลบัญชี/ภาษี','ยังไม่เชื่อมต่อ','badge'],
              ['🖨️','เครื่องพิมพ์ใบเสร็จ','พิมพ์บิลอัตโนมัติ','ยังไม่เชื่อมต่อ','badge']]

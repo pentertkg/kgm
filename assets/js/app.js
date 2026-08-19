@@ -86,6 +86,8 @@ window.APP = (function () {
         <div class="sb-brand">
           <a class="row g10" href="index.html"><span class="logo">🌿</span>
             <span class="logo-txt">StreetFood<span>OS</span></span></a>
+          <span class="badge" style="margin-left:auto;font-size:10.5px;height:21px;padding:0 8px"
+                title="ข้อมูลทั้งหมดในระบบนี้เป็นข้อมูลตัวอย่าง">Prototype</span>
         </div>
         <button class="sb-store" id="storeSel">
           <span class="av">${D.store.emoji}</span>

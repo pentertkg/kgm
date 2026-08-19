@@ -1,6 +1,10 @@
+# StreetFood OS — UI Prototype
+# ตั้งใจ "เปิดให้ crawl ได้" แต่กันการ index ด้วย <meta name="robots" content="noindex">
+# ในตัวหน้าเว็บแทน เพราะถ้าใช้ Disallow ที่นี่ crawler ของ LINE/Facebook/X
+# จะดึง og:image ไม่ได้ ทำให้การ์ดตอนแชร์ลิงก์พัง
+#
+# เมื่อพร้อมเปิดตัวจริง: ลบ meta noindex ออกจาก index.html และ onboarding.html
 User-agent: *
 Allow: /
-Disallow: /app.html
-Disallow: /404.html
 
 Sitemap: https://streetfood-os.vercel.app/sitemap.xml
