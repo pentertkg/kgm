@@ -69,7 +69,7 @@
 
   /* ---- flow ---- */
   const flow = [
-    { n:'Plan',   ic:'analytics', t:'วางแผน',   d:'สร้างร้าน ตั้งเป้า เพิ่มเมนู คำนวณต้นทุนและราคาขาย', href:'onboarding.html' },
+    { n:'Plan',   ic:'analytics', t:'วางแผน',   d:'สร้างร้าน ตั้งเป้า เพิ่มเมนู คำนวณต้นทุนและราคาขาย', href:'login.html?next=onboarding.html' },
     { n:'Sell',   ic:'receipt', t:'ขาย',      d:'รับออเดอร์หน้าร้าน/Delivery ส่งเข้าครัวทันที', href:'app.html?demo=1#/orders' },
     { n:'Manage', ic:'box', t:'บริหาร',   d:'คุม Stock ต้นทุน พนักงาน และข้อมูลลูกค้า', href:'app.html?demo=1#/stock' },
     { n:'Grow',   ic:'analytics', t:'ทำให้โต',  d:'อ่าน Analytics ฟัง AI แล้วยิงโปรโมชัน/โฆษณา', href:'app.html?demo=1#/analytics' }
@@ -140,7 +140,7 @@
         <span class="muted t-sm b6">${t.s}</span></div>
       <p class="t-sm muted mt4">${t.d}</p>
       <div class="col g8 mt16">${t.li.map(x=>`<div class="check"><i>✓</i><span>${x}</span></div>`).join('')}</div>
-      <a class="btn ${t.hot?'btn-primary':'btn-ghost'} btn-block mt20" href="onboarding.html">${t.cta}</a>
+      <a class="btn ${t.hot?'btn-primary':'btn-ghost'} btn-block mt20" href="login.html?next=onboarding.html">${t.cta}</a>
     </div>`).join('');
 
   /* smooth scroll */

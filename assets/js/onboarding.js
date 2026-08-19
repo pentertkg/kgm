@@ -4,6 +4,16 @@
    ============================================================ */
 (function(){
   const U = window.UI;
+
+  /* ── ต้องล็อกอินก่อนสร้างร้าน ─────────────────────────────
+     ข้อมูลร้านต้องผูกกับบัญชีจริง — ถ้ายังไม่มี session
+     พาไปหน้า login แล้วเด้งกลับมาที่นี่หลังยืนยันอีเมลสำเร็จ
+     (ยกเว้นยังไม่ได้ตั้งค่า Supabase = โหมดพรีวิว ให้ลองเล่นได้) */
+  const AUTH = window.SFOS_AUTH;
+  if (AUTH && AUTH.ready && !AUTH.isSignedIn()) {
+    location.replace('login.html?next=' + encodeURIComponent('onboarding.html'));
+    return;
+  }
   const S = {
     step: 1,
     name:'', emoji:'🌿', format:'', type:'ตามสั่ง / อาหารจานเดียว',

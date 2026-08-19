@@ -59,7 +59,8 @@
     em.onkeydown = e => { if (e.key === 'Enter') go(); };
     document.getElementById('demo').onclick = () => {
       A.enterDemo();
-      location.replace('app.html#/dashboard');
+      /* เดโมใช้ Mock data — พาเข้า onboarding ไม่ได้เพราะร้านจะไม่ถูกบันทึกจริง */
+      location.replace(next.startsWith('onboarding') ? 'app.html#/dashboard' : next);
     };
   }
 
@@ -187,7 +188,7 @@
       if (!S.chosen.account) return U.toast('ต้องยินยอมข้อที่จำเป็นจึงจะใช้งานต่อได้', 'warn');
       try {
         await A.grantConsents(Object.keys(S.chosen).filter(k => S.chosen[k]));
-        location.replace('app.html#/dashboard');
+        location.replace(next);
       } catch (e) { U.toast(e.message, 'warn'); }
     };
   }
