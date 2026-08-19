@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>สร้างร้านของคุณ — StreetFood OS</title>
+<meta name="description" content="ตั้งร้านเสร็จใน 4 ขั้นตอน: ข้อมูลร้าน → เป้าหมายยอดขาย → เพิ่มเมนูและต้นทุน → พร้อมเปิดร้าน">
+<meta name="theme-color" content="#ff6a2b">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="StreetFood OS">
+<meta property="og:locale" content="th_TH">
+<meta property="og:title" content="สร้างร้านของคุณ — StreetFood OS">
+<meta property="og:description" content="ตั้งร้านเสร็จใน 4 ขั้นตอน: ข้อมูลร้าน → เป้าหมายยอดขาย → เพิ่มเมนูและต้นทุน → พร้อมเปิดร้าน">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="สร้างร้านของคุณ — StreetFood OS">
+<meta name="twitter:description" content="ตั้งร้านเสร็จใน 4 ขั้นตอน: ข้อมูลร้าน → เป้าหมายยอดขาย → เพิ่มเมนูและต้นทุน → พร้อมเปิดร้าน">
+<link rel="preload" href="assets/fonts/noto-sans-thai-thai.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🌿</text></svg>">
+</head>
+<body>
+<div class="ob">
+  <div class="ob-nav">
+    <a class="row g10" href="index.html"><span class="logo">🌿</span><span class="logo-txt">StreetFood<span>OS</span></span></a>
+    <div class="row g10">
+      <span class="badge">ขั้นตอนที่ <b class="num" id="stepNum">1</b>/4</span>
+      <a class="btn btn-ghost btn-sm" href="app.html#/dashboard">ข้ามไปดู Dashboard</a>
+    </div>
+  </div>
+
+  <div class="ob-main">
+    <div class="steps mb24" id="steps"></div>
+    <div id="stage"></div>
+  </div>
+</div>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/onboarding.js"></script>
+</body>
+</html>

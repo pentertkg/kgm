@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StreetFood OS — ผู้ช่วยบริหารร้านอาหาร Street Food</title>
+<meta name="description" content="ระบบผู้ช่วยบริหารร้าน Street Food ที่รวมเมนู ต้นทุน ออเดอร์ ลูกค้า Stock และ Marketing ไว้ในที่เดียว พร้อม AI ช่วยวิเคราะห์และแนะนำสิ่งที่ควรทำ">
+<meta name="theme-color" content="#ff6a2b">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="StreetFood OS">
+<meta property="og:locale" content="th_TH">
+<meta property="og:title" content="StreetFood OS — ผู้ช่วยบริหารร้านอาหาร Street Food">
+<meta property="og:description" content="ระบบผู้ช่วยบริหารร้าน Street Food ที่รวมเมนู ต้นทุน ออเดอร์ ลูกค้า Stock และ Marketing ไว้ในที่เดียว พร้อม AI ช่วยวิเคราะห์และแนะนำสิ่งที่ควรทำ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="StreetFood OS — ผู้ช่วยบริหารร้านอาหาร Street Food">
+<meta name="twitter:description" content="ระบบผู้ช่วยบริหารร้าน Street Food ที่รวมเมนู ต้นทุน ออเดอร์ ลูกค้า Stock และ Marketing ไว้ในที่เดียว พร้อม AI ช่วยวิเคราะห์และแนะนำสิ่งที่ควรทำ">
+<link rel="preload" href="assets/fonts/noto-sans-thai-thai.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🌿</text></svg>">
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="lp-nav">
+  <div class="in">
+    <a class="row g10" href="index.html">
+      <span class="logo">🌿</span>
+      <span class="logo-txt">StreetFood<span>OS</span></span>
+    </a>
+    <div class="lp-links">
+      <a href="#value">ทำอะไรได้</a>
+      <a href="#flow">วิธีใช้งาน</a>
+      <a href="#ai">AI Advisor</a>
+      <a href="#price">ราคา</a>
+    </div>
+    <div class="row g8" style="margin-left:auto">
+      <a class="btn btn-ghost btn-sm" href="app.html#/dashboard">ทดลองใช้งาน</a>
+      <a class="btn btn-primary btn-sm" href="onboarding.html">เริ่มสร้างร้าน</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrapx hero-in">
+    <div>
+      <span class="eyebrow"><span class="dot dot-live"></span> ใช้ได้ทั้งร้านรถเข็น Food Truck และ Kiosk</span>
+      <h1>เปิดร้านอาหาร<br>ให้เป็น<em>เรื่องง่าย</em></h1>
+      <p class="hero-sub b6" style="font-size:19px;color:var(--ink);margin-top:14px">
+        ตั้งแต่คิดเมนู คำนวณต้นทุน ไปจนถึงเพิ่มยอดขาย
+      </p>
+      <p class="hero-sub">
+        ระบบผู้ช่วยบริหารร้าน Street Food ที่รวม <b>เมนู ต้นทุน ออเดอร์ ลูกค้า Stock และ Marketing</b>
+        ไว้ในที่เดียว พร้อม AI ช่วยวิเคราะห์และแนะนำสิ่งที่ควรทำ
+      </p>
+      <div class="row wrap g12 mt24">
+        <a class="btn btn-primary btn-lg" href="onboarding.html">เริ่มสร้างร้าน →</a>
+        <a class="btn btn-ghost btn-lg" href="app.html#/dashboard">ทดลองใช้งาน</a>
+      </div>
+      <div class="trust">
+        <span>✓ ตั้งร้านเสร็จใน 4 ขั้นตอน</span>
+        <span>✓ ไม่ต้องมีความรู้บัญชี</span>
+        <span>✓ ใช้บนมือถือ/แท็บเล็ตได้</span>
+      </div>
+    </div>
+
+    <!-- Product preview -->
+    <div class="preview" id="preview">
+      <div class="pv-bar"><i></i><i></i><i></i>
+        <span class="t-xs muted num" style="margin-left:10px">streetfood-os.app/dashboard</span></div>
+      <div class="pv-body">
+        <div class="pv-side"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="grow col g10" id="pvContent"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ METRIC STRIP ============ -->
+<section class="wrapx" style="margin-top:-14px">
+  <div class="card card-p grid g-4" id="strip" style="box-shadow:var(--sh-2)"></div>
+</section>
+
+<!-- ============ 4 CORE VALUES ============ -->
+<section class="section wrapx" id="value">
+  <div class="sec-head">
+    <span class="badge badge-brand badge-lg">4 เรื่องที่ระบบช่วยคุณ</span>
+    <h2 class="mt16">ไม่ใช่แค่เครื่องคิดเงิน<br>แต่เป็นผู้ช่วยที่บอกว่า “ควรทำอะไรต่อ”</h2>
+    <p>เจ้าของร้านส่วนใหญ่ไม่ได้ขาดข้อมูล แต่ขาดคนสรุปให้ว่าข้อมูลนั้นหมายถึงอะไร และต้องลงมือทำอะไรต่อ</p>
+  </div>
+  <div class="grid g-4" id="values"></div>
+</section>
+
+<!-- ============ FLOW ============ -->
+<section class="section" id="flow" style="background:var(--surface);border-block:1px solid var(--line)">
+  <div class="wrapx">
+    <div class="sec-head">
+      <span class="badge badge-info badge-lg">Core Product Loop</span>
+      <h2 class="mt16">Plan → Sell → Manage → Grow</h2>
+      <p>ทุกหน้าในระบบเชื่อมกันเป็นวงจร ยิ่งใช้นานยิ่งรู้จักร้านคุณมากขึ้น และคำแนะนำก็ยิ่งแม่นขึ้น</p>
+    </div>
+    <div class="flowline" id="flowline"></div>
+
+    <div class="card card-p mt32" style="background:var(--surface-2)">
+      <div class="row wrap g12 between">
+        <div>
+          <div class="up muted">หัวใจของ UX</div>
+          <h3 class="mt4">Data → Insight → Recommendation → Action</h3>
+        </div>
+        <div class="insight-chain">
+          <span class="step">📉 ยอดขายลด 12%</span><span class="arw">→</span>
+          <span class="step">🔍 ลูกค้าเก่าลดลง</span><span class="arw">→</span>
+          <span class="step badge-ai" style="border-color:var(--ai-line)">🤖 AI แนะนำ Campaign</span><span class="arw">→</span>
+          <span class="step" style="background:var(--brand);color:#fff;border-color:var(--brand)">สร้าง Campaign</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURES ============ -->
+<section class="section wrapx">
+  <div class="sec-head">
+    <h2>ครบทุกเรื่องที่ร้านต้องใช้จริง</h2>
+    <p>ออกแบบจากงานประจำวันของร้านตามสั่ง ไม่ใช่จากระบบบัญชีองค์กร</p>
+  </div>
+  <div class="grid g-3" id="features"></div>
+</section>
+
+<!-- ============ AI SECTION ============ -->
+<section class="section" id="ai" style="background:linear-gradient(180deg,var(--surface),var(--bg))">
+  <div class="wrapx grid g-2" style="align-items:center;gap:44px">
+    <div>
+      <span class="ai-badge">🤖 AI Advisor</span>
+      <h2 class="mt16">ถามได้เหมือนคุยกับผู้จัดการร้าน</h2>
+      <p class="muted mt12" style="font-size:16.5px;line-height:1.75">
+        AI อ่านข้อมูลร้านคุณทั้งเมนู ต้นทุน ออเดอร์ ลูกค้า Stock และโฆษณา
+        แล้วตอบเป็นภาษาคนพร้อมตัวเลขอ้างอิง และมีปุ่มให้กด “ทำเลย” ได้ทันที
+      </p>
+      <div class="col g10 mt24" id="aiQs"></div>
+    </div>
+    <div class="ai-card">
+      <div class="in col g14" id="aiDemo"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="section wrapx" id="price">
+  <div class="sec-head">
+    <h2>ราคาที่ร้านเล็กจ่ายได้</h2>
+    <p>เริ่มฟรี ไม่ต้องผูกบัตร อัปเกรดเมื่อร้านโตขึ้น</p>
+  </div>
+  <div class="grid g-3" id="pricing"></div>
+  <p class="ctr t-xs muted mt16">* ตัวเลขค่าบริการในหน้านี้เป็นข้อมูลตัวอย่างสำหรับ Prototype เท่านั้น</p>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="wrapx" style="padding-bottom:78px">
+  <div class="cta-band">
+    <h2 style="color:#fff">พร้อมเริ่มร้านของคุณหรือยัง?</h2>
+    <p style="color:#c8d0da;max-width:520px;margin:14px auto 0;font-size:16.5px">
+      ใช้เวลา 3 นาที ตั้งชื่อร้าน ใส่เป้ายอดขาย เพิ่มเมนู แล้วระบบจะคำนวณให้ว่าต้องขายวันละเท่าไรจึงถึงเป้า
+    </p>
+    <div class="row g12 mt24" style="justify-content:center;flex-wrap:wrap;position:relative;z-index:1">
+      <a class="btn btn-primary btn-lg" href="onboarding.html">เริ่มสร้างร้าน →</a>
+      <a class="btn btn-white btn-lg" href="app.html#/dashboard">ดู Dashboard ตัวอย่าง</a>
+    </div>
+  </div>
+</section>
+
+<footer class="lp-foot">
+  <div class="wrapx between wrap g16">
+    <div class="row g10"><span class="logo" style="width:28px;height:28px;font-size:15px">🌿</span>
+      <span class="b7">StreetFood OS</span>
+      <span class="badge">UI Prototype</span></div>
+    <div>Local Mock Data ทั้งหมด · ไม่มีการเชื่อมต่อ Backend / Database / External API</div>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/landing.js"></script>
+</body>
+</html>
