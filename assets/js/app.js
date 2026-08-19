@@ -660,9 +660,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const A = window.SFOS_AUTH;
   let mode = 'demo';
   if (A && A.ready) {
-    const r = await A.requireAuth();
-    if (!r.ok) return;                            // กำลังพาไปหน้า login
-    mode = r.mode;
+    try {
+      const r = await A.requireAuth();
+      if (!r.ok) return;                          // กำลังพาไปหน้า login
+      mode = r.mode;
+    } catch (e) {
+      /* ตรวจสิทธิ์ไม่สำเร็จ (เน็ตหลุด/Supabase ล่ม) — ยังต้องเปิดแอปให้ได้
+         ด้วยข้อมูลตัวอย่าง ดีกว่าปล่อยหน้าขาวโดยไม่บอกอะไร */
+      mode = 'demo';
+      setTimeout(() => window.UI && window.UI.toast(
+        'เชื่อมต่อฐานข้อมูลไม่ได้ กำลังแสดงข้อมูลตัวอย่าง — ' + e.message, 'warn'), 600);
+    }
   }
   window.APP.boot(mode);
 });

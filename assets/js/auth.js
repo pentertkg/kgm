@@ -78,6 +78,16 @@ window.SFOS_AUTH = (function () {
   const token = () => (session && session.access_token) || null;
   const email = () => (session && session.user && session.user.email) || null;
 
+  /* session ที่ได้จาก Magic Link ไม่มี object user มาด้วย — ดึงมาเติมให้ครบ */
+  async function hydrateUser() {
+    if (!isSignedIn() || (session.user && session.user.email)) return session;
+    try {
+      const u = await req(AUTH + '/user', { headers: headers() });
+      session.user = u; save(session);
+    } catch (e) {}
+    return session;
+  }
+
   async function refresh() {
     if (!session || !session.refresh_token) return null;
     const d = await req(AUTH + '/token?grant_type=refresh_token', {
@@ -94,12 +104,16 @@ window.SFOS_AUTH = (function () {
   }
 
   /* ---------- เข้าสู่ระบบด้วยรหัสทางอีเมล ---------- */
-  async function sendCode(addr) {
+  async function sendCode(addr, backTo) {
     const e = String(addr || '').trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) throw new Error('รูปแบบอีเมลไม่ถูกต้อง');
-    await req(AUTH + '/otp', {
-      method: 'POST', headers: headers(false),
-      body: JSON.stringify({ email: e, create_user: true })
+    /* redirect_to บอกว่าลิงก์ในอีเมลควรพากลับมาที่ไหน — ต้องอยู่ใน allowlist
+       ของ Redirect URLs ในโปรเจ็ค Supabase ไม่งั้นจะถูกเมินและใช้ Site URL แทน */
+    const body = { email: e, create_user: true };
+    if (backTo) body.options = { email_redirect_to: backTo };
+    const q = backTo ? '?redirect_to=' + encodeURIComponent(backTo) : '';
+    await req(AUTH + '/otp' + q, {
+      method: 'POST', headers: headers(false), body: JSON.stringify(body)
     });
     return e;
   }
@@ -114,6 +128,40 @@ window.SFOS_AUTH = (function () {
     save(d);
     return d;
   }
+  /* ---------- รับ session จากลิงก์ในอีเมล (Magic Link) ----------
+     Supabase ส่ง "ลิงก์" เป็นค่าเริ่มต้น และจะแก้เทมเพลตให้ส่งเป็น "รหัส 6 หลัก"
+     ได้ก็ต่อเมื่อตั้ง custom SMTP แล้ว จึงต้องรองรับทั้งสองทาง
+     ลิงก์จะเด้งกลับมาที่ Site URL พร้อม access_token/refresh_token ใน hash
+     — อ่านแล้วเก็บเป็น session ทันที และลบ token ออกจาก URL เพื่อไม่ให้ค้าง
+     ใน history หรือถูกแชร์ต่อโดยไม่ตั้งใจ */
+  function consumeLinkSession() {
+    let h = location.hash || '';
+    if (h.startsWith('#')) h = h.slice(1);
+    if (!h || h.indexOf('access_token=') < 0) {
+      /* กรณีลิงก์หมดอายุ/ถูกใช้แล้ว Supabase ส่ง error กลับมาใน hash */
+      const q = new URLSearchParams(h);
+      if (q.get('error') || q.get('error_code')) {
+        const code = q.get('error_code') || '';
+        history.replaceState(null, '', location.pathname + location.search);
+        return { error: /expired|invalid/i.test(code)
+          ? 'ลิงก์หมดอายุหรือถูกใช้ไปแล้ว — กดขอลิงก์ใหม่อีกครั้ง'
+          : (q.get('error_description') || 'ลิงก์ใช้งานไม่ได้ — กดขอลิงก์ใหม่') };
+      }
+      return null;
+    }
+    const q = new URLSearchParams(h);
+    const d = {
+      access_token: q.get('access_token'),
+      refresh_token: q.get('refresh_token'),
+      token_type: q.get('token_type') || 'bearer',
+      expires_in: parseInt(q.get('expires_in') || '3600', 10)
+    };
+    history.replaceState(null, '', location.pathname + location.search);
+    if (!d.access_token) return null;
+    save(d);
+    return { ok: true };
+  }
+
   async function signOut() {
     try { if (isSignedIn()) await req(AUTH + '/logout', { method: 'POST', headers: headers() }); } catch (e) {}
     save(null);
@@ -165,7 +213,20 @@ window.SFOS_AUTH = (function () {
       if (redirect !== false) location.replace('login.html?next=' + encodeURIComponent(location.pathname.split('/').pop() + location.hash));
       return { ok: false, reason: 'signed-out' };
     }
-    if (!(await consentComplete())) {
+    let okConsent;
+    try {
+      okConsent = await consentComplete();
+    } catch (e) {
+      /* token ถูกเซิร์ฟเวอร์ปฏิเสธ (เพิกถอน/หมดอายุ/บัญชีถูกลบ) — ต้องไม่โยน error
+         ออกไป เพราะผู้เรียกคือ DOMContentLoaded ซึ่งจะทำให้แอปไม่ boot เลย */
+      if (e.status === 401 || e.status === 403) {
+        save(null);
+        if (redirect !== false) location.replace('login.html');
+        return { ok: false, reason: 'signed-out' };
+      }
+      throw e;                        // error อื่น (เช่นเน็ตหลุด) ปล่อยให้ผู้เรียกจัดการ
+    }
+    if (!okConsent) {
       if (redirect !== false) location.replace('login.html?step=consent');
       return { ok: false, reason: 'no-consent' };
     }
@@ -175,6 +236,7 @@ window.SFOS_AUTH = (function () {
   return {
     ready, POLICY_VERSION, PURPOSES,
     sendCode, verifyCode, signOut, refresh, ensure, isSignedIn, token, email,
+    consumeLinkSession, hydrateUser,
     myConsents, grantConsents, withdrawConsent, hasConsent, consentComplete,
     deleteAccount, requireAuth, isDemo, enterDemo, exitDemo,
     get session() { return session; }

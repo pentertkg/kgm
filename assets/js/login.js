@@ -7,10 +7,29 @@
   const stage = document.getElementById('stage');
   const params = new URLSearchParams(location.search);
   const next = params.get('next') || 'app.html#/dashboard';
+  /* ลิงก์ในอีเมลต้องพากลับมาที่หน้านี้ พร้อมจำปลายทางเดิมไว้ */
+  const backTo = location.origin + location.pathname + '?next=' + encodeURIComponent(next);
 
     /* ทุกข้อเริ่มจาก "ไม่ติ๊ก" โดยเจตนา — PDPA ถือว่าความยินยอมต้องเป็นการกระทำ
      เชิงบวกของเจ้าของข้อมูล การติ๊กมาให้ล่วงหน้าใช้เป็นความยินยอมไม่ได้ */
   const S = { step: 1, email: '', chosen: { account: false, service_email: false, product_news: false } };
+
+  /* ความยินยอมถูกเลือกก่อนส่งอีเมล แต่ผู้ใช้จะออกจากหน้านี้ไปกดลิงก์
+     แล้วกลับมาเป็นหน้าใหม่ — จึงต้องพักสิ่งที่เขาเลือกไว้ก่อน
+     (เป็นการ "จำการกระทำเชิงบวก" ที่เกิดขึ้นแล้ว ไม่ใช่การยินยอมล่วงหน้าแทนผู้ใช้)
+     ถ้าหายไปด้วยเหตุใดก็ตาม ระบบจะพากลับมาถามความยินยอมใหม่ ไม่ข้ามให้ */
+  const PEND = 'sfos_pending_consent';
+  const savePending = () => {
+    try { localStorage.setItem(PEND, JSON.stringify({
+      email: S.email, chosen: Object.keys(S.chosen).filter(k => S.chosen[k]) })); } catch (e) {}
+  };
+  const takePending = () => {
+    try {
+      const v = JSON.parse(localStorage.getItem(PEND) || 'null');
+      localStorage.removeItem(PEND);
+      return v && Array.isArray(v.chosen) ? v.chosen : null;
+    } catch (e) { return null; }
+  };
 
   function steps() {
     const names = ['อีเมล', 'ความยินยอม', 'ยืนยันรหัส'];
@@ -103,7 +122,8 @@
       const btn = document.getElementById('go');
       btn.disabled = true; btn.textContent = 'กำลังส่งรหัส…';
       try {
-        await A.sendCode(S.email);
+        await A.sendCode(S.email, backTo);
+        savePending();
         S.step = 3; render();
       } catch (e) {
         btn.disabled = false; btn.textContent = 'ยินยอมและขอรหัสเข้าสู่ระบบ';
@@ -116,19 +136,20 @@
   function s3(msg) {
     stage.innerHTML = `
       <span class="badge badge-brand">ขั้นที่ 3</span>
-      <h2 class="mt12">กรอกรหัสจากอีเมล</h2>
-      <p class="muted mt8">ส่งรหัส 6 หลักไปที่ <b>${U.esc(S.email)}</b> แล้ว
-        รหัสมีอายุ 1 ชั่วโมง — ถ้าไม่เจอลองดูในโฟลเดอร์สแปม</p>
+      <h2 class="mt12">เปิดอีเมลเพื่อเข้าสู่ระบบ</h2>
+      <p class="muted mt8">ส่งอีเมลไปที่ <b>${U.esc(S.email)}</b> แล้ว —
+        <b>กดปุ่ม "Sign in" ในอีเมลนั้นได้เลย</b> ระบบจะพากลับมาเข้าสู่ระบบให้อัตโนมัติ<br>
+        ถ้าอีเมลมีรหัส 6 หลักมาด้วย จะกรอกที่ช่องล่างนี้ก็ได้ · มีอายุ 10 นาที · ไม่เจอลองดูในโฟลเดอร์สแปม</p>
       <div class="field mt20">
-        <label class="label" for="code">รหัส 6 หลัก</label>
+        <label class="label" for="code">หรือกรอกรหัส 6 หลัก (ถ้ามี)</label>
         <input class="input num" id="code" inputmode="numeric" autocomplete="one-time-code"
                maxlength="6" placeholder="000000"
                style="font-size:28px;letter-spacing:.35em;text-align:center;height:60px">
       </div>
       ${msg ? err(msg) : ''}
-      <button class="btn btn-primary btn-lg btn-block mt20" id="go">เข้าสู่ระบบ</button>
+      <button class="btn btn-primary btn-lg btn-block mt20" id="go">เข้าสู่ระบบด้วยรหัส</button>
       <div class="row g8 mt16" style="justify-content:center">
-        <button class="btn btn-ghost btn-sm" id="resend">ส่งรหัสอีกครั้ง</button>
+        <button class="btn btn-ghost btn-sm" id="resend">ส่งอีเมลอีกครั้ง</button>
         <button class="btn btn-ghost btn-sm" id="back">เปลี่ยนอีเมล</button>
       </div>`;
     const code = document.getElementById('code');
@@ -145,7 +166,7 @@
         U.toast('เข้าสู่ระบบสำเร็จ', 'ok');
         setTimeout(() => location.replace(next), 400);
       } catch (e) {
-        btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ';
+        btn.disabled = false; btn.textContent = 'เข้าสู่ระบบด้วยรหัส';
         s3(e.message);
       }
     };
@@ -155,9 +176,9 @@
     document.getElementById('resend').onclick = async () => {
       const b = document.getElementById('resend');
       b.disabled = true; b.textContent = 'กำลังส่ง…';
-      try { await A.sendCode(S.email); U.toast('ส่งรหัสใหม่แล้ว', 'ok'); }
+      try { await A.sendCode(S.email, backTo); savePending(); U.toast('ส่งอีเมลใหม่แล้ว', 'ok'); }
       catch (e) { s3(e.message); return; }
-      b.disabled = false; b.textContent = 'ส่งรหัสอีกครั้ง';
+      b.disabled = false; b.textContent = 'ส่งอีเมลอีกครั้ง';
     };
   }
 
@@ -207,6 +228,34 @@
         <a class="btn btn-ghost btn-block mt20" href="app.html#/dashboard">ใช้โหมดเดโมต่อ (ไม่ต้องล็อกอิน)</a>`;
       return;
     }
+    /* กลับมาจากการกดลิงก์ในอีเมล — เก็บ session แล้วไปต่อทันที */
+    const link = A.consumeLinkSession();
+    if (link && link.error) {
+      stage.innerHTML = '';
+      render();
+      U.toast(link.error, 'warn');
+      return;
+    }
+    if (link && link.ok) {
+      try {
+        await A.hydrateUser();
+        const pend = takePending();
+        if (pend && pend.length) { try { await A.grantConsents(pend); } catch (e) {} }
+        if (await A.consentComplete()) {
+          U.toast('เข้าสู่ระบบสำเร็จ', 'ok');
+          setTimeout(() => location.replace(next), 400);
+          return;
+        }
+        return consentOnly();        // ยังไม่เคยยินยอม → ขอความยินยอมก่อน
+      } catch (e) {
+        /* token ใช้ไม่ได้/หมดอายุ — ล้าง session แล้วให้เริ่มใหม่ ห้ามปล่อยหน้าว่าง */
+        await A.signOut();
+        render();
+        U.toast('ลิงก์นี้ใช้ไม่ได้แล้ว — กรอกอีเมลเพื่อขอลิงก์ใหม่', 'warn');
+        return;
+      }
+    }
+
     if (params.get('step') === 'consent' && A.isSignedIn()) return consentOnly();
     if (await A.ensure()) {
       if (await A.consentComplete()) { location.replace(next); return; }
