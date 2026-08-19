@@ -199,6 +199,7 @@ window.APP = (function () {
     })();
     window.addEventListener('hashchange', route);
     route();
+    if (state.needsStore) setTimeout(promptCreateStore, 500);
   }
 
   /* ── โหมดจริง: ดึงร้าน + เมนูจาก Supabase มาแทนข้อมูลตัวอย่าง ──
@@ -229,14 +230,20 @@ window.APP = (function () {
     } catch (e) {
       if (e.status === 401) { window.SFOS_AUTH.signOut(); location.replace('login.html'); return; }
       state.liveError = e.message;
-      /* บัญชียังไม่มีร้าน → ชวนไปสร้าง */
-      if (/ยังไม่มีร้าน/.test(e.message)) {
-        U.modal({ title: 'ยังไม่มีร้านในบัญชีนี้', icon: ico('store', 20),
-          okText: 'ไปสร้างร้าน', cancelText: 'ดูข้อมูลตัวอย่างก่อน',
-          body: '<p class="t-sm muted" style="line-height:1.7">บัญชีของคุณล็อกอินสำเร็จแล้ว แต่ยังไม่ได้สร้างร้าน — สร้างร้านก่อนเพื่อให้เมนู ต้นทุน และข้อมูลทั้งหมดเป็นของร้านคุณจริงๆ</p>',
-          onOk() { location.href = 'onboarding.html'; } });
-      }
+      /* บัญชียังไม่มีร้าน — จำไว้ก่อน แล้วค่อยแจ้งหลัง shell ถูก render
+         (ถ้าเปิด modal ตอนนี้จะถูกล้างเพราะ boot เขียน document.body ใหม่) */
+      if (/ยังไม่มีร้าน/.test(e.message)) state.needsStore = true;
     }
+  }
+
+  function promptCreateStore() {
+    U.modal({ title: 'ยังไม่มีร้านในบัญชีนี้', icon: ico('store', 20),
+      okText: 'สร้างร้านของฉัน', cancelText: 'ดูข้อมูลตัวอย่างก่อน',
+      body: `<p class="t-sm muted" style="line-height:1.75">บัญชี
+        <b>${U.esc((window.SFOS_AUTH && window.SFOS_AUTH.email()) || '')}</b>
+        เข้าสู่ระบบแล้ว แต่ยังไม่ได้สร้างร้าน — ตัวเลขที่เห็นอยู่ตอนนี้เป็น<b>ข้อมูลตัวอย่าง</b><br><br>
+        สร้างร้านก่อน แล้วเมนู ต้นทุน และกำไรทั้งหมดจะเป็นของร้านคุณจริงๆ ใช้เวลาประมาณ 2 นาที</p>`,
+      onOk() { location.href = 'onboarding.html'; } });
   }
 
   function paintNav() {

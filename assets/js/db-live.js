@@ -122,6 +122,13 @@ window.SFOS_LIVE = (function () {
     return req(REST + '/' + table + '?' + qs(match), { method: 'DELETE', headers: headers() });
   }
 
+  async function rpc(fn, args) {
+    await ensureSession();
+    return req(REST + '/rpc/' + fn, {
+      method: 'POST', headers: headers(), body: JSON.stringify(args || {})
+    });
+  }
+
   /* ---------- ร้านของผู้ใช้ ---------- */
   let storeId = CFG.storeId || null;
   async function resolveStore() {
@@ -229,15 +236,21 @@ window.SFOS_LIVE = (function () {
       return menu;
     },
 
+    /* สร้างร้าน — ทำผ่านฟังก์ชันในฐานข้อมูล (supabase/07_store_create.sql)
+       เพราะการแยกเป็น insert stores + insert store_members จาก client มี 2 ปัญหา:
+       ถ้าล้มกลางทางจะได้ร้านที่ไม่มีสมาชิก (มองไม่เห็น ลบไม่ได้) และ
+       insert...returning ของ PostgREST ต้องผ่าน policy SELECT ที่ต้องเป็นสมาชิกร้าน
+       ซึ่งตอน insert ยังไม่มีแถวสมาชิก ทำให้สร้างร้านครั้งแรกไม่ผ่าน RLS */
     async createStore(s) {
-      const [store] = await insert('stores', [{
-        name: s.name, emoji: s.emoji, format: s.format, food_type: s.type,
-        location: s.location, open_time: s.open, close_time: s.close,
-        staff_count: s.staff, goal_month: s.goal }]);
-      const me = await req(AUTH + '/user', { headers: headers() });
-      await insert('store_members', [{ store_id: store.id, user_id: me.id, role: 'owner' }]);
-      storeId = store.id;
-      return store;
+      const store = await rpc('create_my_store', {
+        p_name: s.name, p_emoji: s.emoji, p_format: s.format, p_food_type: s.type,
+        p_location: s.location || null, p_open: s.open, p_close: s.close,
+        p_staff: s.staff, p_goal: s.goal
+      });
+      const row = Array.isArray(store) ? store[0] : store;
+      if (!row || !row.id) throw new Error('สร้างร้านไม่สำเร็จ — ไม่ได้รับข้อมูลร้านกลับมา');
+      storeId = row.id;
+      return row;
     }
   };
 
@@ -249,7 +262,7 @@ window.SFOS_LIVE = (function () {
 
   return Object.assign({
     enabled, signUp, signIn, signOut, refresh, isSignedIn,
-    select, insert, update, remove, resolveStore,
+    select, insert, update, remove, rpc, resolveStore,
     get session() { return session; },
     get storeId() { return storeId; }
   }, api);

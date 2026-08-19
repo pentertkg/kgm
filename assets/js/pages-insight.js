@@ -506,21 +506,26 @@
               ? 'ตอนนี้ใช้ข้อมูลตัวอย่างในเครื่อง ไม่มีบัญชีผู้ใช้และไม่บันทึกอะไรลงฐานข้อมูล เข้าสู่ระบบเพื่อใช้ข้อมูลจริงและจัดการความยินยอม'
               : 'ยังไม่ได้ใส่ค่า Supabase ใน <code>assets/js/config.js</code> จึงยังไม่มีระบบสมาชิก'}</span></div></div>
           <div class="row g8 mt16 wrap">
-            <a class="btn btn-primary" href="login.html">เข้าสู่ระบบด้วยอีเมล</a>
+            <a class="btn btn-primary" href="login.html">เข้าสู่ระบบ / สมัครสมาชิก</a>
             <a class="btn btn-ghost" href="privacy.html" target="_blank" rel="noopener">อ่านคำชี้แจงการเก็บข้อมูล</a>
           </div>
           <div class="ai-strip mt16"><div class="ic">${ICO('bell',15)}</div>
-            <div class="t-sm">ระบบเก็บข้อมูลส่วนบุคคลเพียง <b>อีเมล</b> อย่างเดียว และไม่มีรหัสผ่าน</div></div>`);
+            <div class="t-sm">ระบบเก็บข้อมูลส่วนบุคคลเพียง <b>อีเมล</b> อย่างเดียว · รหัสผ่านเก็บเป็น hash อ่านย้อนกลับไม่ได้</div></div>`);
       }
       return card('บัญชีของคุณ','ข้อมูลส่วนบุคคลที่ระบบเก็บมีเพียงอีเมลเท่านั้น', `
           <div class="grid g-2" style="gap:12px">
             <div class="tile"><div class="t-xs muted b6">อีเมล</div>
               <div class="b7 mt4" style="font-size:15.5px;word-break:break-all">${U.esc(A.email() || '—')}</div></div>
             <div class="tile"><div class="t-xs muted b6">วิธีเข้าสู่ระบบ</div>
-              <div class="b7 mt4" style="font-size:15.5px">รหัสทางอีเมล (ไม่มีรหัสผ่าน)</div></div>
+              <div class="b7 mt4" style="font-size:15.5px">อีเมล + รหัสผ่าน</div></div>
+          </div>
+          <div class="row g8 mt16 wrap">
+            <button class="btn btn-soft btn-sm" id="chgPw">เปลี่ยนรหัสผ่าน</button>
+            <button class="btn btn-ghost btn-sm" id="doOut">ออกจากระบบ</button>
           </div>
           <div class="ai-strip mt16"><div class="ic">${ICO('key',15)}</div>
-            <div class="t-sm">ระบบไม่เก็บรหัสผ่าน ชื่อ เบอร์โทร ที่อยู่ IP หรือพฤติกรรมการใช้งาน —
+            <div class="t-sm">ระบบไม่เก็บชื่อ เบอร์โทร ที่อยู่ IP หรือพฤติกรรมการใช้งาน
+              และรหัสผ่านถูกเก็บเป็น hash อ่านย้อนกลับไม่ได้ —
               <a href="privacy.html" target="_blank" rel="noopener">อ่านคำชี้แจง</a></div></div>`) +
         card('ความยินยอม','ถอนได้ง่ายเท่ากับตอนให้ ผลมีทันที', `<div id="consentBox">
             <div class="t-sm muted">กำลังโหลด…</div></div>`,
@@ -541,6 +546,32 @@
     async function mountAccount(root){
       const A = window.SFOS_AUTH;
       if (!A || !A.ready || !A.isSignedIn()) return;   // โหมดเดโม ไม่มีอะไรต้อง mount
+
+      /* เปลี่ยนรหัสผ่าน — รหัสอยู่ในฟอร์มชั่วคราว ส่งตรงไป Supabase แล้วทิ้ง */
+      const cp = root.querySelector('#chgPw');
+      if (cp) cp.onclick = () => {
+        U.modal({
+          title:'เปลี่ยนรหัสผ่าน', icon:ICO('key',20), okText:'บันทึกรหัสผ่านใหม่', cancelText:'ยกเลิก',
+          body:`<div class="col g14">
+            <div class="field"><label class="label" for="cp1">รหัสผ่านใหม่</label>
+              <input class="input" id="cp1" type="password" autocomplete="new-password" placeholder="••••••••">
+              <span class="hint">อย่างน้อย ${A.MIN_PW} ตัวอักษร — ยาวสำคัญกว่าอักขระพิเศษ</span></div>
+            <div class="field"><label class="label" for="cp2">ยืนยันรหัสผ่านใหม่</label>
+              <input class="input" id="cp2" type="password" autocomplete="new-password" placeholder="••••••••"></div>
+            <div class="t-xs muted">เปลี่ยนแล้วอุปกรณ์อื่นที่ล็อกอินอยู่จะยังใช้ได้จนกว่า session จะหมดอายุ</div>
+          </div>`,
+          onOk(el){
+            const a = el.querySelector('#cp1').value, b2 = el.querySelector('#cp2').value;
+            if (a.length < A.MIN_PW) { U.toast('รหัสผ่านต้องยาวอย่างน้อย ' + A.MIN_PW + ' ตัวอักษร','warn'); return false; }
+            if (a !== b2) { U.toast('รหัสผ่านสองช่องไม่ตรงกัน','warn'); return false; }
+            A.changePassword(a)
+              .then(() => U.toast('เปลี่ยนรหัสผ่านแล้ว','ok'))
+              .catch(e => U.toast(e.message,'warn'));
+          }
+        });
+      };
+      const out = root.querySelector('#doOut');
+      if (out) out.onclick = async () => { await A.signOut(); location.href = 'login.html'; };
 
       const box = root.querySelector('#consentBox');
       const paint = async () => {

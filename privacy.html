@@ -10,7 +10,7 @@
 <link rel="canonical" href="https://streetfood-os.vercel.app/privacy.html">
 <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
 <link rel="preload" href="assets/fonts/noto-sans-thai-thai.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/styles.css?v=20260819b">
+<link rel="stylesheet" href="assets/css/styles.css?v=20260819e">
 <style>
   .doc{max-width:720px;margin:0 auto;padding:34px 22px 80px}
   .doc h2{font-size:21px;margin:34px 0 10px}
@@ -41,7 +41,7 @@
       <div>
         <b>สรุปสั้นที่สุด</b>
         <p style="margin-top:6px;color:var(--ink)">
-          เราเก็บ <b>อีเมลของคุณเพียงอย่างเดียว</b> · ไม่มีรหัสผ่าน · ไม่ติดตามพฤติกรรม ·
+          เราเก็บ <b>อีเมลของคุณเพียงอย่างเดียว</b> · รหัสผ่านเก็บเป็น hash · ไม่ติดตามพฤติกรรม ·
           ไม่ส่งต่อให้ใคร · ถอนความยินยอมและลบบัญชีได้เองในหน้า Settings
         </p>
       </div>
@@ -61,7 +61,8 @@
 
   <h2>2. สิ่งที่เรา<u>ไม่</u>เก็บ</h2>
   <ul>
-    <li><b>ไม่มีรหัสผ่าน</b> — เข้าสู่ระบบด้วยรหัสใช้ครั้งเดียวที่ส่งไปยังอีเมล จึงไม่มีรหัสผ่านให้รั่วไหล</li>
+    <li><b>ไม่เก็บรหัสผ่านที่อ่านได้</b> — รหัสผ่านของคุณถูกแปลงเป็นค่าเข้ารหัสทางเดียว (bcrypt hash)
+      โดยระบบยืนยันตัวตนของ Supabase ไม่มีการเก็บรหัสผ่านตัวจริง และทีมงานอ่านย้อนกลับไม่ได้</li>
     <li>ไม่เก็บชื่อ-นามสกุล เบอร์โทรศัพท์ ที่อยู่ เลขบัตรประชาชน หรือข้อมูลการชำระเงิน</li>
     <li><b>ไม่เก็บ IP address และ user-agent</b> แม้ในบันทึกความยินยอม เพราะไม่จำเป็นต่อการพิสูจน์ความยินยอม</li>
     <li>ไม่มี cookie เพื่อการติดตาม ไม่มีเครื่องมือวิเคราะห์พฤติกรรมของบุคคลที่สาม</li>

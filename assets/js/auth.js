@@ -1,8 +1,10 @@
 /* ============================================================
-   StreetFood OS — ระบบสมาชิก (passwordless) + ความยินยอม PDPA
+   StreetFood OS — ระบบสมาชิก (อีเมล + รหัสผ่าน) + ความยินยอม PDPA
    ------------------------------------------------------------
-   · เข้าสู่ระบบด้วยรหัส 6 หลักที่ส่งไปยังอีเมล — ไม่มีรหัสผ่าน
-     จึงไม่มีรหัสผ่านให้เก็บ ไม่มีให้รั่ว และไม่ต้องมี flow ลืมรหัสผ่าน
+   · เข้าสู่ระบบด้วยอีเมล + รหัสผ่าน สมัครแล้วใช้งานได้ทันที ไม่ต้องรออีเมล
+   · รหัสผ่านไม่เคยถูกเก็บหรือส่งผ่านโค้ดของเรา — ส่งตรงไป Supabase (GoTrue)
+     ซึ่งเก็บเป็น bcrypt hash เท่านั้น ที่นี่ไม่มีการเขียนรหัสผ่านลง storage
+   · ยังรองรับลิงก์/รหัสทางอีเมลไว้ (สำหรับลิงก์เก่าและกรณีลืมรหัสผ่าน)
    · ข้อมูลส่วนบุคคลที่ระบบเก็บ = อีเมลเท่านั้น (อยู่ใน auth.users ของ Supabase)
    · ความยินยอมบันทึกใน public.consents พร้อมเวอร์ชันของคำชี้แจง
    · ไม่มี dependency ไม่ต้อง build — คุย REST ตรงด้วย fetch
@@ -61,6 +63,16 @@ window.SFOS_AUTH = (function () {
     if (status === 429 || code === 'over_email_send_rate_limit')
       return 'ขอรหัสถี่เกินไป รออีกสักครู่แล้วลองใหม่ (โปรเจกต์ที่ยังไม่ตั้ง SMTP เองจะส่งอีเมลได้จำกัด)';
     if (status === 403 && /signups not allowed/i.test(msg)) return 'ระบบปิดรับสมัครสมาชิกใหม่อยู่';
+    if (code === 'invalid_credentials' || /invalid login credentials/i.test(msg))
+      return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+    if (code === 'user_already_exists' || /already registered|already been registered/i.test(msg))
+      return 'อีเมลนี้สมัครไว้แล้ว — กดแท็บ "เข้าสู่ระบบ" เพื่อเข้าใช้งาน';
+    if (code === 'weak_password' || /password should be at least/i.test(msg))
+      return 'รหัสผ่านสั้นเกินไป ต้องยาวอย่างน้อย 8 ตัวอักษร';
+    if (code === 'same_password' || /should be different from the old/i.test(msg))
+      return 'รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสเดิม';
+    if (code === 'email_not_confirmed' || /email not confirmed/i.test(msg))
+      return 'อีเมลนี้ยังไม่ได้ยืนยัน — เปิดอีเมลแล้วกดยืนยันก่อน';
     if (msg) return msg;
     return 'เกิดข้อผิดพลาด (HTTP ' + status + ')';
   }
@@ -117,6 +129,65 @@ window.SFOS_AUTH = (function () {
     });
     return e;
   }
+  /* ---------- อีเมล + รหัสผ่าน ----------
+     รหัสผ่านถูกส่งตรงไป Supabase ผ่าน HTTPS แล้วทิ้งทันที
+     ไม่มีการเก็บลง localStorage/sessionStorage หรือ log ที่ใดเลย */
+  const MIN_PW = 8;                                   // ต้องตรงกับ Supabase (Minimum password length)
+  function checkPw(pw) {
+    const v = String(pw || '');
+    if (v.length < MIN_PW) throw new Error('รหัสผ่านต้องยาวอย่างน้อย ' + MIN_PW + ' ตัวอักษร');
+    return v;
+  }
+  function checkEmail(addr) {
+    const e = String(addr || '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) throw new Error('รูปแบบอีเมลไม่ถูกต้อง');
+    return e;
+  }
+
+  async function signUp(addr, pw) {
+    const e = checkEmail(addr), p = checkPw(pw);
+    const d = await req(AUTH + '/signup', {
+      method: 'POST', headers: headers(false),
+      body: JSON.stringify({ email: e, password: p })
+    });
+    /* ปิด "Confirm email" ไว้ Supabase จึงคืน session มาให้เลย
+       ถ้าวันหลังเปิดยืนยันอีเมล จะไม่มี access_token — ต้องบอกผู้ใช้ให้ไปกดยืนยัน */
+    if (d && d.access_token) { save(d); return { session: d, needsConfirm: false }; }
+    return { session: null, needsConfirm: true };
+  }
+
+  async function signIn(addr, pw) {
+    const e = checkEmail(addr), p = String(pw || '');
+    if (!p) throw new Error('กรอกรหัสผ่าน');
+    const d = await req(AUTH + '/token?grant_type=password', {
+      method: 'POST', headers: headers(false),
+      body: JSON.stringify({ email: e, password: p })
+    });
+    save(d);
+    return d;
+  }
+
+  /* เปลี่ยนรหัสผ่านของบัญชีที่ล็อกอินอยู่ */
+  async function changePassword(pw) {
+    const p = checkPw(pw);
+    if (!isSignedIn()) throw new Error('ต้องเข้าสู่ระบบก่อน');
+    const d = await req(AUTH + '/user', {
+      method: 'PUT', headers: headers(), body: JSON.stringify({ password: p })
+    });
+    if (session) { session.user = d; save(session); }
+    return d;
+  }
+
+  /* ลืมรหัสผ่าน — ต้องพึ่งอีเมล จึงจำกัดตามโควตา SMTP ของโปรเจ็ค */
+  async function requestPasswordReset(addr, backTo) {
+    const e = checkEmail(addr);
+    const q = backTo ? '?redirect_to=' + encodeURIComponent(backTo) : '';
+    await req(AUTH + '/recover' + q, {
+      method: 'POST', headers: headers(false), body: JSON.stringify({ email: e })
+    });
+    return e;
+  }
+
   async function verifyCode(addr, code) {
     const e = String(addr || '').trim().toLowerCase();
     const t = String(code || '').replace(/\D/g, '');
@@ -235,6 +306,7 @@ window.SFOS_AUTH = (function () {
 
   return {
     ready, POLICY_VERSION, PURPOSES,
+    MIN_PW, signUp, signIn, changePassword, requestPasswordReset,
     sendCode, verifyCode, signOut, refresh, ensure, isSignedIn, token, email,
     consumeLinkSession, hydrateUser,
     myConsents, grantConsents, withdrawConsent, hasConsent, consentComplete,

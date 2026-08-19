@@ -12,17 +12,14 @@
 
     /* ทุกข้อเริ่มจาก "ไม่ติ๊ก" โดยเจตนา — PDPA ถือว่าความยินยอมต้องเป็นการกระทำ
      เชิงบวกของเจ้าของข้อมูล การติ๊กมาให้ล่วงหน้าใช้เป็นความยินยอมไม่ได้ */
-  const S = { step: 1, email: '', chosen: { account: false, service_email: false, product_news: false } };
+  /* pw อยู่ในหน่วยความจำระหว่างขั้นสมัครเท่านั้น — ไม่เคยถูกเขียนลง storage
+     และถูกล้างทันทีที่สมัครเสร็จ (ดู s2) */
+  const S = { step: 1, mode: 'signin', email: '', pw: '',
+              chosen: { account: false, service_email: false, product_news: false } };
 
-  /* ความยินยอมถูกเลือกก่อนส่งอีเมล แต่ผู้ใช้จะออกจากหน้านี้ไปกดลิงก์
-     แล้วกลับมาเป็นหน้าใหม่ — จึงต้องพักสิ่งที่เขาเลือกไว้ก่อน
-     (เป็นการ "จำการกระทำเชิงบวก" ที่เกิดขึ้นแล้ว ไม่ใช่การยินยอมล่วงหน้าแทนผู้ใช้)
-     ถ้าหายไปด้วยเหตุใดก็ตาม ระบบจะพากลับมาถามความยินยอมใหม่ ไม่ข้ามให้ */
+  /* ความยินยอมที่ค้างจากโฟลวลิงก์อีเมลเดิม — เก็บกวาดให้ครบเมื่อผู้ใช้กลับมา
+     ทางลิงก์เก่าที่ส่งไปก่อนเปลี่ยนมาใช้รหัสผ่าน */
   const PEND = 'sfos_pending_consent';
-  const savePending = () => {
-    try { localStorage.setItem(PEND, JSON.stringify({
-      email: S.email, chosen: Object.keys(S.chosen).filter(k => S.chosen[k]) })); } catch (e) {}
-  };
   const takePending = () => {
     try {
       const v = JSON.parse(localStorage.getItem(PEND) || 'null');
@@ -32,32 +29,66 @@
   };
 
   function steps() {
-    const names = ['อีเมล', 'ความยินยอม', 'ยืนยันรหัส'];
+    if (S.mode !== 'signup') { document.getElementById('steps').innerHTML = ''; return; }
+    const names = ['ตั้งรหัสผ่าน', 'ความยินยอม'];
     document.getElementById('steps').innerHTML = names.map((n, i) => {
       const k = i + 1, cls = k === S.step ? 'on' : k < S.step ? 'done' : '';
       return `<div class="step-i ${cls}"><span class="step-n">${k < S.step ? '✓' : k}</span>
-        <span class="step-l">${n}</span></div>${i < 2 ? `<span class="step-line ${k < S.step ? 'done' : ''}"></span>` : ''}`;
+        <span class="step-l">${n}</span></div>${i < names.length - 1 ? `<span class="step-line ${k < S.step ? 'done' : ''}"></span>` : ''}`;
     }).join('');
   }
 
   const err = m => `<div class="caution-box mt16" role="alert" style="border-left:3px solid var(--bad);background:var(--bad-soft);border-radius:0 10px 10px 0;padding:13px 16px">
       <div class="t-sm b7" style="color:#b8232f">${U.esc(m)}</div></div>`;
 
-  /* ── ขั้น 1: อีเมล ─────────────────────────────────────── */
+  /* ── ขั้น 1: อีเมล + รหัสผ่าน ───────────────────────────
+     รหัสผ่านอยู่ในตัวแปรชั่วคราวเท่านั้น ส่งตรงไป Supabase แล้วทิ้ง
+     ไม่เขียนลง localStorage/sessionStorage และไม่ใส่ใน URL เด็ดขาด */
+  const pwField = (id, label, auto, hint) => `
+      <div class="field mt16">
+        <label class="label" for="${id}">${label}</label>
+        <div style="position:relative">
+          <input class="input" id="${id}" type="password" autocomplete="${auto}"
+                 placeholder="••••••••" style="padding-right:76px">
+          <button type="button" class="btn btn-ghost btn-xs" data-eye="${id}"
+                  style="position:absolute;right:8px;top:50%;transform:translateY(-50%)"
+                  aria-label="สลับการแสดงรหัสผ่าน">แสดง</button>
+        </div>
+        ${hint ? `<span class="hint">${hint}</span>` : ''}
+      </div>`;
+
+  function bindEyes() {
+    stage.querySelectorAll('[data-eye]').forEach(b => b.onclick = () => {
+      const f = document.getElementById(b.dataset.eye);
+      const show = f.type === 'password';
+      f.type = show ? 'text' : 'password';
+      b.textContent = show ? 'ซ่อน' : 'แสดง';
+    });
+  }
+
   function s1(msg) {
+    const isUp = S.mode === 'signup';
     stage.innerHTML = `
-      <span class="badge badge-brand">ขั้นที่ 1</span>
-      <h2 class="mt12">เข้าสู่ระบบด้วยอีเมล</h2>
-      <p class="muted mt8">เราจะส่งรหัส 6 หลักไปให้ — <b>ไม่ต้องตั้งรหัสผ่าน</b>
-        ถ้ายังไม่มีบัญชี ระบบจะสร้างให้อัตโนมัติ</p>
+      <div class="tabs mb16" id="mTabs" role="tablist">
+        <button data-m="signin" class="${isUp ? '' : 'on'}" role="tab">เข้าสู่ระบบ</button>
+        <button data-m="signup" class="${isUp ? 'on' : ''}" role="tab">สมัครสมาชิก</button>
+      </div>
+      <h2>${isUp ? 'สมัครสมาชิกใหม่' : 'เข้าสู่ระบบ'}</h2>
+      <p class="muted mt8">${isUp
+        ? 'ใช้อีเมลกับรหัสผ่าน สมัครเสร็จใช้งานได้ทันที ไม่ต้องรออีเมลยืนยัน'
+        : 'กรอกอีเมลและรหัสผ่านที่ตั้งไว้ตอนสมัคร'}</p>
+
       <div class="field mt20">
         <label class="label" for="em">อีเมล</label>
-        <input class="input" id="em" type="email" inputmode="email" autocomplete="email"
+        <input class="input" id="em" type="email" inputmode="email" autocomplete="${isUp ? 'email' : 'username'}"
                placeholder="you@example.com" value="${U.esc(S.email)}">
-        <span class="hint">ใช้อีเมลที่เปิดอ่านได้ตอนนี้ เพราะต้องเอารหัสจากในเมล</span>
       </div>
+      ${pwField('pw', 'รหัสผ่าน', isUp ? 'new-password' : 'current-password',
+        isUp ? 'อย่างน้อย ' + A.MIN_PW + ' ตัวอักษร — ยาวสำคัญกว่าอักขระพิเศษ' : '')}
+      ${isUp ? pwField('pw2', 'ยืนยันรหัสผ่าน', 'new-password', '') : ''}
       ${msg ? err(msg) : ''}
-      <button class="btn btn-primary btn-lg btn-block mt20" id="go">ต่อไป</button>
+      <button class="btn btn-primary btn-lg btn-block mt20" id="go">${isUp ? 'ต่อไป: ความยินยอม' : 'เข้าสู่ระบบ'}</button>
+      ${isUp ? '' : '<div class="ctr mt12"><button class="btn btn-ghost btn-sm" id="forgot">ลืมรหัสผ่าน?</button></div>'}
 
       <div class="row g10 mt20" style="align-items:center">
         <span style="flex:1;height:1px;background:var(--line)"></span>
@@ -67,15 +98,51 @@
       <button class="btn btn-ghost btn-block mt16" id="demo">ดูโหมดเดโมก่อน (ไม่ต้องสมัคร)</button>
       <p class="t-xs muted ctr mt8">ใช้ข้อมูลตัวอย่างในเครื่อง ไม่บันทึกอะไรลงฐานข้อมูล</p>
       <div class="ctr mt16"><a class="t-sm" href="index.html">← กลับหน้าแรก</a></div>`;
-    const em = document.getElementById('em');
-    em.focus();
-    const go = () => {
+
+    bindEyes();
+    const em = document.getElementById('em'), pw = document.getElementById('pw');
+    (S.email ? pw : em).focus();
+
+    stage.querySelectorAll('[data-m]').forEach(b => b.onclick = () => {
+      S.mode = b.dataset.m; S.email = em.value.trim().toLowerCase(); render();
+    });
+
+    const go = async () => {
+      const btn = document.getElementById('go');
       S.email = em.value.trim().toLowerCase();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(S.email)) return s1('รูปแบบอีเมลไม่ถูกต้อง');
-      S.step = 2; render();
+      const p1 = pw.value;
+      if (!p1) return s1('กรอกรหัสผ่าน');
+
+      if (isUp) {
+        if (p1.length < A.MIN_PW) return s1('รหัสผ่านต้องยาวอย่างน้อย ' + A.MIN_PW + ' ตัวอักษร');
+        if (p1 !== document.getElementById('pw2').value) return s1('รหัสผ่านสองช่องไม่ตรงกัน');
+        S.pw = p1;                       // ถือไว้ชั่วคราวเพื่อสมัครหลังยินยอม
+        S.step = 2; render(); return;
+      }
+
+      btn.disabled = true; btn.textContent = 'กำลังเข้าสู่ระบบ…';
+      try {
+        await A.signIn(S.email, p1);
+        if (await A.consentComplete()) {
+          U.toast('เข้าสู่ระบบสำเร็จ', 'ok');
+          setTimeout(() => location.replace(next), 300);
+        } else {
+          consentOnly();                 // บัญชีเก่าที่ยังไม่เคยยินยอม
+        }
+      } catch (e) {
+        btn.disabled = false; btn.textContent = 'เข้าสู่ระบบ';
+        s1(e.message);
+      }
     };
     document.getElementById('go').onclick = go;
-    em.onkeydown = e => { if (e.key === 'Enter') go(); };
+    [em, pw].forEach(f => f.onkeydown = e => { if (e.key === 'Enter') go(); });
+    const p2 = document.getElementById('pw2');
+    if (p2) p2.onkeydown = e => { if (e.key === 'Enter') go(); };
+
+    const fg = document.getElementById('forgot');
+    if (fg) fg.onclick = () => { S.email = em.value.trim().toLowerCase(); forgotView(); };
+
     document.getElementById('demo').onclick = () => {
       A.enterDemo();
       /* เดโมใช้ Mock data — พาเข้า onboarding ไม่ได้เพราะร้านจะไม่ถูกบันทึกจริง */
@@ -83,11 +150,70 @@
     };
   }
 
+  /* ── ลืมรหัสผ่าน — ต้องพึ่งอีเมล จึงบอกข้อจำกัดไว้ตรงๆ ── */
+  function forgotView(msg, ok) {
+    document.getElementById('steps').innerHTML = '';
+    stage.innerHTML = `
+      <h2>ตั้งรหัสผ่านใหม่</h2>
+      <p class="muted mt8">ใส่อีเมลที่สมัครไว้ ระบบจะส่งลิงก์ตั้งรหัสผ่านใหม่ไปให้</p>
+      <div class="tile mt16" style="border-left:3px solid var(--warn);background:var(--warn-soft);border-radius:0 10px 10px 0">
+        <span class="t-sm">ขั้นนี้ต้องส่งอีเมล ซึ่งช่วง Beta ยังจำกัดประมาณ 3–4 ฉบับต่อชั่วโมง
+          ถ้าไม่ได้รับ ให้รอสักครู่แล้วลองใหม่</span></div>
+      <div class="field mt16">
+        <label class="label" for="fem">อีเมล</label>
+        <input class="input" id="fem" type="email" inputmode="email" autocomplete="email"
+               placeholder="you@example.com" value="${U.esc(S.email)}">
+      </div>
+      ${msg ? err(msg) : ''}
+      ${ok ? `<div class="tile mt16" style="border-left:3px solid var(--good);background:var(--good-soft);border-radius:0 10px 10px 0">
+        <span class="t-sm">ส่งลิงก์ไปที่ <b>${U.esc(S.email)}</b> แล้ว — เปิดอีเมลแล้วกดลิงก์เพื่อตั้งรหัสใหม่</span></div>` : ''}
+      <button class="btn btn-primary btn-lg btn-block mt20" id="go">ส่งลิงก์ตั้งรหัสใหม่</button>
+      <div class="ctr mt12"><button class="btn btn-ghost btn-sm" id="back">← กลับไปเข้าสู่ระบบ</button></div>`;
+    document.getElementById('fem').focus();
+    document.getElementById('back').onclick = () => { S.mode = 'signin'; S.step = 1; render(); };
+    document.getElementById('go').onclick = async () => {
+      const b = document.getElementById('go');
+      S.email = document.getElementById('fem').value.trim().toLowerCase();
+      b.disabled = true; b.textContent = 'กำลังส่ง…';
+      try {
+        await A.requestPasswordReset(S.email, location.origin + location.pathname + '?reset=1');
+        forgotView(null, true);
+      } catch (e) { forgotView(e.message); }
+    };
+  }
+
+  /* ── ตั้งรหัสผ่านใหม่ (กลับมาจากลิงก์ในอีเมล พร้อม session) ── */
+  function resetView(msg) {
+    document.getElementById('steps').innerHTML = '';
+    stage.innerHTML = `
+      <h2>ตั้งรหัสผ่านใหม่</h2>
+      <p class="muted mt8">ยืนยันตัวตนจากลิงก์ในอีเมลแล้ว — ตั้งรหัสผ่านใหม่ได้เลย</p>
+      ${pwField('np', 'รหัสผ่านใหม่', 'new-password', 'อย่างน้อย ' + A.MIN_PW + ' ตัวอักษร')}
+      ${pwField('np2', 'ยืนยันรหัสผ่านใหม่', 'new-password', '')}
+      ${msg ? err(msg) : ''}
+      <button class="btn btn-primary btn-lg btn-block mt20" id="go">บันทึกรหัสผ่านใหม่</button>`;
+    bindEyes();
+    document.getElementById('np').focus();
+    document.getElementById('go').onclick = async () => {
+      const b = document.getElementById('go');
+      const a1 = document.getElementById('np').value, a2 = document.getElementById('np2').value;
+      if (a1.length < A.MIN_PW) return resetView('รหัสผ่านต้องยาวอย่างน้อย ' + A.MIN_PW + ' ตัวอักษร');
+      if (a1 !== a2) return resetView('รหัสผ่านสองช่องไม่ตรงกัน');
+      b.disabled = true; b.textContent = 'กำลังบันทึก…';
+      try {
+        await A.changePassword(a1);
+        const done = await A.consentComplete();
+        U.toast('ตั้งรหัสผ่านใหม่แล้ว', 'ok');
+        setTimeout(() => location.replace(done ? next : 'login.html?step=consent'), 400);
+      } catch (e) { resetView(e.message); }
+    };
+  }
+
   /* ── ขั้น 2: ความยินยอม ────────────────────────────────── */
   function s2(msg) {
     stage.innerHTML = `
       <span class="badge badge-brand">ขั้นที่ 2</span>
-      <h2 class="mt12">ขอความยินยอมก่อนเริ่มใช้งาน</h2>
+      <h2 class="mt12">ขอความยินยอมก่อนสร้างบัญชี</h2>
       <p class="muted mt8">เลือกได้ว่าจะยินยอมเรื่องใด ข้อที่ไม่บังคับปฏิเสธได้และยังใช้ระบบได้ปกติ</p>
 
       <div class="tile mt16" style="background:var(--surface-2)">
@@ -99,8 +225,8 @@
 
       <div class="col g10 mt16" id="cons"></div>
       ${msg ? err(msg) : ''}
-      <button class="btn btn-primary btn-lg btn-block mt20" id="go">ยินยอมและขอรหัสเข้าสู่ระบบ</button>
-      <div class="ctr mt12"><button class="btn btn-ghost btn-sm" id="back">← เปลี่ยนอีเมล</button></div>`;
+      <button class="btn btn-primary btn-lg btn-block mt20" id="go">ยินยอมและสร้างบัญชี</button>
+      <div class="ctr mt12"><button class="btn btn-ghost btn-sm" id="back">← ย้อนกลับ</button></div>`;
 
     document.getElementById('cons').innerHTML = A.PURPOSES.map(p => `
       <label class="choice" style="align-items:flex-start;cursor:pointer">
@@ -122,63 +248,24 @@
       const btn = document.getElementById('go');
       btn.disabled = true; btn.textContent = 'กำลังส่งรหัส…';
       try {
-        await A.sendCode(S.email, backTo);
-        savePending();
-        S.step = 3; render();
-      } catch (e) {
-        btn.disabled = false; btn.textContent = 'ยินยอมและขอรหัสเข้าสู่ระบบ';
-        s2(e.message);
-      }
-    };
-  }
-
-  /* ── ขั้น 3: รหัส 6 หลัก ───────────────────────────────── */
-  function s3(msg) {
-    stage.innerHTML = `
-      <span class="badge badge-brand">ขั้นที่ 3</span>
-      <h2 class="mt12">เปิดอีเมลเพื่อเข้าสู่ระบบ</h2>
-      <p class="muted mt8">ส่งอีเมลไปที่ <b>${U.esc(S.email)}</b> แล้ว —
-        <b>กดปุ่ม "Sign in" ในอีเมลนั้นได้เลย</b> ระบบจะพากลับมาเข้าสู่ระบบให้อัตโนมัติ<br>
-        ถ้าอีเมลมีรหัส 6 หลักมาด้วย จะกรอกที่ช่องล่างนี้ก็ได้ · มีอายุ 10 นาที · ไม่เจอลองดูในโฟลเดอร์สแปม</p>
-      <div class="field mt20">
-        <label class="label" for="code">หรือกรอกรหัส 6 หลัก (ถ้ามี)</label>
-        <input class="input num" id="code" inputmode="numeric" autocomplete="one-time-code"
-               maxlength="6" placeholder="000000"
-               style="font-size:28px;letter-spacing:.35em;text-align:center;height:60px">
-      </div>
-      ${msg ? err(msg) : ''}
-      <button class="btn btn-primary btn-lg btn-block mt20" id="go">เข้าสู่ระบบด้วยรหัส</button>
-      <div class="row g8 mt16" style="justify-content:center">
-        <button class="btn btn-ghost btn-sm" id="resend">ส่งอีเมลอีกครั้ง</button>
-        <button class="btn btn-ghost btn-sm" id="back">เปลี่ยนอีเมล</button>
-      </div>`;
-    const code = document.getElementById('code');
-    code.focus();
-    code.oninput = () => { code.value = code.value.replace(/\D/g, '').slice(0, 6); };
-    const go = async () => {
-      const btn = document.getElementById('go');
-      btn.disabled = true; btn.textContent = 'กำลังตรวจรหัส…';
-      try {
-        await A.verifyCode(S.email, code.value);
-        // บันทึกความยินยอมหลังล็อกอินสำเร็จ (ต้องมี auth.uid() ก่อน)
-        const chosen = Object.keys(S.chosen).filter(k => S.chosen[k]);
-        await A.grantConsents(chosen);
-        U.toast('เข้าสู่ระบบสำเร็จ', 'ok');
+        const r = await A.signUp(S.email, S.pw);
+        S.pw = '';                        // ทิ้งรหัสผ่านจากหน่วยความจำทันทีที่ใช้เสร็จ
+        if (r.needsConfirm) {
+          /* เผื่อกรณีเปิด "Confirm email" ในอนาคต */
+          document.getElementById('steps').innerHTML = '';
+          stage.innerHTML = `<h2>สร้างบัญชีแล้ว — เหลือยืนยันอีเมล</h2>
+            <p class="muted mt8">เปิดอีเมล <b>${U.esc(S.email)}</b> แล้วกดยืนยัน
+              จากนั้นกลับมาเข้าสู่ระบบด้วยรหัสผ่านที่ตั้งไว้</p>
+            <a class="btn btn-primary btn-lg btn-block mt20" href="login.html">ไปหน้าเข้าสู่ระบบ</a>`;
+          return;
+        }
+        await A.grantConsents(Object.keys(S.chosen).filter(k => S.chosen[k]));
+        U.toast('สร้างบัญชีสำเร็จ', 'ok');
         setTimeout(() => location.replace(next), 400);
       } catch (e) {
-        btn.disabled = false; btn.textContent = 'เข้าสู่ระบบด้วยรหัส';
-        s3(e.message);
+        btn.disabled = false; btn.textContent = 'ยินยอมและสร้างบัญชี';
+        s2(e.message);
       }
-    };
-    document.getElementById('go').onclick = go;
-    code.onkeydown = e => { if (e.key === 'Enter') go(); };
-    document.getElementById('back').onclick = () => { S.step = 1; render(); };
-    document.getElementById('resend').onclick = async () => {
-      const b = document.getElementById('resend');
-      b.disabled = true; b.textContent = 'กำลังส่ง…';
-      try { await A.sendCode(S.email, backTo); savePending(); U.toast('ส่งอีเมลใหม่แล้ว', 'ok'); }
-      catch (e) { s3(e.message); return; }
-      b.disabled = false; b.textContent = 'ส่งอีเมลอีกครั้ง';
     };
   }
 
@@ -214,7 +301,7 @@
     };
   }
 
-  function render() { steps(); [s1, s2, s3][S.step - 1](); }
+  function render() { steps(); (S.step === 2 ? s2 : s1)(); }
 
   /* ── เริ่มทำงาน ────────────────────────────────────────── */
   (async function start() {
@@ -239,6 +326,8 @@
     if (link && link.ok) {
       try {
         await A.hydrateUser();
+        /* ลิงก์ตั้งรหัสผ่านใหม่ — พาไปหน้าตั้งรหัสทันที */
+        if (params.get('reset') === '1') return resetView();
         const pend = takePending();
         if (pend && pend.length) { try { await A.grantConsents(pend); } catch (e) {} }
         if (await A.consentComplete()) {
