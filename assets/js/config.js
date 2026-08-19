@@ -9,7 +9,7 @@
       ห้ามใส่ service_role key ที่นี่เด็ดขาด (ตัวนั้นข้าม RLS ทั้งหมด)
    ============================================================ */
 window.SFOS_CONFIG = {
-  supabaseUrl: '',        // เช่น 'https://xxxxxxxxxxxx.supabase.co'
-  supabaseAnonKey: '',    // publishable / anon key
+  supabaseUrl: 'https://maezclcrarmqsgtoieas.supabase.co',
+  supabaseAnonKey: '',    // ⬅️ ใส่ anon / public key จาก Project Settings → API Keys
   storeId: ''             // ปล่อยว่างไว้ = ใช้ร้านแรกที่ผู้ใช้เป็นสมาชิก
 };
