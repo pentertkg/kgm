@@ -48,9 +48,10 @@
   --brand-soft:#fff2ec;
   --brand-line:#ffd9c8;
 
-  /* Semantic */
-  --good:#0f9f6e;   --good-soft:#e8f8f1; --good-line:#bdead9;
-  --warn:#d98307;   --warn-soft:#fff6e6; --warn-line:#f7dfae;
+  /* Semantic — ค่า *-ink ใช้กับ "ข้อความ" (ผ่าน WCAG AA >= 4.5:1 บนพื้นขาว)
+     ส่วนค่าปกติใช้กับพื้นหลัง/แถบ/จุด/กราฟ ซึ่งไม่ต้องผ่านเกณฑ์ข้อความ */
+  --good:#0a8557;   --good-soft:#e8f8f1; --good-line:#bdead9; --good-ink:#07724d;
+  --warn:#d98307;   --warn-soft:#fff6e6; --warn-line:#f7dfae; --warn-ink:#9a5c06;
   --bad:#dc2f45;    --bad-soft:#fdedef;  --bad-line:#f6c9cf;
   --info:#2f6bff;   --info-soft:#eef3ff; --info-line:#cfdcff;
   --ai:#6d51f5;     --ai-soft:#f2effe;   --ai-line:#dbd2fd;
@@ -105,7 +106,8 @@ h4{font-size:16px}
 p{margin:0}
 .num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-feature-settings:"tnum"}
 .t-xs{font-size:12px}.t-sm{font-size:13px}.t-md{font-size:14px}.t-lg{font-size:17px}
-.muted{color:var(--muted)}.muted-2{color:var(--muted-2)}
+.muted{color:var(--muted)}
+.muted-2{color:#6b7480} /* ข้อความ: ต้องผ่าน AA — token --muted-2 คงไว้สำหรับจุด/เส้น/ไอคอน */
 .b6{font-weight:600}.b7{font-weight:700}.b8{font-weight:800}
 .up{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:700}
 .ctr{text-align:center}.right{text-align:right}
@@ -133,6 +135,14 @@ p{margin:0}
 .mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}
 .hide{display:none !important}
 .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- Skip link (คีย์บอร์ด/screen reader) ---------- */
+.skip-link{
+  position:fixed;top:-60px;left:14px;z-index:300;
+  background:var(--ink);color:#fff;padding:11px 18px;border-radius:0 0 12px 12px;
+  font-weight:700;font-size:14px;transition:top .18s ease;box-shadow:var(--sh-2);
+}
+.skip-link:focus{top:0}
 
 /* ---------- Buttons ---------- */
 .btn{
@@ -188,7 +198,7 @@ p{margin:0}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(15,159,110,.5)}70%{box-shadow:0 0 0 8px rgba(15,159,110,0)}100%{box-shadow:0 0 0 0 rgba(15,159,110,0)}}
 
 .delta{display:inline-flex;align-items:center;gap:3px;font-weight:800;font-size:12.5px;font-family:var(--f-num)}
-.delta-up{color:var(--good)}.delta-down{color:var(--bad)}.delta-flat{color:var(--muted)}
+.delta-up{color:var(--good-ink)}.delta-down{color:var(--bad)}.delta-flat{color:var(--muted)}
 
 /* ---------- Forms ---------- */
 .field{display:flex;flex-direction:column;gap:7px}
@@ -262,7 +272,7 @@ p{margin:0}
 .underline-tabs{display:flex;gap:26px;border-bottom:1px solid var(--line);overflow-x:auto}
 .underline-tabs button{padding:12px 0;font-weight:700;color:var(--muted);border-bottom:2.5px solid transparent;
   margin-bottom:-1px;white-space:nowrap;font-size:14.5px}
-.underline-tabs button.on{color:var(--brand);border-color:var(--brand)}
+.underline-tabs button.on{color:var(--brand-ink);border-color:var(--brand)}
 .underline-tabs button:hover{color:var(--ink)}
 
 /* ============================================================
@@ -329,7 +339,7 @@ p{margin:0}
 
 .page{padding:26px 22px 96px;max-width:var(--maxw);width:100%;margin:0 auto;flex:1}
 .page-h{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
-.page-t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.page-t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:0}
 .page-s{color:var(--muted);font-size:14.5px;margin-top:3px}
 
 /* Mobile drawer + bottom nav */
@@ -446,7 +456,6 @@ p{margin:0}
 .menu-card:hover{transform:translateY(-3px);box-shadow:var(--sh-2);border-color:var(--brand-line)}
 .menu-thumb{height:120px;display:grid;place-items:center;font-size:44px;background:var(--bg-2);position:relative}
 .menu-card .mb{padding:14px}
-.margin-ring{position:relative;width:56px;height:56px;flex:none}
 .ing-row{display:grid;grid-template-columns:1fr 96px 34px;gap:8px;align-items:center}
 
 /* ============================================================
@@ -489,7 +498,7 @@ p{margin:0}
 .legend .lk{display:flex;align-items:center;gap:6px}
 .legend .sw{width:10px;height:10px;border-radius:3px;flex:none}
 .chart-grid line{stroke:var(--line-2);stroke-width:1}
-.chart-ax{font-family:var(--f-num);font-size:11px;fill:var(--muted-2)}
+.chart-ax{font-family:var(--f-num);font-size:11px;fill:var(--muted)}
 .bar-hover{transition:opacity .14s}
 .bar-hover:hover{opacity:.75}
 

@@ -638,7 +638,7 @@
                  ['จำนวนบิลที่คาดว่าจะเกิด', U.nf(expOrders)+' บิล', ''],
                  ['ยอดขายที่คาดว่าจะได้', U.baht(expRev), ''],
                  ['ต้นทุนส่วนลดรวม', '−'+U.baht(expOrders*W.disc), 'var(--bad)'],
-                 ['กำไรจากบิลแรก', U.baht(expProfit), expProfit>0?'var(--good)':'var(--warn)'],
+                 ['กำไรจากบิลแรก', U.baht(expProfit), expProfit>0?'var(--good-ink)':'var(--warn-ink)'],
                  ['กำไรถ้าลูกค้ากลับมาซื้อซ้ำ 3 ครั้ง', U.baht(ltProfit), 'var(--good)']]
                 .map(([l,v,c],i)=>`<div class="between"><span class="t-sm muted">${l}</span>
                   <b class="num" style="font-size:${i>=4?'18px':'15px'};${c?'color:'+c:''}">${v}</b></div>`).join('')}

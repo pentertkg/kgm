@@ -25,6 +25,10 @@
         {
           "key": "Permissions-Policy",
           "value": "geolocation=(), camera=(), microphone=(), payment=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
         }
       ]
     },
@@ -63,6 +67,22 @@
           "value": "public, max-age=604800"
         }
       ]
+    },
+    {
+      "source": "/(favicon|apple-touch-icon).png",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/favicon.ico",
+      "destination": "/favicon.png",
+      "permanent": true
     }
   ]
 }

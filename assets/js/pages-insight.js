@@ -161,7 +161,7 @@
           ['จำนวน', l=>U.nf(l.units), 'r num b7'],
           ['Revenue', l=>U.baht(l.revenue), 'r num'],
           ['Profit', l=>`<span style="color:var(--good)">${U.baht(l.profit)}</span>`, 'r num b7']], 'วันนี้')}
-        ${table('เมนูที่ควรทบทวน', lines.filter(l=>l.units<=14).concat([]).slice(0,6), [
+        ${table('เมนูที่ควรทบทวน', lines.filter(l=>l.units<=14).slice(0,6), [
           ['Menu', l=>`<div class="row g8"><span style="font-size:17px">${l.emoji}</span><b class="t-sm">${U.esc(l.name)}</b></div>`],
           ['จำนวน', l=>U.nf(l.units), 'r num'],
           ['Margin', l=>U.marginBadge(l.margin), 'r'],

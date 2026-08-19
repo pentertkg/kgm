@@ -51,8 +51,36 @@ window.APP = (function () {
   /* ============================================================
      SHELL
      ============================================================ */
+  /* ถ้ามี JS error ที่ไม่คาดคิด อย่าปล่อยให้ผู้ใช้เห็นจอเปล่า — บอกให้ชัดว่าเกิดอะไรและทำอะไรได้ */
+  function installErrorGuard() {
+    let shown = false;
+    const show = msg => {
+      if (shown) return; shown = true;
+      const b = document.createElement('div');
+      b.setAttribute('role', 'alert');
+      b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:200;background:#fff;' +
+        'border:1px solid var(--bad-line,#f6c9cf);border-left:5px solid var(--bad,#dc2f45);border-radius:14px;' +
+        'padding:14px 16px;box-shadow:0 12px 32px rgba(16,24,32,.18);font-size:14px;line-height:1.6;max-width:640px;margin:0 auto';
+      b.innerHTML = '<b>เกิดข้อผิดพลาดในหน้านี้</b><br>' +
+        '<span style="color:#6d7685">ลองรีเฟรชหน้า หรือกดปุ่มด้านล่างเพื่อล้างข้อมูลเดโมในเครื่องแล้วเริ่มใหม่</span>' +
+        '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">' +
+        '<button id="egReload" style="height:34px;padding:0 14px;border-radius:999px;border:none;background:#101820;color:#fff;font-weight:700;cursor:pointer">รีเฟรช</button>' +
+        '<button id="egReset" style="height:34px;padding:0 14px;border-radius:999px;border:1px solid #e5e8ed;background:#fff;font-weight:700;cursor:pointer">ล้างข้อมูลเดโมแล้วเริ่มใหม่</button>' +
+        '<button id="egClose" style="height:34px;padding:0 14px;border-radius:999px;border:none;background:transparent;color:#6d7685;font-weight:700;cursor:pointer">ปิด</button></div>' +
+        '<div style="margin-top:8px;font-size:11.5px;color:#98a1ae;font-family:monospace;word-break:break-all">' + String(msg).slice(0, 180) + '</div>';
+      document.body.appendChild(b);
+      b.querySelector('#egReload').onclick = () => location.reload();
+      b.querySelector('#egReset').onclick = () => { try { localStorage.clear(); } catch (e) {} location.href = 'app.html#/dashboard'; };
+      b.querySelector('#egClose').onclick = () => b.remove();
+    };
+    window.addEventListener('error', e => show(e.message || 'unknown error'));
+    window.addEventListener('unhandledrejection', e => show((e.reason && e.reason.message) || 'promise rejection'));
+  }
+
   function boot() {
+    installErrorGuard();
     document.body.innerHTML = `
+    <a class="skip-link" href="#page">ข้ามไปเนื้อหาหลัก</a>
     <div class="shell">
       <aside class="sidebar" id="sb">
         <div class="sb-brand">
@@ -90,7 +118,7 @@ window.APP = (function () {
             <button class="avatar" id="profileBtn" title="โปรไฟล์">สม</button>
           </div>
         </header>
-        <main class="page" id="page"></main>
+        <main class="page" id="page" tabindex="-1" role="main"></main>
       </div>
     </div>
 
@@ -181,10 +209,12 @@ window.APP = (function () {
     const [t, s] = TITLES[id] || [id, ''];
     const page = document.getElementById('page');
     page.innerHTML = `<div class="page-h">
-        <div><div class="page-t">${U.esc(t)}</div><div class="page-s">${U.esc(s)}</div></div>
+        <div><h1 class="page-t">${U.esc(t)}</h1><div class="page-s">${U.esc(s)}</div></div>
         <div class="row g8 wrap" id="pageActions"></div>
       </div><div id="pageBody"></div>`;
     window.PAGES[id](document.getElementById('pageBody'), document.getElementById('pageActions'), q);
+    U.linkLabels(page);
+    document.title = t + ' — StreetFood OS';
     markActive(id); paintNav();
     toggleSide(false);
     window.scrollTo({ top: 0 });

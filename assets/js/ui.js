@@ -213,7 +213,11 @@ window.UI = (function () {
      ============================================================ */
   function toast(msg, kind) {
     let w = document.querySelector('.toast-wrap');
-    if (!w) { w = document.createElement('div'); w.className = 'toast-wrap'; document.body.appendChild(w); }
+    if (!w) {
+      w = document.createElement('div'); w.className = 'toast-wrap';
+      w.setAttribute('role', 'status'); w.setAttribute('aria-live', 'polite'); w.setAttribute('aria-atomic', 'false');
+      document.body.appendChild(w);
+    }
     const ic = kind === 'ok' ? '✅' : kind === 'warn' ? '⚠️' : kind === 'ai' ? '🤖' : '✨';
     const t = document.createElement('div');
     t.className = 'toast'; t.innerHTML = `<span>${ic}</span><span>${esc(msg)}</span>`;
@@ -222,9 +226,19 @@ window.UI = (function () {
       setTimeout(() => t.remove(), 320); }, 2600);
   }
 
-  let modalEl = null;
+  let modalEl = null, lastFocused = null;
+  const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  function trapTab(e) {
+    if (e.key !== 'Tab' || !modalEl) return;
+    const f = Array.from(modalEl.querySelectorAll(FOCUSABLE)).filter(el => el.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
   function modal(o) {
     closeModal(true);
+    lastFocused = document.activeElement;
     modalEl = document.createElement('div');
     modalEl.className = 'modal-scrim';
     modalEl.innerHTML = `
@@ -247,7 +261,13 @@ window.UI = (function () {
     const ok = modalEl.querySelector('[data-ok]');
     if (ok) ok.onclick = () => { if (!o.onOk || o.onOk(modalEl) !== false) closeModal(); };
     if (o.onMount) o.onMount(modalEl);
+    linkLabels(modalEl);
     document.addEventListener('keydown', escClose);
+    document.addEventListener('keydown', trapTab);
+    // ย้าย focus เข้า dialog เพื่อให้คนใช้คีย์บอร์ด/screen reader ไม่หลงอยู่หลัง modal
+    const target = modalEl.querySelector('input:not([type=hidden]),textarea,select') ||
+                   modalEl.querySelector('[data-ok]') || modalEl.querySelector('[data-x]');
+    if (target) requestAnimationFrame(() => target.focus());
     return modalEl;
   }
   function escClose(e) { if (e.key === 'Escape') closeModal(); }
@@ -255,6 +275,9 @@ window.UI = (function () {
     if (!modalEl) return;
     const m = modalEl; modalEl = null;
     document.removeEventListener('keydown', escClose);
+    document.removeEventListener('keydown', trapTab);
+    if (lastFocused && document.contains(lastFocused)) { try { lastFocused.focus(); } catch (e) {} }
+    lastFocused = null;
     if (instant) return m.remove();
     m.classList.remove('on'); setTimeout(() => m.remove(), 200);
   }
@@ -287,9 +310,12 @@ window.UI = (function () {
      ใส่ UTF-8 BOM เพื่อให้ Excel เปิดภาษาไทยไม่เป็นตัวยึกยือ
      ============================================================ */
   function csv(filename, rows) {
+    // กัน CSV formula injection: ถ้าค่าขึ้นต้นด้วย = + - @ tab หรือ CR
+    // Excel/Sheets จะตีความเป็นสูตรและอาจรันคำสั่ง จึงเติม ' นำหน้าให้เป็นข้อความ
     const cell = v => {
-      const t = v == null ? '' : String(v);
-      return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+      let t = v == null ? '' : String(v);
+      if (/^[=+\-@\t\r]/.test(t)) t = "'" + t;
+      return /[",\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
     };
     const body = rows.map(r => r.map(cell).join(',')).join('\r\n');
     const blob = new Blob(['\uFEFF' + body], { type: 'text/csv;charset=utf-8' });
@@ -301,7 +327,21 @@ window.UI = (function () {
     toast('ดาวน์โหลด ' + filename + ' แล้ว', 'ok');
   }
 
-  return { csv, nf, baht, bahtK, pc, esc, delta, marginBadge, TH_M, TH_D, TODAY, shift, dayLabel, fullToday, monthLabel,
+  /* ผูก <label class="label"> กับ control ใน .field เดียวกันให้อัตโนมัติ
+     เพื่อให้ screen reader อ่านออกว่าช่องนี้คืออะไร และคลิก label แล้ว focus เข้าช่อง */
+  let uid = 0;
+  function linkLabels(root) {
+    (root || document).querySelectorAll('.field').forEach(f => {
+      const lab = f.querySelector('label.label');
+      if (!lab || lab.getAttribute('for')) return;
+      const ctrl = f.querySelector('input:not([type=hidden]),select,textarea');
+      if (!ctrl) return;
+      if (!ctrl.id) ctrl.id = 'f' + (++uid);
+      lab.setAttribute('for', ctrl.id);
+    });
+  }
+
+  return { csv, linkLabels, nf, baht, bahtK, pc, esc, delta, marginBadge, TH_M, TH_D, TODAY, shift, dayLabel, fullToday, monthLabel,
            comboChart, areaChart, hBars, donut, ring, spark, waterfall, heatmap,
            toast, modal, closeModal, kpi, empty, sectionTitle };
 })();
