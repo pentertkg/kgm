@@ -12,3 +12,4 @@
 # Logs / temp
 *.log
 _csptest-*.html
+.vercel
