@@ -711,11 +711,14 @@ p{margin:0}
 /* Onboarding page */
 /* ไม่มีไล่เฉดพื้นตามระบบ — canvas cream ล้วน */
 .ob{min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
-/* หัวหน้าเป็นแคปซูลลอยแบบเดียวกับ nav ของหน้าอื่น ไม่ใช่แถบเบลอแนบขอบ */
-.ob-nav{margin:24px auto 0;max-width:960px;width:calc(100% - 48px);
+/* หัวหน้าเป็นแคปซูลลอย และต้อง "กว้างเท่าคอลัมน์เนื้อหาที่มันครอบอยู่"
+   ไม่ใช่แถบเต็มความกว้าง — เดิมโลโก้ไปชิดขอบซ้ายสุดขณะที่การ์ดอยู่กลางจอ
+   จึงดูไม่เข้าคู่กัน ผูกทั้งสองไว้กับตัวแปรเดียว (--ob-w) แล้วให้แต่ละหน้าตั้งค่า */
+.ob{--ob-w:960px}
+.ob-nav{margin:24px auto 0;width:min(var(--ob-w), calc(100% - 48px));
   padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:14px;
   background:var(--white);border-radius:var(--r-pill);box-shadow:var(--sh-nav)}
-.ob-main{flex:1;width:100%;max-width:960px;margin:0 auto;padding:32px 24px 64px}
+.ob-main{flex:1;width:100%;max-width:var(--ob-w);margin:0 auto;padding:32px 0 64px}
 .ob-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);
   padding:32px}
 /* กล่องคำนวณเคยเป็นไล่เฉดน้ำเงินเข้ม → เปลี่ยนเป็นพื้น ink เรียบตามระบบ */
@@ -765,14 +768,17 @@ p{margin:0}
   .topbar{padding:0 14px;gap:10px}
   .search kbd{display:none}
   .card-p,.card-b,.card-h{padding:16px}
-  .ob-card{padding:20px}
+  .ob-card{padding:22px}
+  .ob-main{padding-left:14px;padding-right:14px}
   .cta-band{padding:36px 20px}
   .lp-links{display:none}
   .lp-nav .in{padding:12px 20px;gap:16px}
   /* แคปซูลหัวหน้าของ onboarding ล้นขอบบนมือถือ — ย่อระยะและซ่อนป้ายขั้นตอน
      ที่ซ้ำกับแถบ stepper ด้านล่าง */
-  .ob-nav{width:calc(100% - 28px);padding:11px 16px;gap:10px}
-  .ob-nav .badge:not(.badge-brand){display:none}
+  .ob-nav{width:min(var(--ob-w), calc(100% - 28px));padding:11px 16px;gap:10px}
+  /* ซ่อนป้ายเฉพาะแคปซูลที่มีปุ่มแย่งที่ด้วย (หน้า onboarding มีปุ่ม "ข้ามไปดู…")
+     หน้า login ไม่มีปุ่มในแถบ จึงคงป้ายไว้ ไม่ให้แคปซูลว่างเปล่า */
+  .ob-nav:has(.btn) .badge{display:none}
   .ob-nav .btn{padding:5px 14px;font-size:14px}
   .step-l{display:none}
   .step-line{width:26px;margin:0 6px}

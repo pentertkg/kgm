@@ -99,7 +99,7 @@ window.APP = (function () {
           <a class="row g10" href="index.html"><span class="logo">🌿</span>
             <span class="logo-txt">StreetFood<span>OS</span></span></a>
           <span class="badge" style="margin-left:auto;font-size:10.5px;height:21px;padding:0 8px"
-                title="ข้อมูลทั้งหมดในระบบนี้เป็นข้อมูลตัวอย่าง" id="modeBadge">Prototype</span>
+                title="ข้อมูลทั้งหมดในระบบนี้เป็นข้อมูลตัวอย่าง" id="modeBadge">Beta</span>
         </div>
         <button class="sb-store" id="storeSel">
           <span class="av">${D.store.emoji}</span>
@@ -314,7 +314,7 @@ window.APP = (function () {
   function cancelOrder(id) {
     const o = state.orders.find(x => x.id === id); if (!o) return;
     U.modal({ title:'ยกเลิกออเดอร์ ' + id, icon:ico('alert',20), okText:'ยืนยันยกเลิก', cancelText:'ไม่ยกเลิก',
-      body:`<p>ยอด ${U.baht(o.total)} จะถูกตัดออกจากยอดขายวันนี้ (Prototype: ไม่กระทบตัวเลข Mock กลาง)</p>`,
+      body:`<p>ยอด ${U.baht(o.total)} จะถูกตัดออกจากยอดขายวันนี้ (ยังไม่กระทบตัวเลขสรุปรวมของวัน)</p>`,
       onOk(){ o.st = 'cancelled'; U.toast(id + ' ถูกยกเลิก', 'warn'); refresh(); } });
   }
   function newOrderModal() {
@@ -550,7 +550,7 @@ window.APP = (function () {
          ขณะที่ชาเย็นขายได้แค่ 14 แก้วแต่ margin ${U.pc(D.mi('m10').margin)} — ควรดันเครื่องดื่มเพิ่ม`,
         actions:[{label:'ดู Menu & Cost',to:'menu'}] };
 
-    return { html: `ผมยังไม่มีข้อมูลพอสำหรับคำถามนี้ใน Prototype ครับ<br>
+    return { html: `ผมยังไม่มีข้อมูลพอสำหรับคำถามนี้ครับ<br>
       <span class="t-sm muted">ลองถามเรื่องเหล่านี้ได้เลย:</span>
       <div class="chips mt8">${SUGGEST.slice(0,5).map(s=>`<span class="chip">${s}</span>`).join('')}</div>` };
   }
@@ -651,7 +651,7 @@ window.APP = (function () {
   }
   function welcomeModal() {
     U.modal({ title:'ยินดีต้อนรับสู่ StreetFood OS', icon:D.store.emoji, okText:'เริ่มรับออเดอร์', cancelText:'ดูรอบๆ ก่อน',
-      body:`<p>ร้าน <b>${U.esc(D.store.name)}</b> ถูกสร้างเรียบร้อยแล้ว ข้อมูลใน Prototype นี้เป็น Mock Data ที่ผูกกันทุกหน้า</p>
+      body:`<p>ร้าน <b>${U.esc(D.store.name)}</b> ถูกสร้างเรียบร้อยแล้ว ข้อมูลตัวอย่างในระบบผูกกันทุกหน้า</p>
         <div class="col g8 mt16">
           ${[['dashboard','Dashboard บอกว่าวันนี้ร้านเป็นอย่างไร และควรทำอะไรต่อ'],
              ['receipt','กด "รับออเดอร์" เพื่อสร้างบิล แล้วไปดูที่ Kitchen Display'],

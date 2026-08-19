@@ -227,7 +227,7 @@ window.PAGES = window.PAGES || {};
       </div>
       <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div>
         <div class="t-sm">ค่าใช้จ่ายจะถูกนำไปคำนวณกำไรสุทธิในหน้า Analytics → Profit อัตโนมัติ</div></div>`,
-      onOk(){ U.toast('บันทึกรายจ่ายแล้ว (Prototype: ไม่แก้ตัวเลข Mock กลาง)','ok'); } });
+      onOk(){ U.toast('บันทึกรายจ่ายแล้ว (ยังไม่แก้ตัวเลขสรุปรวม)','ok'); } });
   }
 
   /* ============================================================
@@ -327,7 +327,7 @@ window.PAGES = window.PAGES || {};
           <span class="num">${U.baht(l.sum)}</span></div>`).join('')}</div>
         <div class="between mt12"><b>รวมทั้งสิ้น</b><b class="num" style="font-size:20px">${U.baht(o.total)}</b></div>
         <div class="between t-xs muted"><span>ช่องทาง ${D.CH[o.ch].label}</span><span>${U.esc(o.cust)}</span></div>
-        <div class="ctr t-xs muted mt16">ขอบคุณที่อุดหนุนครับ<br>Prototype — ไม่มีการเชื่อมต่อเครื่องพิมพ์จริง</div>` });
+        <div class="ctr t-xs muted mt16">ขอบคุณที่อุดหนุนครับ<br>ยังไม่ได้เชื่อมต่อเครื่องพิมพ์จริง</div>` });
   }
 
   /* ============================================================
@@ -574,7 +574,7 @@ window.PAGES = window.PAGES || {};
           <div class="field"><label class="label">รูปอาหาร</label>
             <div class="tile ctr" style="border-style:dashed;cursor:pointer" id="e_img">
               <div>${ICO('report',26)}</div>
-              <div class="t-sm muted mt4">อัปโหลดรูป (Prototype — ยังไม่เชื่อมต่อที่เก็บไฟล์)</div></div></div>
+              <div class="t-sm muted mt4">อัปโหลดรูป (ยังไม่เชื่อมต่อที่เก็บไฟล์)</div></div></div>
         </div>
 
         <div>
@@ -628,7 +628,7 @@ window.PAGES = window.PAGES || {};
         };
         el.querySelector('#addIng').onclick = () => { rows.push({ name:'', cost:0 }); paint(); };
         el.querySelector('#e_price').oninput = paint;
-        el.querySelector('#e_img').onclick = () => U.toast('Prototype: ยังไม่เชื่อมต่อที่เก็บไฟล์','warn');
+        el.querySelector('#e_img').onclick = () => U.toast('ยังไม่เชื่อมต่อที่เก็บไฟล์','warn');
         paint();
       },
       onOk(el){

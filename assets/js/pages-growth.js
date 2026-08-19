@@ -20,7 +20,7 @@
     actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="sAdj">${ICO('report',16)} ปรับยอดคงเหลือ</button>
       <button class="btn btn-primary btn-sm" id="sPO">${ICO('stock',16)} สร้างรายการสั่งซื้อ</button>`;
     actions.querySelector('#sPO').onclick = () => poModal(need);
-    actions.querySelector('#sAdj').onclick = () => U.toast('Prototype: การนับสต็อกจริงจะทำใน Phase ถัดไป','warn');
+    actions.querySelector('#sAdj').onclick = () => U.toast('การนับสต็อกจริงยังไม่เปิดใช้งาน','warn');
 
     el.innerHTML = `
       <div class="grid g-4 mb16">

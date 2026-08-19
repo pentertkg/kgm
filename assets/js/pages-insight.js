@@ -468,7 +468,7 @@
       ['roles','Roles & Permissions','key'],['payment','Payment','money'],['noti','Notification','bell'],
       ['integrations','Integrations','settings'],['subscription','Subscription','money']];
     actions.innerHTML = `<button class="btn btn-primary btn-sm" id="sSave">บันทึกการตั้งค่า</button>`;
-    actions.querySelector('#sSave').onclick = () => U.toast('บันทึกการตั้งค่าแล้ว (Prototype)','ok');
+    actions.querySelector('#sSave').onclick = () => U.toast('บันทึกการตั้งค่าแล้ว','ok');
 
     el.innerHTML = `<div class="grid" style="grid-template-columns:240px 1fr;gap:16px" id="sWrap">
       <div class="card" style="align-self:start;overflow:hidden"><div class="col" id="sNav" style="padding:8px"></div></div>
@@ -483,7 +483,7 @@
       el.querySelector('#sBody').innerHTML = ({ account:vAccount, store:vStore, users:vUsers, staff:vStaff,
         roles:vRoles, payment:vPayment, noti:vNoti, integrations:vInteg, subscription:vSub })[tab]();
       if (tab === 'account') mountAccount(el.querySelector('#sBody'));
-      const up = el.querySelector('#doUpgrade'); if (up) up.onclick = () => U.toast('Prototype: ยังไม่เชื่อมต่อระบบชำระเงิน','warn');
+      const up = el.querySelector('#doUpgrade'); if (up) up.onclick = () => U.toast('ยังไม่เชื่อมต่อระบบชำระเงิน','warn');
       el.querySelectorAll('.switch').forEach(s => s.onclick = () => s.classList.toggle('on'));
     };
 
@@ -740,11 +740,11 @@
         </div>`);
     }
     function vInteg(){
-      return card('Integrations','เชื่อมต่อบริการภายนอก — ยังไม่เปิดใช้งานทั้งหมดใน Prototype นี้', `
+      return card('Integrations','เชื่อมต่อบริการภายนอก — ยังไม่เปิดใช้งานทั้งหมด', `
         <div class="ai-strip mb16" style="background:var(--warn-soft);border-color:var(--warn-line)">
           <div class="ic" style="background:var(--warn-soft);color:var(--warn-ink)">${ICO('alert',15)}</div>
           <div class="t-sm"><b>ทุกรายการด้านล่างยังไม่ได้เชื่อมต่อจริง</b><br>
-          <span class="muted">Prototype นี้ไม่มีการต่อ Backend, API หรือบริการภายนอกใดๆ
+          <span class="muted">ระบบยังไม่ได้ต่อบริการภายนอกใดๆ
           รายการนี้แสดงไว้เพื่อให้เห็นขอบเขตของงานในเฟสถัดไปเท่านั้น</span></div>
         </div>
         <div class="grid g-2" style="gap:12px">
@@ -760,7 +760,7 @@
               <div class="t-xs muted mt8">${d}</div></div>`).join('')}
         </div>
         <div class="ai-strip mt16"><div class="ic">${ICO('alert',15)}</div><div class="t-sm">
-          Prototype นี้ไม่มีการเชื่อมต่อ Backend, Database, API หรือ External Service ใดๆ
+          ยังไม่มีการเชื่อมต่อบริการภายนอกใดๆ
           สถานะที่เห็นเป็น Mock Data ทั้งหมด</div></div>`);
     }
     function vSub(){
@@ -786,7 +786,7 @@
             .map(r=>`<tr><td class="t-sm b6">${r[0]}</td>${r.slice(1).map(v=>
               `<td class="r t-sm ${v==='✓'?'':'muted'}" style="${v==='✓'?'color:var(--good);font-weight:800':''}">${v}</td>`).join('')}</tr>`).join('')}
           </tbody></table></div>
-        <p class="t-xs muted mt16">* ตัวเลขค่าบริการเป็นข้อมูลตัวอย่างสำหรับ Prototype เท่านั้น</p>`);
+        <p class="t-xs muted mt16">* ตัวเลขค่าบริการเป็นข้อมูลตัวอย่าง ยังไม่เปิดขายจริง</p>`);
     }
     paint();
   };

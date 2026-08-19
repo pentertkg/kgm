@@ -14,7 +14,7 @@ window.UI = (function () {
   const TH_M = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
   const TH_D = ['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
   const TH_DFULL = ['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
-  // วันอ้างอิงของ Prototype (Mock) — คงที่เพื่อให้ตัวเลขทุกหน้าตรงกัน
+  // วันอ้างอิงของข้อมูลตัวอย่าง — คงที่เพื่อให้ตัวเลขทุกหน้าตรงกัน
   const TODAY = new Date(2026, 7, 19);
   const shift = d => { const x = new Date(TODAY); x.setDate(x.getDate() + d); return x; };
   const dayLabel = d => TH_D[shift(d).getDay()] + ' ' + shift(d).getDate();
