@@ -71,11 +71,11 @@
   function s1(msg) {
     const isUp = S.mode === 'signup';
     stage.innerHTML = `
-      <div class="tabs mb16" id="mTabs" role="tablist">
+      <div class="tabs tabs-split mb20" id="mTabs" role="tablist">
         <button data-m="signin" class="${isUp ? '' : 'on'}" role="tab">เข้าสู่ระบบ</button>
         <button data-m="signup" class="${isUp ? 'on' : ''}" role="tab">สมัครสมาชิก</button>
       </div>
-      <h2>${isUp ? 'สมัครสมาชิกใหม่' : 'เข้าสู่ระบบ'}</h2>
+      <h2 class="mt20">${isUp ? 'เริ่มใช้งานฟรี' : 'ยินดีต้อนรับกลับ'}</h2>
       <p class="muted mt8">${isUp
         ? 'ใช้อีเมลกับรหัสผ่าน สมัครเสร็จใช้งานได้ทันที ไม่ต้องรออีเมลยืนยัน'
         : 'กรอกอีเมลและรหัสผ่านที่ตั้งไว้ตอนสมัคร'}</p>
