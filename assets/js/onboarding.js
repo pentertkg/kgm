@@ -177,11 +177,11 @@
         </div>
         <div class="grid g-4 mt20" id="calcOut"></div>
         <div class="mt20">
-          <div class="between t-xs" style="color:#9aa5b4;margin-bottom:6px">
+          <div class="between t-xs" style="color:var(--muted-2);margin-bottom:6px">
             <span>ยอดขายที่ต้องทำต่อชั่วโมง (เปิด 12 ชม.)</span>
             <span class="num b7" id="perHour"></span></div>
-          <div class="bar bar-lg" style="background:rgba(255,255,255,.14)"><i id="feasBar" style="background:linear-gradient(90deg,#ff6a2b,#ffb089)"></i></div>
-          <div class="t-xs mt8" id="feasNote" style="color:#c8d0da"></div>
+          <div class="bar bar-lg" style="background:rgba(255,255,255,.14)"><i id="feasBar" style="background:var(--accent)"></i></div>
+          <div class="t-xs mt8" id="feasNote" style="color:var(--line)"></div>
         </div>
       </div>
 
@@ -200,7 +200,7 @@
         ['Order ต่อชั่วโมง', U.nf(c.orders/12,1) + ' บิล', 'ช่วงเที่ยงจะหนักกว่านี้ 2–3 เท่า'],
         ['Average Order Value', U.baht(S.aov), 'ยิ่งสูง ยิ่งทำเป้าง่าย']
       ].map(([l,v,s])=>`<div><div class="cl">${l}</div><div class="cv">${v}</div>
-        <div class="t-xs" style="color:#7f8b9b;margin-top:2px">${s}</div></div>`).join('');
+        <div class="t-xs" style="color:var(--muted);margin-top:2px">${s}</div></div>`).join('');
       document.getElementById('perHour').textContent = U.baht(c.perHour);
       const feas = Math.min(100, c.orders / 300 * 100);
       document.getElementById('feasBar').style.width = feas.toFixed(0) + '%';
@@ -404,14 +404,14 @@
 
       <div class="col g16">
         <div class="calc-box">
-          <div class="up" style="color:#9aa5b4">เป้าที่ต้องทำให้ได้</div>
-          <div class="cv mt8">${U.baht(c.perDay)}<span style="font-size:14px;color:#9aa5b4"> /วัน</span></div>
+          <div class="up" style="color:var(--muted-2)">เป้าที่ต้องทำให้ได้</div>
+          <div class="cv mt8">${U.baht(c.perDay)}<span style="font-size:14px;color:var(--muted-2)"> /วัน</span></div>
           <div class="col g12 mt16">
             ${[['จำนวน Order/วัน', U.nf(c.orders)+' บิล'],
                ['Average Order', U.baht(S.aov)],
                ['จำนวนจาน/วัน (ประมาณ)', U.nf(dishesPerDay)+' จาน'],
                ['กำไรขั้นต้นคาดการณ์/วัน', U.baht(c.perDay*avgM/100)]]
-              .map(([l,v])=>`<div class="between"><span class="t-sm" style="color:#9aa5b4">${l}</span>
+              .map(([l,v])=>`<div class="between"><span class="t-sm" style="color:var(--muted-2)">${l}</span>
                 <span class="num b7">${v}</span></div>`).join('')}
           </div>
         </div>

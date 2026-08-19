@@ -74,13 +74,13 @@ window.UI = (function () {
       rows.forEach((r, i) => { s += `<circle cx="${x(i)}" cy="${y(r[k] || 0)}" r="3.6" fill="#fff" stroke="${o.colors[k]}" stroke-width="2.2"><title>${k}: ${baht(r[k] || 0)}</title></circle>`; });
     });
     s += `<defs><linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffb089"/><stop offset="100%" stop-color="#ffd9c8"/></linearGradient></defs></svg>`;
+      <stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--brand-line)"/></linearGradient></defs></svg>`;
     return s;
   }
 
   /** Area/line chart for long series */
   function areaChart(vals, opt) {
-    const o = Object.assign({ w: 760, h: 200, color: 'var(--c2)', fill: 'rgba(47,107,255,.12)', labels: null }, opt);
+    const o = Object.assign({ w: 760, h: 200, color: 'var(--c2)', fill: 'rgba(56,96,190,.12)', labels: null }, opt);
     const W = o.w, H = o.h, PB = o.labels ? 24 : 8, PL = 46;
     const max = Math.max(...vals) * 1.12, min = Math.min(...vals) * .84;
     const x = i => PL + i * ((W - PL - 12) / (vals.length - 1));
@@ -194,6 +194,8 @@ window.UI = (function () {
     const days = ['จ.','อ.','พ.','พฤ.','ศ.','ส.','อา.'];
     const hours = ['08','10','12','14','16','18','20'];
     const seed = [[2,3,9,4,2,6,3],[2,4,9,3,2,6,3],[3,4,9,4,3,7,4],[3,4,8,4,3,7,4],[4,5,9,5,4,9,6],[5,6,8,6,5,9,7],[3,4,7,5,3,6,4]];
+    /* ความทึบสูงสุด .85 ไม่ใช่ .9 — ที่ .9 ตัวเลขสีหมึกบนเซลล์เข้มสุดได้คอนทราสต์
+       4.62:1 ซึ่งผ่าน AA แบบเฉียดฉิว การลดลงเล็กน้อยทำให้ได้ 4.97:1 มีระยะเผื่อ */
     let s = `<div style="display:grid;grid-template-columns:34px repeat(${hours.length},1fr);gap:4px">`;
     s += `<div></div>` + hours.map(h => `<div class="t-xs muted ctr num">${h}</div>`).join('');
     days.forEach((d, di) => {
@@ -201,8 +203,8 @@ window.UI = (function () {
       hours.forEach((h, hi) => {
         const v = seed[di][hi], a = (v / 9);
         s += `<div title="${d} ${h}:00 — ระดับความคึกคัก ${v}/9" style="height:30px;border-radius:6px;
-          background:rgba(255,106,43,${(a * .9).toFixed(2)});display:grid;place-items:center;
-          font-size:10.5px;font-weight:800;font-family:var(--f-num);color:${a > .6 ? '#fff' : 'var(--brand-ink)'}">${v >= 8 ? v : ''}</div>`;
+          background:rgba(207,69,0,${(a * .85).toFixed(2)});display:grid;place-items:center;
+          font-size:10.5px;font-weight:800;font-family:var(--f-num);color:var(--ink)">${v >= 8 ? v : ''}</div>`;
       });
     });
     return s + '</div>';

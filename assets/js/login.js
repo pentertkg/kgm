@@ -41,7 +41,7 @@
   }
 
   const err = m => `<div class="caution-box mt16" role="alert" style="border-left:3px solid var(--bad);background:var(--bad-soft);border-radius:0 10px 10px 0;padding:13px 16px">
-      <div class="t-sm b7" style="color:#b8232f">${U.esc(m)}</div></div>`;
+      <div class="t-sm b7" style="color:var(--bad-ink)">${U.esc(m)}</div></div>`;
 
   /* ── ขั้น 1: อีเมล + รหัสผ่าน ───────────────────────────
      รหัสผ่านอยู่ในตัวแปรชั่วคราวเท่านั้น ส่งตรงไป Supabase แล้วทิ้ง

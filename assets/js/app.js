@@ -61,14 +61,14 @@ window.APP = (function () {
       const b = document.createElement('div');
       b.setAttribute('role', 'alert');
       b.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:200;background:#fff;' +
-        'border:1px solid var(--bad-line,#f6c9cf);border-left:5px solid var(--bad,#dc2f45);border-radius:14px;' +
-        'padding:14px 16px;box-shadow:0 12px 32px rgba(16,24,32,.18);font-size:14px;line-height:1.6;max-width:640px;margin:0 auto';
+        'border:1px solid var(--bad-line,var(--bad-line));border-left:5px solid var(--bad,var(--bad));border-radius:14px;' +
+        'padding:14px 16px;box-shadow:0 12px 32px rgba(20,20,19,.18);font-size:14px;line-height:1.6;max-width:640px;margin:0 auto';
       b.innerHTML = '<b>เกิดข้อผิดพลาดในหน้านี้</b><br>' +
-        '<span style="color:#6d7685">ลองรีเฟรชหน้า หรือกดปุ่มด้านล่างเพื่อล้างข้อมูลเดโมในเครื่องแล้วเริ่มใหม่</span>' +
+        '<span style="color:var(--muted)">ลองรีเฟรชหน้า หรือกดปุ่มด้านล่างเพื่อล้างข้อมูลเดโมในเครื่องแล้วเริ่มใหม่</span>' +
         '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">' +
         '<button id="egReload" style="height:34px;padding:0 14px;border-radius:999px;border:none;background:#101820;color:#fff;font-weight:700;cursor:pointer">รีเฟรช</button>' +
-        '<button id="egReset" style="height:34px;padding:0 14px;border-radius:999px;border:1px solid #e5e8ed;background:#fff;font-weight:700;cursor:pointer">ล้างข้อมูลเดโมแล้วเริ่มใหม่</button>' +
-        '<button id="egClose" style="height:34px;padding:0 14px;border-radius:999px;border:none;background:transparent;color:#6d7685;font-weight:700;cursor:pointer">ปิด</button></div>' +
+        '<button id="egReset" style="height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-weight:700;cursor:pointer">ล้างข้อมูลเดโมแล้วเริ่มใหม่</button>' +
+        '<button id="egClose" style="height:34px;padding:0 14px;border-radius:999px;border:none;background:transparent;color:var(--muted);font-weight:700;cursor:pointer">ปิด</button></div>' +
         '<div style="margin-top:8px;font-size:11.5px;color:#98a1ae;font-family:monospace;word-break:break-all">' + String(msg).slice(0, 180) + '</div>';
       document.body.appendChild(b);
       b.querySelector('#egReload').onclick = () => location.reload();
@@ -146,7 +146,7 @@ window.APP = (function () {
 
     <div class="ai-panel" id="aiPanel">
       <div class="ai-head">
-        <div class="fi" style="width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center">${ico('advisor', 18)}</div>
+        <div class="fi" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center">${ico('advisor', 18)}</div>
         <div class="grow"><b>AI Advisor</b>
           <div class="t-xs" style="color:#d9d2ff">อ่านข้อมูลร้าน ${U.esc(D.store.name)} แล้ว</div></div>
         <button class="btn-icon" id="aiClose" style="border-color:rgba(255,255,255,.25);color:#fff" aria-label="ปิด">&times;</button>

@@ -27,51 +27,88 @@
    ============================================================ */
 
 :root{
-  /* Surfaces */
-  --bg:#f5f6f8;
-  --bg-2:#eef0f4;
-  --surface:#ffffff;
-  --surface-2:#fafbfc;
-  --line:#e5e8ed;
-  --line-2:#eff1f5;
+  /* ════════════════════════════════════════════════════════════
+     Design System: Mastercard-inspired (DESIGN-mastercard.md)
+     ------------------------------------------------------------
+     สามพื้นผิวไล่จังหวะหน้า: canvas cream → lifted cream → ink
+     รูปทรง: 20px (ปุ่ม) · 40px (เฮโร/คอนเทนเนอร์ใหญ่) · 999px (แคปซูล)
+     เอกสารระบุให้เลี่ยงช่วง 8–16px เพราะ "อ่านว่าเทมเพลตทั่วไป"
 
-  /* Ink */
-  --ink:#101820;
-  --ink-2:#3d4653;
-  --muted:#6d7685;
-  --muted-2:#98a1ae;
+     ข้อที่ปรับจากเอกสารอย่างมีเหตุผล (บันทึกไว้เพื่อให้ตรวจย้อนได้):
+     · เอกสารเขียนเองว่าปรัชญา whitespace ของมันคือ "ตรงข้ามกับ dashboard
+       ที่หนาแน่น" — หน้า Orders/Kitchen/Stock ของเราเป็น dashboard ที่ใช้งาน
+       ตอนยืนขายของ จึงรับ "สี ตัวอักษร มุมโค้ง เงา eyebrow" มาทั้งหมด
+       แต่คงความหนาแน่นของตารางและรายการไว้ ไม่ใส่ whitespace แบบนิตยสาร
+     · ฟอนต์ MarkForMC เป็นลิขสิทธิ์เฉพาะ และแอปนี้เป็นภาษาไทย
+       Sofia Sans ที่เอกสารแนะนำไม่มีอักษรไทย จึงคง Noto Sans Thai ไว้สำหรับไทย
+       และใช้ Inter (ตัวสำรองที่เอกสารระบุ) กับตัวเลข/ละติน
+       สิ่งที่รักษาไว้ตามเอกสาร: น้ำหนัก 450 ในเนื้อความ และ tracking -2% ในหัวข้อ
+     · เอกสารไม่ได้กำหนดสี good/warn/bad (เป็นหน้าการตลาด ไม่มีสถานะระบบ)
+       จึงตั้งเพิ่มให้เข้าโทนอุ่นและผ่าน WCAG AA ทุกค่าเมื่อใช้เป็นตัวอักษร
+     ════════════════════════════════════════════════════════════ */
 
-  /* Brand — warm street-food orange */
-  --brand:#ff6a2b;
-  --brand-2:#f04e12;
-  --brand-ink:#b93b0b;
-  --brand-soft:#fff2ec;
-  --brand-line:#ffd9c8;
+  /* Surfaces — สามโทนตามเอกสาร ไม่มีขาวล้วนเป็นพื้นหน้า */
+  --bg:#f3f0ee;          /* Canvas Cream */
+  --bg-2:#e8e2da;        /* whisper cream — ใช้แทนพื้นเทาอ่อนเดิม */
+  --surface:#fcfbfa;     /* Lifted Cream — พื้นการ์ด */
+  --surface-2:#f4f4f4;   /* Soft Bone */
+  --white:#ffffff;       /* สงวนไว้: nav pill, modal, satellite CTA */
+  --line:#dcd6ce;
+  --line-2:#e8e2da;
 
-  /* Semantic — ค่า *-ink ใช้กับ "ข้อความ" (ผ่าน WCAG AA >= 4.5:1 บนพื้นขาว)
-     ส่วนค่าปกติใช้กับพื้นหลัง/แถบ/จุด/กราฟ ซึ่งไม่ต้องผ่านเกณฑ์ข้อความ */
-  --good:#0a8557;   --good-soft:#e8f8f1; --good-line:#bdead9; --good-ink:#07724d;
-  --warn:#d98307;   --warn-soft:#fff6e6; --warn-line:#f7dfae; --warn-ink:#9a5c06;
-  --bad:#dc2f45;    --bad-soft:#fdedef;  --bad-line:#f6c9cf;
-  --info:#2f6bff;   --info-soft:#eef3ff; --info-line:#cfdcff;
-  --ai:#6d51f5;     --ai-soft:#f2effe;   --ai-line:#dbd2fd;
+  /* Ink & neutrals */
+  --ink:#141413;         /* Ink Black — หัวข้อ เนื้อความ ปุ่มหลัก พื้น footer */
+  --ink-2:#262627;       /* Charcoal */
+  --muted:#555555;       /* Granite — ใช้กับข้อความรอง (บน cream ได้ 5.6:1) */
+  --muted-2:#696969;     /* Slate Gray — ป้ายกำกับ/ไอคอน ไม่ใช้กับเนื้อความยาว */
+  --whisper:#d1cdc7;     /* Dust Taupe — ข้อความจาง/สถานะว่าง */
 
-  /* Chart series */
-  --c1:#ff6a2b; --c2:#2f6bff; --c3:#0f9f6e; --c4:#6d51f5; --c5:#d98307; --c6:#0ea5b7;
+  /* Signal Orange — เอกสารสงวนไว้สำหรับ "ความยินยอม/กฎหมาย" เท่านั้น
+     ปุ่มหลักของหน้าเว็บจึงเป็น Ink Pill ไม่ใช่สีส้ม */
+  --brand:#cf4500;       /* Signal Orange — พื้นปุ่มยินยอม (ตัวอักษรขาว 4.65:1) */
+  --brand-2:#b03a00;
+  --brand-ink:#9a3a0a;   /* Clay Brown — เมื่อสีส้มต้องเป็น "ตัวอักษร" (6.2:1) */
+  --brand-soft:#fbeee7;
+  --brand-line:#f0d8c9;
+  --accent:#f37338;      /* Light Signal Orange — เส้นโคจร/จุด eyebrow/ตัวชี้ */
 
-  /* Shape */
-  --r-sm:6px; --r:10px; --r-lg:14px; --r-xl:18px; --r-pill:999px;
-  --sh-1:0 1px 2px rgba(16,24,32,.04);
-  --sh-2:0 2px 6px rgba(16,24,32,.06), 0 8px 24px rgba(16,24,32,.06);
-  --sh-3:0 12px 32px rgba(16,24,32,.12), 0 2px 8px rgba(16,24,32,.08);
-  --sh-brand:0 8px 24px rgba(255,106,43,.28);
+  /* Semantic — ส่วนขยาย (เอกสารไม่ได้กำหนด) · ค่า *-ink ผ่าน AA บน cream */
+  --good:#1a7f4b;   --good-soft:#e9f3ec; --good-line:#c3ddcb; --good-ink:#136239;
+  --warn:#b06d05;   --warn-soft:#fbf1e2; --warn-line:#eddbb8; --warn-ink:#7d4d04;
+  --bad:#c4212f;    --bad-soft:#fbeaec;  --bad-line:#eec8cc;  --bad-ink:#a01824;
+  --info:#3860be;   --info-soft:#eceff9; --info-line:#ccd5ee; --info-ink:#2f52a2;  /* Link Blue */
+  --ai:#9a3a0a;     --ai-soft:#fbeee7;   --ai-line:#f0d8c9;
 
-  /* Layout */
-  --sidebar:260px;
+  /* Chart series — เริ่มจาก accent แล้วไล่ไปโทนที่แยกกันได้ */
+  --c1:#cf4500; --c2:#3860be; --c3:#1a7f4b; --c4:#b06d05; --c5:#696969; --c6:#0e7490;
+
+  /* Shape — 20 / 40 / 999 ตามเอกสาร (เลี่ยงช่วง 8–16) */
+  --r-sm:6px;            /* ชิปจิ๋วเท่านั้น */
+  --r:20px;              /* ปุ่มและช่องกรอก */
+  --r-lg:20px;           /* การ์ด */
+  --r-xl:40px;           /* คอนเทนเนอร์ใหญ่ เฮโร โมดัล */
+  --r-pill:999px;
+
+  /* Elevation — เงาเป็น "เบาะอากาศ" กระจายกว้าง ทึบต่ำ ไม่มีเงาคมสั้น */
+  --sh-1:none;                                         /* ระดับ 0 = ค่าเริ่มต้น */
+  --sh-nav:0 4px 24px rgba(0,0,0,.04);                 /* ระดับ 1 — nav pill */
+  --sh-2:0 24px 48px rgba(0,0,0,.08);                  /* ระดับ 2 — การ์ดยกตัว */
+  --sh-3:0 70px 110px rgba(0,0,0,.25);                 /* ระดับ 3 — ใช้น้อยมาก */
+  --sh-brand:none;
+
+  /* Sidebar = พื้นผิว ink ตามจังหวะ cream → lifted → ink */
+  --sb-bg:#141413;
+  --sb-line:rgba(255,255,255,.14);
+  --sb-ink:#f3f0ee;
+  --sb-muted:#a5a19c;
+  --sb-hover:rgba(255,255,255,.07);
+
+  /* Layout — base 8px, สเกล 8/16/24/32/48/64/96/128 */
+  --sidebar:256px;
   --topbar:64px;
-  --maxw:1440px;
+  --maxw:1280px;
 
-  /* ฟอนต์แรกคือไฟล์ที่ self-host · ที่เหลือคือฟอนต์ไทยที่ติดมากับ OS (กันกรณีโหลดไฟล์ไม่ได้) */
+  /* ตัวอักษร: ไทยใช้ Noto Sans Thai · ตัวเลข/ละตินใช้ Inter (ตัวสำรองที่เอกสารระบุ) */
   --f-thai:"Noto Sans Thai","Sarabun","IBM Plex Sans Thai","Leelawadee UI","Thonburi",
            -apple-system,BlinkMacSystemFont,system-ui,"Segoe UI","Helvetica Neue",sans-serif;
   --f-num:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
@@ -84,8 +121,11 @@ body{
   font-family:var(--f-thai);
   background:var(--bg);
   color:var(--ink);
-  font-size:15px;
-  line-height:1.6;
+  /* น้ำหนัก 450 คือลายเซ็นของระบบนี้ — อ่อนกว่า 500 แต่แน่นกว่า 400
+     ฟอนต์ที่ self-host เป็น variable (400–800) จึงได้ 450 จริง ไม่ใช่ปัดเป็น 400 */
+  font-weight:450;
+  font-size:16px;
+  line-height:1.4;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
@@ -98,18 +138,32 @@ table{border-collapse:collapse;width:100%}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
 
 /* ---------- Typography ---------- */
-h1,h2,h3,h4,h5{margin:0;line-height:1.28;font-weight:800;letter-spacing:-.01em}
-h1{font-size:clamp(30px,5vw,52px);letter-spacing:-.03em}
-h2{font-size:clamp(23px,3.2vw,34px);letter-spacing:-.02em}
-h3{font-size:19px}
-h4{font-size:16px}
+/* หัวข้อ: น้ำหนัก 500 + tracking -2% · line-height แน่นลงเมื่อขนาดใหญ่ขึ้น
+   (H1 = 1:1, H3 = 1.2, เนื้อความ = 1.4) */
+h1,h2,h3,h4,h5{margin:0;font-weight:500;letter-spacing:-.02em}
+h1{font-size:clamp(40px,5.6vw,64px);line-height:1.02}
+h2{font-size:clamp(28px,3.4vw,36px);line-height:1.22}
+h3{font-size:24px;line-height:1.2}
+h4{font-size:18px;line-height:1.3}
+h5{font-size:14px;font-weight:700;letter-spacing:.04em;line-height:1}
 p{margin:0}
-.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;font-feature-settings:"tnum"}
-.t-xs{font-size:12px}.t-sm{font-size:13px}.t-md{font-size:14px}.t-lg{font-size:17px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  font-feature-settings:"tnum";font-weight:500}
+.t-xs{font-size:12.5px}.t-sm{font-size:14px}.t-md{font-size:15px}.t-lg{font-size:18px}
 .muted{color:var(--muted)}
 .muted-2{color:#6b7480} /* ข้อความ: ต้องผ่าน AA — token --muted-2 คงไว้สำหรับจุด/เส้น/ไอคอน */
-.b6{font-weight:600}.b7{font-weight:700}.b8{font-weight:800}
-.up{text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:700}
+/* ระบบนี้ใช้แค่ 450 (เนื้อความ) · 500 (หัวข้อ/ปุ่ม) · 700 (eyebrow/ตัวเน้น) */
+.b6{font-weight:500}.b7{font-weight:500}.b8{font-weight:700}
+.up{text-transform:uppercase;letter-spacing:.04em;font-size:14px;font-weight:700}
+
+/* Eyebrow — ฉลากหมวดของระบบนี้: จุด accent + ตัวพิมพ์ใหญ่ 14px/700/+4%
+   เอกสารย้ำว่า "ห้ามลืมจุดนำหน้า มันคือเอกลักษณ์" และห้ามใช้ตัวพิมพ์ใหญ่
+   ที่ขนาดใหญ่กว่า 14px ที่ใดอีก */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;
+  letter-spacing:.04em;text-transform:uppercase;color:var(--muted-2);line-height:1}
+/* เติมจุดให้เฉพาะกรณีที่ markup ยังไม่มีจุดของตัวเอง — บางที่ใช้ .dot dot-live
+   ที่กระพริบเพื่อสื่อสถานะ ถ้าเติมซ้ำจะได้จุดสองจุด */
+.eyebrow:not(:has(.dot))::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
 .ctr{text-align:center}.right{text-align:right}
 .nowrap{white-space:nowrap}
 .tnum{font-variant-numeric:tabular-nums}
@@ -145,54 +199,71 @@ p{margin:0}
 .skip-link:focus{top:0}
 
 /* ---------- Buttons ---------- */
+/* ปุ่มคือเครื่องมือ ไม่ใช่ของประดับ — เหลี่ยม พื้นทึบ ไม่ยกลอยตอน hover
+   (การยกลอย + เงาเรืองแสงคือลายเซ็นของเทมเพลตสำเร็จรูป) */
+/* ปุ่มรอง (ค่าเริ่มต้น) = Outlined Pill: พื้นขาว ขอบหมึก 1.5px รัศมี 20px
+   ปุ่มหลัก = Ink Pill: พื้นหมึก ตัวอักษรสี cream ไม่ใช่ขาวล้วน
+   สีส้ม Signal สงวนไว้ให้ .btn-consent เท่านั้นตามกฎของระบบ */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  height:42px;padding:0 18px;border-radius:var(--r-pill);
-  font-weight:700;font-size:14.5px;white-space:nowrap;
-  border:1px solid transparent;background:var(--surface);color:var(--ink);
-  box-shadow:var(--sh-1);transition:transform .12s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease;
+  min-height:40px;padding:8px 24px;border-radius:var(--r);
+  font-weight:450;font-size:16px;letter-spacing:-.02em;white-space:nowrap;
+  border:1.5px solid var(--ink);background:var(--white);color:var(--ink);
+  transition:background .16s ease,color .16s ease,border-color .16s ease;
 }
-.btn:hover{transform:translateY(-1px);box-shadow:var(--sh-2)}
-.btn:active{transform:translateY(0)}
-.btn-primary{background:linear-gradient(180deg,var(--brand),var(--brand-2));color:#fff;box-shadow:var(--sh-brand)}
-.btn-primary:hover{box-shadow:0 12px 30px rgba(255,106,43,.36)}
-.btn-dark{background:var(--ink);color:#fff}
-.btn-ghost{background:transparent;border-color:var(--line);box-shadow:none}
-.btn-ghost:hover{background:var(--surface);border-color:var(--muted-2)}
-.btn-soft{background:var(--bg-2);border-color:var(--line);box-shadow:none}
-.btn-ai{background:var(--ink);color:#fff}
+.btn:hover{background:var(--bg-2)}
+.btn:active{transform:scale(.985)}
+.btn-primary{background:var(--ink);border-color:var(--ink);color:var(--bg);font-weight:500}
+.btn-primary:hover{background:#000;border-color:#000}
+/* ปุ่มความยินยอม/กฎหมาย — ที่เดียวที่ใช้ Signal Orange ได้ */
+.btn-consent{background:var(--brand);border-color:var(--brand);color:#fff;border-radius:24px}
+.btn-consent:hover{background:var(--brand-2);border-color:var(--brand-2)}
+.btn-dark{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn-ghost{background:transparent;border-color:rgba(20,20,19,.28)}
+.btn-ghost:hover{background:var(--white);border-color:var(--ink)}
+.btn-soft{background:var(--bg-2);border-color:var(--bg-2)}
+.btn-soft:hover{background:var(--line);border-color:var(--line)}
+.btn-ai{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .btn-ai:hover{background:#000}
-.btn-good{background:var(--good);color:#fff}
-.btn-bad{background:var(--bad);color:#fff}
-.btn-white{background:#fff;color:var(--ink)}
-.btn-lg{height:52px;padding:0 26px;font-size:16px}
-.btn-sm{height:34px;padding:0 13px;font-size:13.5px;border-radius:var(--r-pill)}
-.btn-xs{height:28px;padding:0 10px;font-size:12.5px;font-weight:700;border-radius:8px}
+.btn-good{background:var(--good);border-color:var(--good);color:#fff}
+.btn-bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn-white{background:var(--white);border-color:var(--white);color:var(--ink)}
+.btn-lg{min-height:52px;padding:12px 40px;font-size:17px;border-radius:24px}
+.btn-sm{min-height:34px;padding:5px 16px;font-size:14px}
+.btn-xs{min-height:28px;padding:3px 12px;font-size:13px;border-width:1px}
 .btn-block{width:100%}
-.btn-icon{width:38px;height:38px;padding:0;border-radius:11px;background:transparent;border:1px solid var(--line);box-shadow:none}
-.btn-icon:hover{background:var(--surface-2)}
+/* ปุ่มไอคอนเป็นวงกลมสมบูรณ์ตามระบบ (ไม่ใช่สี่เหลี่ยมมุมมน) */
+.btn-icon{width:40px;height:40px;min-height:40px;padding:0;border-radius:50%;
+  background:transparent;border:1px solid rgba(20,20,19,.22)}
+.btn-icon:hover{background:var(--white);border-color:var(--ink)}
 .btn[disabled]{opacity:.45;pointer-events:none}
 
 /* ---------- Cards ---------- */
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-1)}
-.card-p{padding:20px}
-.card-h{padding:16px 20px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.card-b{padding:20px}
-.card-f{padding:14px 20px;border-top:1px solid var(--line-2);background:var(--surface-2);border-radius:0 0 var(--r-lg) var(--r-lg)}
-.card-hover{transition:transform .15s ease,box-shadow .2s ease,border-color .2s ease}
-.card-hover:hover{transform:translateY(-2px);box-shadow:var(--sh-2);border-color:var(--muted-2)}
-.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+/* การ์ด: พื้น lifted cream บน canvas cream · ระดับความสูง 0 เป็นค่าเริ่มต้น
+   (เอกสาร: "95% ของพื้นผิววางบน canvas ตรง ๆ") เส้นขอบทำหน้าที่คั่น */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg)}
+.card-p{padding:24px}
+.card-h{padding:20px 24px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.card-b{padding:24px}
+.card-f{padding:16px 24px;border-top:1px solid var(--line-2);background:var(--surface-2);border-radius:0 0 var(--r-lg) var(--r-lg)}
+/* ยกตัวด้วยเงาระดับ 2 ที่กระจาย 48px ทึบ 8% — "เบาะอากาศ" ไม่ใช่เงาทิศทาง */
+.card-hover{transition:box-shadow .22s ease,transform .22s ease}
+.card-hover:hover{box-shadow:var(--sh-2);transform:translateY(-2px)}
+.card-raise{box-shadow:var(--sh-2)}
+.tile{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:16px 20px}
 
 /* ---------- Badges / pills ---------- */
-.badge{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 10px;border-radius:var(--r-pill);
-  font-size:12px;font-weight:700;background:var(--bg-2);color:var(--ink-2);border:1px solid var(--line);white-space:nowrap}
-.badge-good{background:var(--good-soft);color:#0a7a54;border-color:var(--good-line)}
-.badge-warn{background:var(--warn-soft);color:#a9640a;border-color:var(--warn-line)}
-.badge-bad{background:var(--bad-soft);color:#b8232f;border-color:var(--bad-line)}
-.badge-info{background:var(--info-soft);color:#1f4fd8;border-color:var(--info-line)}
+/* ชิป/ป้าย = แคปซูลเต็ม 999px ตามระบบ · ตัวอักษรใช้ค่า *-ink ที่ผ่าน AA */
+.badge{display:inline-flex;align-items:center;gap:6px;min-height:26px;padding:3px 14px;border-radius:var(--r-pill);
+  font-size:13px;font-weight:500;background:var(--white);color:var(--ink);border:1px solid var(--line);white-space:nowrap}
+.badge-good{background:var(--good-soft);color:var(--good-ink);border-color:var(--good-line)}
+.badge-warn{background:var(--warn-soft);color:var(--warn-ink);border-color:var(--warn-line)}
+.badge-bad{background:var(--bad-soft);color:var(--bad-ink);border-color:var(--bad-line)}
+.badge-info{background:var(--info-soft);color:var(--info-ink);border-color:var(--info-line)}
 .badge-brand{background:var(--brand-soft);color:var(--brand-ink);border-color:var(--brand-line)}
 .badge-ai{background:var(--brand-soft);color:var(--brand-ink);border-color:var(--brand-line)}
-.badge-lg{height:30px;padding:0 13px;font-size:13px}
+.badge-ink{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.badge-lg{min-height:32px;padding:5px 18px;font-size:14px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--muted-2);flex:none}
 .dot-good{background:var(--good)}.dot-warn{background:var(--warn)}.dot-bad{background:var(--bad)}
 .dot-live{background:var(--good);box-shadow:0 0 0 0 rgba(15,159,110,.6);animation:pulse 2s infinite}
@@ -203,77 +274,88 @@ p{margin:0}
 
 /* ---------- Forms ---------- */
 .field{display:flex;flex-direction:column;gap:7px}
-.label{font-size:13.5px;font-weight:700;color:var(--ink-2)}
-.hint{font-size:12.5px;color:var(--muted)}
+.label{font-size:14px;font-weight:700;color:var(--ink)}
+.hint{font-size:13px;color:var(--muted)}
+/* ช่องกรอกเป็นแคปซูล พื้นขาว ขอบหมึกจาง — ตามสเปกช่องค้นหาของระบบ
+   (textarea คงมุม 20px เพราะแคปซูลกับข้อความหลายบรรทัดใช้ร่วมกันไม่ได้) */
 .input,.select,.textarea{
-  width:100%;height:46px;padding:0 14px;border-radius:var(--r);
-  background:var(--surface);border:1.5px solid var(--line);
-  transition:border-color .15s ease,box-shadow .15s ease;font-size:15px;
+  width:100%;height:48px;padding:12px 24px;border-radius:var(--r-pill);
+  background:var(--white);border:1px solid rgba(20,20,19,.5);color:var(--ink);
+  transition:border-color .15s ease;font-size:16px;font-weight:450;
 }
-.textarea{height:auto;padding:12px 14px;min-height:88px;resize:vertical;line-height:1.55}
-.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-soft)}
+.textarea{height:auto;border-radius:var(--r);min-height:96px;resize:vertical;line-height:1.4}
+.input::placeholder,.textarea::placeholder{color:var(--muted-2)}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:var(--ink);border-width:1.5px}
 .select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236d7685' stroke-width='2' stroke-linecap='round'><path d='M4 6l4 4 4-4'/></svg>");
   background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
-.input-sm{height:38px;font-size:14px;padding:0 11px}
+.input-sm{height:40px;font-size:15px;padding:8px 18px}
 .input-prefix{position:relative}
-.input-prefix .input{padding-left:34px}
-.input-prefix span{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700}
+.input-prefix .input{padding-left:40px}
+.input-prefix span{position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:500}
 
 .choice{
-  display:flex;align-items:center;gap:11px;padding:14px;border-radius:var(--r);
-  border:1.5px solid var(--line);background:var(--surface);cursor:pointer;text-align:left;
-  transition:all .15s ease;width:100%;
+  display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:var(--r);
+  border:1.5px solid var(--line);background:var(--white);cursor:pointer;text-align:left;
+  transition:border-color .16s ease,box-shadow .16s ease;width:100%;
 }
-.choice:hover{border-color:var(--brand-line);background:var(--brand-soft)}
-.choice.on{border-color:var(--brand);background:var(--brand-soft);box-shadow:0 0 0 3px rgba(255,106,43,.1)}
-.choice .ci{width:40px;height:40px;flex:none;border-radius:11px;display:grid;place-items:center;background:var(--bg-2);font-size:19px}
-.choice.on .ci{background:#fff}
+.choice:hover{border-color:var(--ink)}
+.choice.on{border-color:var(--ink);box-shadow:var(--sh-2)}
+/* ไอคอนในตัวเลือกเป็นวงกลม — ระบบนี้ครอบภาพ/ไอคอนเป็นวงกลมเสมอ */
+.choice .ci{width:44px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;
+  background:var(--bg-2);color:var(--ink);font-size:19px}
+.choice.on .ci{background:var(--ink);color:var(--bg)}
 .choice-c{flex-direction:column;align-items:flex-start;gap:8px}
 
 .switch{position:relative;width:44px;height:26px;border-radius:var(--r-pill);background:var(--line);
   transition:background .18s ease;flex:none;cursor:pointer;border:none}
 .switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
   background:#fff;box-shadow:var(--sh-1);transition:transform .18s ease}
-.switch.on{background:var(--good)}
+.switch.on{background:var(--ink)}
 .switch.on::after{transform:translateX(18px)}
 
 /* ---------- Tables ---------- */
-.tbl{width:100%;font-size:14px}
+/* ตารางคงความหนาแน่นไว้ (หน้าใช้งานจริง ไม่ใช่หน้าโปรโมต)
+   แต่หัวตารางใช้สเกล eyebrow ของระบบ และเส้นคั่นเป็นเส้นบาง ไม่ใช้เงา */
+.tbl{width:100%;font-size:15px;font-weight:450}
 .tbl th{
-  text-align:left;padding:11px 14px;font-size:11.5px;font-weight:800;letter-spacing:.05em;
-  text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);background:var(--surface-2);
+  text-align:left;padding:12px 16px;font-size:12.5px;font-weight:700;letter-spacing:.03em;
+  color:var(--muted-2);border-bottom:1px solid var(--line);background:var(--surface-2);
   white-space:nowrap;position:sticky;top:0;z-index:1;
 }
-.tbl td{padding:13px 14px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.tbl td{padding:14px 16px;border-bottom:1px solid var(--line-2);vertical-align:middle}
 .tbl tbody tr:last-child td{border-bottom:none}
 .tbl tbody tr{transition:background .12s ease}
-.tbl tbody tr:hover{background:var(--surface-2)}
+.tbl tbody tr:hover{background:var(--white)}
 .tbl .r{text-align:right}
 .tbl-clickable tbody tr{cursor:pointer}
 
 /* ---------- Progress / meters ---------- */
 .bar{height:8px;border-radius:var(--r-pill);background:var(--bg-2);overflow:hidden}
-.bar > i{display:block;height:100%;border-radius:var(--r-pill);background:var(--brand);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.bar > i{display:block;height:100%;border-radius:var(--r-pill);background:var(--ink);transition:width .5s cubic-bezier(.2,.8,.2,1)}
 .bar-good > i{background:var(--good)}.bar-warn > i{background:var(--warn)}.bar-bad > i{background:var(--bad)}
 .bar-lg{height:12px}
 .stacked{display:flex;height:12px;border-radius:var(--r-pill);overflow:hidden;background:var(--bg-2)}
 .stacked > i{display:block;height:100%}
 
 /* ---------- Tabs / segmented ---------- */
+/* แถบสลับมุมมอง = แคปซูลซ้อนแคปซูล ตัวที่เลือกเป็น Ink Pill */
 .tabs{display:flex;gap:4px;background:var(--bg-2);padding:4px;border-radius:var(--r-pill);overflow-x:auto}
 .tabs button{
-  height:36px;padding:0 16px;border-radius:var(--r-pill);font-weight:700;font-size:13.5px;
-  color:var(--muted);white-space:nowrap;transition:all .15s ease;display:inline-flex;align-items:center;gap:7px;
+  min-height:36px;padding:6px 18px;border-radius:var(--r-pill);font-weight:450;font-size:15px;
+  color:var(--muted);white-space:nowrap;transition:background .16s,color .16s;display:inline-flex;align-items:center;gap:8px;
 }
 .tabs button:hover{color:var(--ink)}
-.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:var(--sh-1)}
-.tabs button .n{font-size:11.5px;font-weight:800;background:var(--bg-2);padding:1px 6px;border-radius:var(--r-pill)}
-.tabs button.on .n{background:var(--brand-soft);color:var(--brand-ink)}
+.tabs button.on{background:var(--ink);color:var(--bg);font-weight:500}
+.tabs button .n{font-family:var(--f-num);font-size:13px;font-weight:500;background:var(--white);
+  padding:1px 8px;border-radius:var(--r-pill);color:var(--muted)}
+.tabs button.on .n{background:rgba(255,255,255,.18);color:var(--bg)}
 
 .underline-tabs{display:flex;gap:26px;border-bottom:1px solid var(--line);overflow-x:auto}
 .underline-tabs button{padding:12px 0;font-weight:700;color:var(--muted);border-bottom:2.5px solid transparent;
   margin-bottom:-1px;white-space:nowrap;font-size:14.5px}
-.underline-tabs button.on{color:var(--brand-ink);border-color:var(--brand)}
+.underline-tabs button.on{color:var(--ink);border-color:var(--ink)}
+.underline-tabs button{font-size:16px;font-weight:450}
+.underline-tabs button.on{font-weight:500}
 .underline-tabs button:hover{color:var(--ink)}
 
 /* ============================================================
@@ -281,35 +363,60 @@ p{margin:0}
    ============================================================ */
 .shell{display:flex;min-height:100vh}
 
+/* แถบข้าง = พื้นผิว ink ซึ่งเป็นโทนที่สามของระบบ (cream → lifted → ink)
+   ในเว็บต้นแบบ ink คือ footer; ในแอปที่ใช้งานทุกวันบทบาทเดียวกันคือแถบนำทาง */
 .sidebar{
-  width:var(--sidebar);flex:none;background:var(--surface);border-right:1px solid var(--line);
+  width:var(--sidebar);flex:none;background:var(--sb-bg);color:var(--sb-ink);
   display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:60;
 }
-.sb-brand{height:var(--topbar);padding:0 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line-2)}
-.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-2));
-  display:grid;place-items:center;font-size:18px;box-shadow:var(--sh-brand);flex:none}
-.logo-txt{font-weight:800;font-size:16.5px;letter-spacing:-.02em}
-.logo-txt span{color:var(--brand)}
+.sb-brand{height:var(--topbar);padding:0 16px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--sb-line)}
+/* โลโก้เป็นวงกลม — ระบบนี้ครอบภาพเป็นวงกลมเสมอ ไม่ใช่สี่เหลี่ยมมุมมน */
+.logo{width:36px;height:36px;border-radius:50%;background:var(--brand);
+  display:grid;place-items:center;font-size:18px;flex:none}
+/* ค่าเริ่มต้นเป็นสีหมึก (ใช้บน nav pill ขาวของหน้า Landing)
+   แล้วกลับเป็น cream เฉพาะเมื่ออยู่ในแถบข้างสีเข้ม — เดิมตั้ง cream ไว้ตัวเดียว
+   ทำให้ชื่อแบรนด์บนหน้าแรกเป็น cream บนขาว = มองไม่เห็น */
+.logo-txt{font-weight:500;font-size:17px;letter-spacing:-.02em;color:var(--ink)}
+.logo-txt span{color:var(--brand-ink)}
+.sidebar .logo-txt{color:var(--sb-ink)}
+.sidebar .logo-txt span{color:var(--accent)}
 
-.sb-store{margin:14px 14px 6px;padding:11px 12px;border-radius:var(--r);background:var(--surface-2);
-  border:1px solid var(--line);display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s}
-.sb-store:hover{border-color:var(--brand-line);background:var(--brand-soft)}
-.sb-store .av{width:34px;height:34px;border-radius:10px;background:var(--brand-soft);display:grid;place-items:center;font-size:17px;flex:none}
+.sb-store{margin:16px 16px 8px;padding:12px 16px;border-radius:var(--r-pill);background:var(--sb-hover);
+  border:1px solid var(--sb-line);display:flex;align-items:center;gap:12px;cursor:pointer;
+  transition:border-color .15s,background .15s}
+.sb-store:hover{border-color:rgba(255,255,255,.4)}
+.sb-store b{color:var(--sb-ink)}
+.sb-store .t-xs,.sb-store .muted{color:var(--sb-muted)}
+.sb-store .av{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);
+  display:grid;place-items:center;font-size:17px;flex:none}
 
 .sb-nav{flex:1;overflow-y:auto;padding:10px 12px 16px;display:flex;flex-direction:column;gap:2px}
-.sb-sec{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2);
-  padding:16px 10px 7px}
+/* หัวข้อหมวดในแถบข้างใช้สเกล eyebrow (14px/700/+4%) ตามระบบ
+   แต่ลดเหลือ 12px เพราะเป็นฉลากภายในเครื่องมือ ไม่ใช่ป้ายหมวดบนหน้าเว็บ */
+.sb-sec{font-size:12px;font-weight:700;letter-spacing:.03em;color:var(--sb-muted);
+  padding:20px 14px 8px}
+/* รายการนำทางเป็นแคปซูล
+   คลาสนี้ใช้สองที่: แถบข้างสีเข้ม และแท็บด้านข้างในการ์ดพื้นขาว (หน้า Settings)
+   ค่าเริ่มต้นจึงต้องเป็นสีสำหรับ "พื้นสว่าง" แล้วค่อยกลับสีเมื่ออยู่ใน .sidebar
+   (เดิมตั้งสีอ่อนเป็นค่าเริ่มต้น ทำให้แท็บในหน้า Settings เป็นเทาอ่อนบนขาว = 1.47:1) */
 .nav-i{
-  display:flex;align-items:center;gap:11px;padding:10px 11px;border-radius:11px;
-  font-weight:600;font-size:14.5px;color:var(--ink-2);transition:all .14s ease;position:relative;
+  display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--r-pill);
+  font-weight:450;font-size:16px;color:var(--ink-2);transition:background .16s,color .16s;position:relative;
 }
-.nav-i:hover{background:var(--surface-2);color:var(--ink)}
-.nav-i.on{background:var(--brand-soft);color:var(--brand-ink);font-weight:700}
-.nav-i.on::before{content:"";position:absolute;left:-12px;top:50%;transform:translateY(-50%);
-  width:3px;height:20px;border-radius:0 3px 3px 0;background:var(--brand)}
-.nav-i .ni{width:20px;height:20px;flex:none;display:grid;place-items:center;color:var(--muted)}
-.nav-i.on .ni{color:var(--brand)}
-.nav-i:hover .ni{color:var(--ink-2)}
+.nav-i:hover{background:var(--bg-2);color:var(--ink)}
+.nav-i.on{background:var(--ink);color:var(--bg);font-weight:500}
+.nav-i .ni{width:20px;height:20px;flex:none;display:grid;place-items:center;color:var(--muted-2)}
+.nav-i.on .ni{color:var(--bg)}
+.nav-i:hover .ni{color:var(--ink)}
+
+/* กลับสีเมื่ออยู่ในแถบข้างสีหมึก */
+.sidebar .nav-i{color:#d5d1cc}
+.sidebar .nav-i:hover{background:var(--sb-hover);color:var(--white)}
+.sidebar .nav-i.on{background:var(--bg);color:var(--ink)}
+.sidebar .nav-i .ni{color:var(--sb-muted)}
+.sidebar .nav-i.on .ni{color:var(--ink)}
+.sidebar .nav-i:hover .ni{color:var(--white)}
 .ico{display:block;flex:none}
 /* อักษรย่อแทนโลโก้บริษัทอื่น — เลี่ยงการใช้เครื่องหมายการค้าและ emoji */
 .mono-chip{
@@ -317,40 +424,50 @@ p{margin:0}
   background:var(--bg-2);border:1px solid var(--line);color:var(--ink-2);
   font-family:var(--f-num);font-size:10.5px;font-weight:700;letter-spacing:.02em;
 }
-.nav-i .nb{margin-left:auto;font-size:11px;font-weight:800;font-family:var(--f-num);
-  background:var(--bad);color:#fff;padding:1px 7px;border-radius:var(--r-pill)}
-.nav-i .nb-soft{background:var(--bg-2);color:var(--muted)}
+/* ตัวเลขนี้เคยใช้ Signal Orange ซึ่งระบบสงวนไว้ให้ "ความยินยอม/กฎหมาย" เท่านั้น
+   ตัวเลขที่หมายถึง "มีของค้างต้องจัดการ" จึงใช้สีสถานะเตือน (ส่วนขยายของเรา) */
+.nav-i .nb{margin-left:auto;font-size:12px;font-weight:500;font-family:var(--f-num);
+  background:var(--bad);color:#fff;padding:1px 8px;border-radius:var(--r-pill);min-width:22px;text-align:center}
+.nav-i .nb-soft{background:rgba(255,255,255,.14);color:#d5d1cc}
+.nav-i.on .nb{background:var(--ink);color:var(--bg)}
 
-.sb-foot{padding:12px;border-top:1px solid var(--line-2)}
-.plan{padding:13px;border-radius:var(--r);background:linear-gradient(145deg,#1a2230,#101820);color:#fff}
-.plan .pt{font-size:12.5px;color:#a9b3c2}
+.sb-foot{padding:16px;border-top:1px solid var(--sb-line)}
+.plan{padding:16px 18px;border-radius:var(--r);background:var(--sb-hover);border:1px solid var(--sb-line);color:var(--sb-ink)}
+.plan .pt{font-size:13px;color:var(--sb-muted)}
+.plan .btn{background:var(--bg);border-color:var(--bg);color:var(--ink)}
+.plan .btn:hover{background:var(--white);border-color:var(--white)}
 
 .main{flex:1;min-width:0;margin-left:var(--sidebar);display:flex;flex-direction:column}
 
+/* แถบบน = nav pill ลอย: พื้นขาว แคปซูลเต็ม เงาระดับ 1 (บาง 4%)
+   ไม่แนบขอบจอด้านบน แต่ลอยห่างลงมาตามระบบ */
 .topbar{
-  height:var(--topbar);background:rgba(255,255,255,.86);backdrop-filter:saturate(180%) blur(12px);
-  border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;
-  display:flex;align-items:center;gap:14px;padding:0 22px;
+  position:sticky;top:16px;z-index:50;
+  display:flex;align-items:center;gap:12px;
+  margin:16px 24px 0;padding:9px 14px 9px 20px;
+  min-height:56px;height:auto;
+  background:var(--white);border-radius:var(--r-pill);box-shadow:var(--sh-nav);
 }
 .search{
-  flex:1 1 0;min-width:0;max-width:420px;height:40px;border-radius:var(--r-pill);background:var(--bg);
-  border:1px solid var(--line);display:flex;align-items:center;gap:9px;padding:0 14px;color:var(--muted);
-  transition:all .15s;
+  flex:1 1 0;min-width:0;max-width:400px;height:40px;border-radius:var(--r-pill);background:var(--bg);
+  border:1px solid rgba(20,20,19,.16);display:flex;align-items:center;gap:10px;padding:0 20px;color:var(--muted);
+  transition:border-color .15s,background .15s;
 }
-.search:focus-within{border-color:var(--brand);background:var(--surface);box-shadow:0 0 0 4px var(--brand-soft)}
+.search:focus-within{border-color:var(--ink);background:var(--white)}
 .search input{flex:1;min-width:0;width:100%;border:none;background:none;outline:none;font-size:14px;color:var(--ink)}
 .search kbd{font-family:var(--f-num);font-size:11px;font-weight:700;background:var(--surface);
   border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--muted)}
-.avatar{width:36px;height:36px;border-radius:var(--r-pill);background:linear-gradient(135deg,#2f6bff,#6d51f5);
-  color:#fff;display:grid;place-items:center;font-weight:800;font-size:13.5px;flex:none;cursor:pointer}
+/* อวาตาร์เป็นวงกลมพื้นหมึก — เดิมเป็นไล่เฉดน้ำเงิน→ม่วงที่ไม่มีที่มาจากระบบสีนี้ */
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--ink);
+  color:var(--bg);display:grid;place-items:center;font-weight:500;font-size:14px;flex:none;cursor:pointer}
 .bell{position:relative}
 .bell::after{content:"";position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;
   background:var(--bad);border:2px solid var(--surface)}
 
-.page{padding:26px 22px 96px;max-width:var(--maxw);width:100%;margin:0 auto;flex:1}
-.page-h{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
-.page-t{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:0}
-.page-s{color:var(--muted);font-size:14.5px;margin-top:3px}
+.page{padding:24px 24px 96px;max-width:var(--maxw);width:100%;margin:0 auto;flex:1}
+.page-h{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.page-t{font-size:36px;font-weight:500;letter-spacing:-.02em;line-height:1.22;margin:0}
+.page-s{color:var(--muted);font-size:16px;margin-top:4px;font-weight:450}
 
 /* Mobile drawer + bottom nav */
 .scrim{position:fixed;inset:0;background:rgba(16,24,32,.45);z-index:55;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -361,16 +478,22 @@ p{margin:0}
 /* ============================================================
    KPI CARDS
    ============================================================ */
-/* เส้นกราฟจิ๋วเคยวางทับบรรทัดเปรียบเทียบด้านล่าง (absolute สูง 38px ทับพอดี)
-   จึงกันที่ให้มันด้วย padding-bottom แล้วให้ข้อความอยู่เหนือเส้นเสมอ */
+/* เส้นกราฟจิ๋วเคยวางทับบรรทัดเปรียบเทียบด้านล่าง จึงกันที่ด้วย padding-bottom */
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
-  padding:18px 18px 34px;
-  box-shadow:var(--sh-1);position:relative;overflow:hidden;transition:transform .15s,box-shadow .2s}
-.kpi:hover{transform:translateY(-2px);box-shadow:var(--sh-2)}
-.kpi .kl{font-size:13px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:7px}
-.kpi .kv{font-size:29px;font-weight:800;font-family:var(--f-num);letter-spacing:-.03em;margin-top:7px;line-height:1.1}
-.kpi .kf{margin-top:9px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.kpi .ki{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:15px;flex:none}
+  padding:22px 22px 36px;
+  position:relative;overflow:hidden;transition:box-shadow .22s ease,transform .22s ease}
+.kpi:hover{box-shadow:var(--sh-2);transform:translateY(-2px)}
+/* ป้ายกำกับใช้สเกล eyebrow (14px/700/+4%) แต่ "ไม่" บังคับตัวพิมพ์ใหญ่
+   เพราะอักษรไทยไม่มีตัวพิมพ์ใหญ่ — ถ้าเปิด uppercase จะได้สองมาตรฐานในแถวเดียวกัน
+   ("ยอดขายวันนี้" ตัวปกติ ข้าง "ORDERS" ตัวพิมพ์ใหญ่) ซึ่งอ่านว่าพลาดมากกว่าตั้งใจ
+   สัญญาณ "นี่คือฉลาก" มาจากน้ำหนัก 700 + ระยะอักษร + ขนาด ซึ่งได้ผลกับทั้งสองภาษา */
+.kpi .kl{font-size:14px;font-weight:700;color:var(--muted-2);letter-spacing:.03em;
+  display:flex;align-items:center;gap:8px}
+.kpi .kv{font-size:38px;font-weight:500;font-family:var(--f-num);font-variant-numeric:tabular-nums;
+  letter-spacing:-.02em;margin-top:10px;line-height:1}
+.kpi .kf{margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px;font-weight:450}
+/* ไอคอนในการ์ดเป็นวงกลม ตามการครอบภาพของระบบ */
+.kpi .ki{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:16px;flex:none}
 .kpi-spark{position:absolute;right:0;bottom:0;left:0;width:100%;height:30px;
   opacity:.42;pointer-events:none;z-index:0}
 .kpi > :not(.kpi-spark){position:relative;z-index:1}
@@ -380,10 +503,10 @@ p{margin:0}
    ============================================================ */
 /* การ์ดคำแนะนำ: เดิมเป็นขอบไล่สีรุ้ง 3 สี ซึ่งอ่านว่า "งานที่เครื่องทำ" มากกว่างานที่ออกแบบ
    เปลี่ยนเป็นเส้นหนาด้านซ้ายสีแบรนด์ + พื้นเรียบ ให้เป็นระบบสีเดียวกับที่เหลือทั้งแอป */
+/* การ์ดคำแนะนำ: เอกสารเลี่ยงเส้นข้างสีเดียวและใช้เงาระดับ 2 เป็นตัวยกความสำคัญ */
 .ai-card{
-  border-radius:var(--r-lg);background:var(--surface);
-  border:1px solid var(--line);border-left:3px solid var(--brand);
-  box-shadow:var(--sh-1);
+  border-radius:var(--r-xl);background:var(--white);
+  border:1px solid var(--line);box-shadow:var(--sh-2);
 }
 .ai-card > .in{padding:22px}
 .ai-badge{
@@ -406,27 +529,27 @@ p{margin:0}
 
 /* Floating AI assistant */
 .fab{
-  position:fixed;right:22px;bottom:22px;z-index:70;height:52px;padding:0 20px 0 16px;border-radius:var(--r-pill);
-  background:var(--ink);color:#fff;font-weight:700;font-size:14.5px;
-  display:inline-flex;align-items:center;gap:10px;box-shadow:0 12px 30px rgba(16,24,32,.28);
-  transition:transform .15s ease,box-shadow .2s ease;
+  position:fixed;right:24px;bottom:24px;z-index:70;min-height:56px;padding:10px 24px 10px 14px;border-radius:var(--r-pill);
+  background:var(--ink);color:var(--bg);font-weight:500;font-size:16px;letter-spacing:-.02em;
+  display:inline-flex;align-items:center;gap:12px;box-shadow:var(--sh-2);
+  transition:background .16s ease;
 }
-.fab:hover{transform:translateY(-2px) scale(1.02)}
-.fab .fi{width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:15px}
+.fab:hover{background:#000}
+.fab .fi{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:16px}
 .fab .fd{width:8px;height:8px;border-radius:50%;background:#48e0a0;box-shadow:0 0 0 3px rgba(72,224,160,.25)}
 
 .ai-panel{
   position:fixed;right:20px;bottom:20px;width:412px;max-width:calc(100vw - 32px);
-  height:min(660px,calc(100vh - 40px));z-index:75;background:var(--surface);border:1px solid var(--line);
-  border-radius:var(--r-xl);box-shadow:var(--sh-3);display:flex;flex-direction:column;overflow:hidden;
+  height:min(660px,calc(100vh - 40px));z-index:75;background:var(--white);border:1px solid var(--line);
+  border-radius:var(--r-xl);box-shadow:var(--sh-2);display:flex;flex-direction:column;overflow:hidden;
   transform:translateY(14px) scale(.98);opacity:0;pointer-events:none;transition:all .2s cubic-bezier(.2,.8,.2,1);
 }
 .ai-panel.on{transform:none;opacity:1;pointer-events:auto}
-.ai-head{padding:15px 16px;background:var(--ink);color:#fff;display:flex;
+.ai-head{padding:18px 20px;background:var(--ink);color:var(--bg);display:flex;
   align-items:center;gap:11px;flex:none}
 .ai-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--surface-2)}
 .ai-foot{padding:12px;border-top:1px solid var(--line);background:var(--surface);flex:none}
-.msg{max-width:88%;padding:12px 14px;border-radius:16px;font-size:14px;line-height:1.6}
+.msg{max-width:88%;padding:14px 18px;border-radius:var(--r);font-size:15px;line-height:1.4;font-weight:450}
 .msg-ai{background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:5px;box-shadow:var(--sh-1)}
 .msg-me{background:var(--ink);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
 .chips{display:flex;gap:7px;flex-wrap:wrap}
@@ -484,7 +607,7 @@ p{margin:0}
 .modal-scrim{position:fixed;inset:0;background:rgba(16,24,32,.5);backdrop-filter:blur(3px);z-index:80;
   display:grid;place-items:center;padding:20px;overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .18s}
 .modal-scrim.on{opacity:1;pointer-events:auto}
-.modal{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--sh-3);width:100%;max-width:560px;
+.modal{background:var(--white);border-radius:var(--r-xl);box-shadow:var(--sh-2);width:100%;max-width:560px;
   transform:translateY(12px) scale(.98);transition:transform .2s cubic-bezier(.2,.8,.2,1);max-height:92vh;
   display:flex;flex-direction:column;overflow:hidden}
 .modal-scrim.on .modal{transform:none}
@@ -495,7 +618,7 @@ p{margin:0}
 
 .toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:95;display:flex;
   flex-direction:column;gap:10px;align-items:center;pointer-events:none}
-.toast{background:var(--ink);color:#fff;padding:13px 20px;border-radius:var(--r-pill);box-shadow:var(--sh-3);
+.toast{background:var(--ink);color:var(--bg);padding:14px 24px;border-radius:var(--r-pill);box-shadow:var(--sh-2);
   font-weight:700;font-size:14px;display:flex;align-items:center;gap:10px;animation:tin .28s cubic-bezier(.2,.8,.2,1)}
 @keyframes tin{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
 
@@ -503,12 +626,15 @@ p{margin:0}
 .step-i{display:flex;align-items:center;gap:10px}
 .step-n{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;
   font-family:var(--f-num);font-size:14px;background:var(--surface);border:2px solid var(--line);color:var(--muted);flex:none}
-.step-i.on .step-n{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:var(--sh-brand)}
+/* ขั้นที่กำลังทำใช้พื้น ink (สีส้ม Signal สงวนไว้ให้ความยินยอม/กฎหมาย)
+   ขั้นที่ทำแล้วใช้สีสถานะสำเร็จ ซึ่งเป็นส่วนขยายของเราไม่ใช่สีแบรนด์ */
+.step-i.on .step-n{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .step-i.done .step-n{background:var(--good);border-color:var(--good);color:#fff}
 .step-l{font-size:13.5px;font-weight:700;color:var(--muted)}
 .step-i.on .step-l{color:var(--ink)}
 .step-line{width:clamp(20px,6vw,72px);height:2px;background:var(--line);margin:0 10px}
 .step-line.done{background:var(--good)}
+.step-n{font-weight:500;font-family:var(--f-num)}
 
 /* ============================================================
    CHARTS
@@ -525,30 +651,32 @@ p{margin:0}
 /* ============================================================
    LANDING
    ============================================================ */
-.lp-nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(14px);
-  border-bottom:1px solid var(--line)}
-.lp-nav .in{max-width:1200px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:26px}
-.lp-links{display:flex;gap:26px;margin-left:14px}
-.lp-links a{font-size:14.5px;font-weight:600;color:var(--ink-2)}
-.lp-links a:hover{color:var(--brand)}
+/* nav ลอยเป็นแคปซูลขาว ห่างขอบจอด้านบน 24px ตามระบบ (ไม่แนบขอบ ไม่เบลอ) */
+.lp-nav{position:sticky;top:24px;z-index:50;max-width:1280px;margin:24px auto 0;padding:0 24px}
+.lp-nav .in{background:var(--white);border-radius:var(--r-pill);box-shadow:var(--sh-nav);
+  padding:14px 32px;display:flex;align-items:center;gap:32px}
+.lp-links{display:flex;gap:48px;margin-left:24px}
+.lp-links a{font-size:16px;font-weight:500;letter-spacing:-.02em;color:var(--ink)}
+.lp-links a:hover{color:var(--brand-ink)}
 
-.hero{position:relative;overflow:hidden;background:
-  radial-gradient(1100px 460px at 78% -12%,#ffe9dd 0%,rgba(255,233,221,0) 62%),
-  radial-gradient(760px 400px at 8% 4%,#e9efff 0%,rgba(233,239,255,0) 60%),
-  linear-gradient(180deg,#fff,var(--bg))}
-.wrapx{max-width:1200px;margin:0 auto;padding:0 22px}
-.hero-in{padding:72px 0 60px;display:grid;grid-template-columns:1.02fr .98fr;gap:52px;align-items:center}
-.eyebrow{display:inline-flex;align-items:center;gap:9px;height:34px;padding:0 15px;border-radius:var(--r-pill);
-  background:var(--surface);border:1px solid var(--line);box-shadow:var(--sh-1);font-size:13px;font-weight:700}
-.hero h1{margin:20px 0 0}
-.hero h1 em{font-style:normal;background:linear-gradient(120deg,var(--brand),#ff9d3d);
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-.hero-sub{font-size:17px;color:var(--ink-2);margin-top:18px;max-width:560px;line-height:1.72}
-.trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:26px;font-size:13.5px;color:var(--muted);font-weight:600}
+/* เอกสารระบุว่าระบบนี้ "ไม่มี gradient ในโครง UI" — เฮโรจึงเป็น canvas cream ล้วน
+   ความรู้สึกมีมิติมาจากรูปวงกลม เส้นโคจร และเงากระจายกว้าง ไม่ใช่ไล่เฉดพื้น */
+.hero{position:relative;overflow:hidden;background:var(--bg)}
+.wrapx{max-width:1280px;margin:0 auto;padding:0 48px}
+/* ใช้ padding-block ไม่ใช่ shorthand — element นี้ถือคลาส .wrapx ด้วย
+   ถ้าใช้ shorthand จะล้าง padding ซ้าย-ขวาของ .wrapx ทำให้เนื้อหาชิดขอบจอ */
+.hero-in{padding-block:96px 80px;display:grid;grid-template-columns:1.02fr .98fr;gap:64px;align-items:center}
+.hero h1{margin:24px 0 0}
+/* ตัวเน้นในหัวข้อเคยเป็นตัวอักษรไล่เฉด ซึ่งขัดกับระบบที่ใช้สีเดียว
+   จึงเน้นด้วยสี Clay Brown ที่อ่านได้จริง (6.2:1) แทน */
+.hero h1 em{font-style:normal;color:var(--brand-ink)}
+.hero-sub{font-size:18px;color:var(--ink-2);margin-top:24px;max-width:560px;line-height:1.4;font-weight:450}
+.trust{display:flex;gap:24px;flex-wrap:wrap;margin-top:32px;font-size:14px;color:var(--muted);font-weight:450}
 
-.preview{border-radius:var(--r-xl);background:var(--surface);border:1px solid var(--line);box-shadow:var(--sh-3);
-  overflow:hidden;transform:perspective(1600px) rotateY(-7deg) rotateX(2.5deg);transition:transform .5s ease}
-.preview:hover{transform:perspective(1600px) rotateY(-2deg) rotateX(0)}
+/* กรอบสื่อแบบ stadium: มุม 40px + เงาระดับ 2 วางบน canvas ตรง ๆ
+   ไม่บิด 3D — ระบบนี้ไม่มีการหมุนเปอร์สเปกทีฟที่ใดเลย */
+.preview{border-radius:var(--r-xl);background:var(--white);border:1px solid var(--line);box-shadow:var(--sh-2);
+  overflow:hidden}
 .pv-bar{height:38px;background:var(--surface-2);border-bottom:1px solid var(--line);display:flex;align-items:center;
   gap:7px;padding:0 14px}
 .pv-bar i{width:10px;height:10px;border-radius:50%;background:var(--line);display:block}
@@ -572,22 +700,26 @@ p{margin:0}
 .check{display:flex;gap:9px;align-items:flex-start;font-size:14px;color:var(--ink-2)}
 .check i{color:var(--good);font-style:normal;font-weight:800;flex:none}
 
-.cta-band{background:linear-gradient(135deg,#101820,#1e2a3a 60%,#2a1a12);color:#fff;border-radius:var(--r-xl);
-  padding:52px 40px;text-align:center;position:relative;overflow:hidden}
-.cta-band::after{content:"";position:absolute;inset:auto -10% -70% 60%;height:280px;
-  background:radial-gradient(closest-side,rgba(255,106,43,.42),transparent);pointer-events:none}
-.lp-foot{border-top:1px solid var(--line);padding:36px 0;color:var(--muted);font-size:13.5px}
+/* แถบปิดท้าย = พื้นผิว ink เรียบ (เดิมเป็นไล่เฉด 3 สี + วงเรืองแสงสีส้ม
+   ซึ่งขัดกับข้อกำหนด "ไม่มี gradient ในโครง UI" ของระบบ) */
+.cta-band{background:var(--ink);color:var(--bg);border-radius:var(--r-xl);
+  padding:96px 48px;text-align:center}
+.cta-band h2{color:var(--bg)}
+.cta-band .btn-white{background:var(--bg);border-color:var(--bg);color:var(--ink)}
+.lp-foot{border-top:1px solid var(--line);padding:48px 0;color:var(--muted);font-size:14px}
 
 /* Onboarding page */
-.ob{min-height:100vh;display:flex;flex-direction:column;background:
-  radial-gradient(900px 400px at 82% -8%,#ffeade 0%,rgba(255,234,222,0) 60%),
-  radial-gradient(700px 340px at 6% 0%,#eaf0ff 0%,rgba(234,240,255,0) 58%),var(--bg)}
-.ob-nav{padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;
-  border-bottom:1px solid var(--line);background:rgba(255,255,255,.7);backdrop-filter:blur(10px)}
-.ob-main{flex:1;width:100%;max-width:960px;margin:0 auto;padding:30px 22px 64px}
-.ob-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);box-shadow:var(--sh-2);
-  padding:30px}
-.calc-box{background:linear-gradient(145deg,#101820,#1c2734);color:#fff;border-radius:var(--r-lg);padding:22px}
+/* ไม่มีไล่เฉดพื้นตามระบบ — canvas cream ล้วน */
+.ob{min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
+/* หัวหน้าเป็นแคปซูลลอยแบบเดียวกับ nav ของหน้าอื่น ไม่ใช่แถบเบลอแนบขอบ */
+.ob-nav{margin:24px auto 0;max-width:960px;width:calc(100% - 48px);
+  padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  background:var(--white);border-radius:var(--r-pill);box-shadow:var(--sh-nav)}
+.ob-main{flex:1;width:100%;max-width:960px;margin:0 auto;padding:32px 24px 64px}
+.ob-card{background:var(--white);border:1px solid var(--line);border-radius:var(--r-xl);
+  padding:32px}
+/* กล่องคำนวณเคยเป็นไล่เฉดน้ำเงินเข้ม → เปลี่ยนเป็นพื้น ink เรียบตามระบบ */
+.calc-box{background:var(--ink);color:var(--bg);border-radius:var(--r-xl);padding:24px}
 .calc-box .cv{font-family:var(--f-num);font-size:26px;font-weight:800;letter-spacing:-.03em}
 .calc-box .cl{font-size:12.5px;color:#9aa5b4;font-weight:600}
 
@@ -597,15 +729,25 @@ p{margin:0}
 @media (max-width:1180px){
   .g-5{grid-template-columns:repeat(3,minmax(0,1fr))}
   .g-2-1,.g-1-2,.g-3-2{grid-template-columns:1fr}
-  .hero-in{grid-template-columns:1fr;gap:38px;padding:52px 0 44px}
+  .hero-in{grid-template-columns:1fr;gap:40px;padding-block:56px 48px}
   .preview{transform:none}
 }
+@media (max-width:1120px){
+  /* ระยะ 48px ระหว่างลิงก์ (ตามระบบ) กว้างเกินจนแคปซูล nav ล้นจอบนจอกลาง */
+  .lp-links{gap:24px}
+  .lp-links a{font-size:15px}
+  .lp-nav .in{padding:12px 22px;gap:18px}
+  .wrapx{padding:0 32px}
+}
 @media (max-width:1024px){
+  /* เอกสาร: tablet (768–1023) แสดงลิงก์ 2–3 รายการ — ที่นี่ซ่อนทั้งชุด
+     เพราะชื่อเมนูภาษาไทยยาวกว่าอังกฤษ แคปซูล nav จึงล้นก่อนถึง 3 รายการ */
+  .lp-links{display:none}
   :root{--sidebar:0px}
   .sidebar{transform:translateX(-100%);transition:transform .24s cubic-bezier(.2,.8,.2,1);width:280px;box-shadow:var(--sh-3)}
   .sidebar.on{transform:none}
   .main{margin-left:0}
-  .burger{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:11px;border:1px solid var(--line)}
+  .burger{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1px solid rgba(20,20,19,.22)}
   .g-4{grid-template-columns:repeat(2,minmax(0,1fr))}
   .g-3{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -626,6 +768,12 @@ p{margin:0}
   .ob-card{padding:20px}
   .cta-band{padding:36px 20px}
   .lp-links{display:none}
+  .lp-nav .in{padding:12px 20px;gap:16px}
+  /* แคปซูลหัวหน้าของ onboarding ล้นขอบบนมือถือ — ย่อระยะและซ่อนป้ายขั้นตอน
+     ที่ซ้ำกับแถบ stepper ด้านล่าง */
+  .ob-nav{width:calc(100% - 28px);padding:11px 16px;gap:10px}
+  .ob-nav .badge:not(.badge-brand){display:none}
+  .ob-nav .btn{padding:5px 14px;font-size:14px}
   .step-l{display:none}
   .step-line{width:26px;margin:0 6px}
   .modal-f{flex-direction:column-reverse}
@@ -636,10 +784,14 @@ p{margin:0}
     backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:7px 6px calc(7px + env(safe-area-inset-bottom));
     justify-content:space-around;
   }
-  .bn-i{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 2px;border-radius:10px;
+  .bn-i{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:5px 2px;border-radius:var(--r-pill);
     font-size:10.5px;font-weight:700;color:var(--muted)}
   .bn-i .bi{display:grid;place-items:center;height:22px}
-  .bn-i.on{color:var(--brand)}
+  /* ตัวที่เลือกในแถบล่างเคยใช้ Signal Orange ซึ่งระบบสงวนให้ความยินยอม/กฎหมาย
+     จึงใช้แคปซูลสีหมึกแบบเดียวกับรายการที่เลือกในแถบข้าง */
+  .bn-i.on{color:var(--ink);font-weight:500}
+  .bn-i.on .bi{background:var(--ink);color:var(--bg);border-radius:var(--r-pill);
+    width:44px;height:26px;display:grid;place-items:center}
   .fab{bottom:78px;right:14px;height:48px;padding:0 16px 0 13px}
   .ai-panel{right:8px;left:8px;bottom:74px;width:auto;height:min(560px,calc(100vh - 130px))}
   .g-2.g-2-keep{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -659,7 +811,7 @@ p{margin:0}
   .tabs button{padding:0 12px;font-size:13px}
   .topbar{gap:7px;padding:0 10px}
   .search{height:38px;padding:0 11px}
-  .btn-icon{width:34px;height:34px;border-radius:10px}
+  .btn-icon{width:38px;height:38px;min-height:38px;border-radius:50%}
   .avatar{width:32px;height:32px;font-size:12px}
   #storeTop{display:none}
   .page-h{margin-bottom:16px}
@@ -737,3 +889,36 @@ p{margin:0}
 /* ลิงก์ในบล็อกความยินยอมต้องเห็นว่าเป็นลิงก์ */
 .consent-main a{color:var(--brand-ink);font-weight:700;text-decoration:underline;text-underline-offset:2px}
 .consent-main a:hover{color:var(--brand-2)}
+
+
+/* ============================================================
+   คลาสที่หน้าต่าง ๆ เรียกใช้แต่ไม่เคยมีสไตล์ — เพิ่มให้ครบตามระบบ
+   (ตรวจพบจากการเทียบคลาสในไฟล์ .js/.html กับที่นิยามใน CSS)
+   ============================================================ */
+.caution,.caution-box{
+  background:var(--white);border:1px solid var(--bad-line);border-left:4px solid var(--bad);
+  border-radius:0 var(--r) var(--r) 0;padding:16px 20px;
+}
+.caution .lbl,.lbl{
+  font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--bad-ink);
+}
+.doc{max-width:72ch;line-height:1.6}
+.doc h2{margin:40px 0 12px}
+.doc h3{margin:28px 0 8px;font-size:18px}
+.doc p,.doc li{font-weight:450;color:var(--ink-2)}
+.doc ul,.doc ol{margin:8px 0 8px 22px;padding:0}
+.doc li{margin:6px 0}
+.doc a{color:var(--info-ink);text-decoration:underline;text-underline-offset:2px}
+.fl{display:flex;align-items:center;gap:8px}
+.g14{gap:14px}
+.mt10{margin-top:10px}
+
+
+/* ปุ่มสลับแสดงรหัสผ่านอยู่ในช่องแบบแคปซูล — ต้องหลบส่วนโค้งของขอบ
+   จึงขยับเข้ามาและใช้ทรงแคปซูลเล็กให้เข้าชุดกับช่องกรอก */
+.field [data-eye]{
+  right:6px !important;min-height:34px;padding:4px 14px;border-radius:var(--r-pill);
+  border:1px solid var(--line);background:var(--bg);font-size:14px;
+}
+.field [data-eye]:hover{background:var(--bg-2);border-color:var(--ink)}
+.field .input:has(~ [data-eye]){padding-right:88px}
