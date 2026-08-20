@@ -12,10 +12,10 @@ window.PAGES = window.PAGES || {};
      DASHBOARD
      ============================================================ */
   window.PAGES.dashboard = function (el, actions) {
-    const t = D.today, c = D.cmpYesterday, m = D.month;
+    const t = A.today(), c = D.cmpYesterday, m = D.month;
     const trend = D.trend7.map((r, i) => ({ label: U.dayLabel(r.d), revenue: r.revenue, profit: r.profit, orders: r.orders, hi: i === 6 }));
     const top = D.topMenuToday();
-    const alerts = D.ingredients.filter(i => D.stockStatus(i) !== 'ok');
+    const alerts = A.ingredients().filter(i => D.stockStatus(i) !== 'ok');
 
     actions.innerHTML = `
       <span class="badge badge-lg"><span class="dot dot-live"></span> เปิดร้าน · ${D.store.open}–${D.store.close}</span>
@@ -167,12 +167,12 @@ window.PAGES = window.PAGES || {};
         <div class="card-h"><h4>สัดส่วนช่องทางขาย</h4></div>
         <div class="card-b row g20 wrap" style="justify-content:center">
           ${U.donut(D.channelMix.map(c=>({label:c.label,v:c.revenue,color:c.color})),
-            { center:U.nf(D.today.orders), sub:'ออเดอร์วันนี้' })}
+            { center:U.nf(A.today().orders), sub:'ออเดอร์วันนี้' })}
           <div class="col g12 grow" style="min-width:150px">
             ${D.channelMix.map(c=>`<div>
               <div class="between t-sm"><span class="row g8"><i class="sw" style="width:10px;height:10px;border-radius:3px;background:${c.color};display:block"></i>
                 <b>${c.label}</b></span><span class="num b7">${U.baht(c.revenue)}</span></div>
-              <div class="t-xs muted">${c.orders} ออเดอร์ · ${U.pc(c.revenue/D.today.revenue*100)}</div></div>`).join('')}
+              <div class="t-xs muted">${c.orders} ออเดอร์ · ${U.pc(c.revenue/A.today().revenue*100)}</div></div>`).join('')}
           </div>
         </div>
       </div>
@@ -267,11 +267,11 @@ window.PAGES = window.PAGES || {};
 
       const live = all.filter(o => o.st === 'new' || o.st === 'preparing' || o.st === 'ready');
       el.querySelector('#oKpi').innerHTML = `
-        ${U.kpi({ label:'ออเดอร์วันนี้', icon:ICO('receipt'), value:U.nf(D.today.orders), foot:U.delta(D.cmpYesterday.orders) })}
+        ${U.kpi({ label:'ออเดอร์วันนี้', icon:ICO('receipt'), value:U.nf(A.today().orders), foot:U.delta(D.cmpYesterday.orders) })}
         ${U.kpi({ label:'กำลังดำเนินการ', icon:ICO('clock'), iconBg:'var(--warn-soft)', value:U.nf(live.length),
           foot:`<span class="t-xs muted">ใหม่ ${all.filter(o=>o.st==='new').length} · ทำอยู่ ${all.filter(o=>o.st==='preparing').length} · พร้อม ${all.filter(o=>o.st==='ready').length}</span>` })}
-        ${U.kpi({ label:'ยอดขายวันนี้', icon:ICO('money'), value:U.baht(D.today.revenue), foot:U.delta(D.cmpYesterday.revenue) })}
-        ${U.kpi({ label:'Average Order', icon:ICO('report'), value:U.baht(D.today.aov,0),
+        ${U.kpi({ label:'ยอดขายวันนี้', icon:ICO('money'), value:U.baht(A.today().revenue), foot:U.delta(D.cmpYesterday.revenue) })}
+        ${U.kpi({ label:'Average Order', icon:ICO('report'), value:U.baht(A.today().aov,0),
           foot:`<span class="t-xs muted">บิลสูงสุดวันนี้ ${U.baht(Math.max(...all.map(o=>o.total)))}</span>` })}`;
 
       let rows = all.filter(o => (tab === 'all' || o.st === tab) && (ch === 'all' || o.ch === ch));
@@ -385,7 +385,7 @@ window.PAGES = window.PAGES || {};
         <div class="ic">${ICO('advisor',15)}</div>
         <div class="t-sm"><b>AI เตือนครัว</b> — ช่วง 11:00–13:00 คือพีคของร้าน (คิดเป็น 34% ของยอดทั้งวัน)
           แนะนำเตรียมหมูกรอบทอดล่วงหน้า 40 ชิ้น และหั่นเครื่องกะเพราให้พร้อมก่อน 10:45
-          ${(function(){ const out = D.ingredients.filter(i=>D.stockStatus(i)==='out');
+          ${(function(){ const out = A.ingredients().filter(i=>D.stockStatus(i)==='out');
             return out.length ? `<br><b style="color:var(--bad-ink)">${out.map(i=>U.esc(i.name)).join(', ')} หมด</b> — เมนูที่ใช้วัตถุดิบนี้ถูกปิดขายชั่วคราว` : ''; })()}
         </div>
       </div>`;
@@ -418,7 +418,7 @@ window.PAGES = window.PAGES || {};
       const cats = ['all', ...Array.from(new Set(M.map(m=>m.cat)))];
       const avgM = M.reduce((s,m)=>s+m.margin,0)/M.length;
       const low = M.filter(m=>m.margin<35);
-      const sold = D.todayLines.filter(l=>l.units>0).length;
+      const sold = A.todayLines().filter(l=>l.units>0).length;
 
       el.querySelector('#mKpi').innerHTML = `
         ${U.kpi({ label:'เมนูทั้งหมด', icon:ICO('menu'), value:U.nf(M.length),
@@ -442,7 +442,7 @@ window.PAGES = window.PAGES || {};
           <thead><tr><th>Menu</th><th>Category</th><th class="r">Price</th><th class="r">Cost</th>
             <th class="r">Profit</th><th class="r">Margin</th><th class="r">ขายวันนี้</th><th>Status</th><th></th></tr></thead>
           <tbody>${rows.map(m=>{
-            const u = D.todayUnits[m.id] || 0;
+            const u = A.todayUnits()[m.id] || 0;
             return `<tr data-m="${m.id}">
               <td><div class="row g10"><span style="font-size:19px">${m.emoji}</span>
                 <span><b class="t-sm">${U.esc(m.name)}</b>${m.hero?' <span class="badge badge-brand">ขายดี</span>':''}
@@ -460,11 +460,11 @@ window.PAGES = window.PAGES || {};
           <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div>
             <div class="t-sm"><b>AI Warning</b> — ${low.length} เมนูมี Margin ต่ำกว่าเป้า 35%:
               ${low.map(m=>`<b>${U.esc(m.name)}</b> (${U.pc(m.margin)})`).join(', ')}<br>
-              <span class="muted">กลุ่มนี้กินสัดส่วนยอดขาย ${U.pc(low.reduce((s,m)=>s+(D.todayUnits[m.id]||0)*m.price,0)/D.today.revenue*100)}
-              ของทั้งวัน ถ้าขึ้นราคาเฉลี่ย 4 บาท จะได้กำไรเพิ่มราว ${U.baht(low.reduce((s,m)=>s+(D.todayUnits[m.id]||0)*4,0))}/วัน</span></div></div>`;
+              <span class="muted">กลุ่มนี้กินสัดส่วนยอดขาย ${U.pc(low.reduce((s,m)=>s+(A.todayUnits()[m.id]||0)*m.price,0)/A.today().revenue*100)}
+              ของทั้งวัน ถ้าขึ้นราคาเฉลี่ย 4 บาท จะได้กำไรเพิ่มราว ${U.baht(low.reduce((s,m)=>s+(A.todayUnits()[m.id]||0)*4,0))}/วัน</span></div></div>`;
       } else {
         body.innerHTML = `<div class="grid g-4">${rows.map(m=>{
-          const u = D.todayUnits[m.id] || 0;
+          const u = A.todayUnits()[m.id] || 0;
           return `<div class="menu-card" data-m="${m.id}">
             <div class="menu-thumb" style="background:linear-gradient(135deg,var(--brand-soft),var(--bg-2))">${m.emoji}
               <span class="badge ${u?'badge-good':'badge-bad'}" style="position:absolute;top:10px;right:10px">${u?u+' จาน':'ไม่ขยับ'}</span></div>
@@ -486,7 +486,7 @@ window.PAGES = window.PAGES || {};
 
   function menuDetail(id) {
     const m = D.mi(id) || st().menu.find(x=>x.id===id); if (!m) return;
-    const u = D.todayUnits[m.id] || 0;
+    const u = A.todayUnits()[m.id] || 0;
     U.modal({ title:m.name, icon:m.emoji, sub:m.cat + ' · ' + (m.active?'กำลังขาย':'ปิดขาย'), wide:true,
       okText:'แก้ไขต้นทุน', cancelText:'ปิด',
       body:`<div class="grid g-2" style="gap:20px">
@@ -518,8 +518,8 @@ window.PAGES = window.PAGES || {};
               <div class="t-xs muted b6">ยอดขายวันนี้จากเมนูนี้</div>
               <div class="num b8" style="font-size:19px">${U.baht(u*m.price)}</div>
               <div class="t-xs" style="color:var(--good-ink)">กำไร ${U.baht(u*m.profit)}</div>
-              <div class="bar mt8"><i style="width:${Math.min(100,u*m.price/D.today.revenue*100*3).toFixed(0)}%"></i></div>
-              <div class="t-xs muted mt4">${U.pc(u*m.price/D.today.revenue*100)} ของยอดขายวันนี้</div></div>
+              <div class="bar mt8"><i style="width:${Math.min(100,u*m.price/A.today().revenue*100*3).toFixed(0)}%"></i></div>
+              <div class="t-xs muted mt4">${U.pc(u*m.price/A.today().revenue*100)} ของยอดขายวันนี้</div></div>
           </div>
           ${m.margin < 35 ? `<div class="ai-strip mt16"><div class="ic">${ICO('alert',15)}</div>
             <div class="t-sm"><b>Margin ต่ำกว่าค่าเป้าหมาย (35%)</b><br>

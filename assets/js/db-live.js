@@ -175,6 +175,49 @@ window.SFOS_LIVE = (function () {
       return select('orders', p);
     },
 
+    /* แปลงแถวจากฐานข้อมูลให้เป็นรูปทรงเดียวกับข้อมูลตัวอย่าง
+       เพื่อให้หน้า Orders/Kitchen/Dashboard ใช้ต่อได้โดยไม่ต้องแก้โค้ดหน้า
+       (unit_price / unit_cost เป็นค่าที่ snapshot ไว้ตอนขาย จึงไม่เปลี่ยน
+        แม้ภายหลังจะแก้ราคาเมนู — ยอดขายย้อนหลังจึงไม่ขยับ) */
+    adaptOrder(r) {
+      const lines = (r.order_lines || []).map((l) => {
+        const price = +l.unit_price || 0, cost = +l.unit_cost || 0, qty = +l.qty || 0;
+        const m = l.menus || {};
+        return {
+          menu: { id: m.id, name: m.name || 'เมนูที่ถูกลบ', emoji: m.emoji || '🍽️',
+                  price, cost, profit: price - cost },
+          qty, sum: price * qty, profit: (price - cost) * qty
+        };
+      });
+      const t = new Date(r.placed_at);
+      return {
+        id: r.code || ('#' + String(r.id).slice(0, 6)),
+        dbId: r.id,
+        t: String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0'),
+        placedAt: r.placed_at,
+        ch: r.channel, st: r.status,
+        cust: r.channel === 'walkin' ? 'ลูกค้าหน้าร้าน' : 'ลูกค้าสั่งออนไลน์',
+        note: r.note || '',
+        lines,
+        total: lines.reduce((a, l) => a + l.sum, 0),
+        profit: lines.reduce((a, l) => a + l.profit, 0),
+        qty: lines.reduce((a, l) => a + l.qty, 0)
+      };
+    },
+
+    /* ออเดอร์ของวันนี้ (ตามเวลาไทย) แปลงพร้อมใช้ */
+    async ordersToday() {
+      const sid = await resolveStore();
+      const rows = await select('orders', {
+        select: '*,order_lines(id,qty,unit_price,unit_cost,menus(id,name,emoji))',
+        store_id: eq(sid),
+        placed_at: 'gte.' + today() + 'T00:00:00',
+        order: 'placed_at.desc',
+        limit: 300
+      });
+      return (rows || []).map((r) => api.adaptOrder(r));
+    },
+
     async createOrder(o) {
       const sid = await resolveStore();
       const [order] = await insert('orders', [{
@@ -187,7 +230,12 @@ window.SFOS_LIVE = (function () {
           order_id: order.id, menu_id: l.menuId, qty: l.qty
         })));
       }
-      return order;
+      // อ่านกลับมาเพื่อให้ได้ code ที่ trigger เติม และราคาที่ snapshot ไว้จริง
+      const [full] = await select('orders', {
+        select: '*,order_lines(id,qty,unit_price,unit_cost,menus(id,name,emoji))',
+        id: eq(order.id), limit: 1
+      });
+      return api.adaptOrder(full || order);
     },
     setOrderStatus: async (id, status) => (await update('orders', { id: eq(id) }, { status }))[0],
     cancelOrder:    async (id, reason) => (await update('orders', { id: eq(id) },

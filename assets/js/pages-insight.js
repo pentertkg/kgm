@@ -52,7 +52,7 @@
       } else if (tab === 'product') {
         name = 'analytics-product';
         rows = head.concat([['เมนู','หมวด','ราคาขาย','ต้นทุน','กำไรต่อจาน','Margin (%)','ขายวันนี้ (จาน)','ยอดขาย (บาท)','กำไรรวม (บาท)']],
-          st().menu.map(x => { const u = D.todayUnits[x.id] || 0;
+          st().menu.map(x => { const u = A.todayUnits()[x.id] || 0;
             return [x.name, x.cat, x.price, x.cost, x.profit, x.margin.toFixed(2), u, u*x.price, u*x.profit]; }));
       } else if (tab === 'customer') {
         name = 'analytics-customer';
@@ -136,7 +136,7 @@
     }
 
     function vProduct(){
-      const lines = D.todayLines.slice().sort((a,b)=>b.revenue-a.revenue);
+      const lines = A.todayLines().slice().sort((a,b)=>b.revenue-a.revenue);
       const M = st().menu;
       const byProfit = M.slice().sort((a,b)=>b.profit-a.profit);
       const byMargin = M.slice().sort((a,b)=>a.margin-b.margin);
@@ -356,7 +356,7 @@
       <button class="btn btn-ai btn-sm" id="adChat">เปิดแชทถาม AI</button>`;
     actions.querySelector('#adChat').onclick = () => A.aiOpen(true);
 
-    const t = D.today, m = D.month;
+    const t = A.today(), m = D.month;
     el.innerHTML = `
     <!-- วันนี้ควรทำอะไร -->
     <div class="ai-card mb16"><div class="in">
@@ -439,7 +439,7 @@
       { ic:'dashboard', mod:'Dashboard', to:'dashboard', head:D.ai.headline,
         body:`เกินเป้ารายวัน ${U.pc(t.revenue/m.dailyTarget*100-100)} แต่กำไรสวนทาง — ปัญหาอยู่ที่โครงสร้างต้นทุน ไม่ใช่ยอดขาย` },
       { ic:'menu', mod:'Menu & Cost', to:'menu', head:`3 เมนูมี Margin ต่ำกว่าเป้า 35%`,
-        body:`กะเพราหมูกรอบ (${U.pc(D.mi('m1').margin)}) เป็นเมนูขายดีที่สุดแต่กำไรน้อยสุด ขึ้นราคา 4 บาท = +${U.baht(D.todayUnits.m1*4)}/วัน` },
+        body:`กะเพราหมูกรอบ (${U.pc(D.mi('m1').margin)}) เป็นเมนูขายดีที่สุดแต่กำไรน้อยสุด ขึ้นราคา 4 บาท = +${U.baht((A.todayUnits()['m1'] || 0)*4)}/วัน` },
       { ic:'stock', mod:'Stock', to:'stock', head:`หมูสับจะไม่พอขายพรุ่งนี้`,
         body:`ต้องใช้ 7.8 kg แต่มี 3.2 kg — ถ้าไม่สั่งวันนี้ จะขายได้ถึงประมาณ 12:40 เท่านั้น` },
       { ic:'customers', mod:'Customers', to:'customers', head:`ลูกค้า ${D.crm.lost} คนหายไปเกิน 30 วัน`,
@@ -722,7 +722,7 @@
         </div>
         <div class="ai-strip mt16"><div class="ic">${ICO('advisor',15)}</div><div class="t-sm">
           ลูกค้า ${U.pc(58)} จ่ายผ่าน QR Code แล้ว — การเปิดบัตรเครดิตอาจไม่คุ้มค่าธรรมเนียม
-          สำหรับบิลเฉลี่ย ${U.baht(D.today.aov,0)}</div></div>`);
+          สำหรับบิลเฉลี่ย ${U.baht(A.today().aov,0)}</div></div>`);
     }
     function vNoti(){
       return card('การแจ้งเตือน','เลือกเรื่องที่อยากให้ระบบเตือน', `

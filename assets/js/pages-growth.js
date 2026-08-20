@@ -13,9 +13,9 @@
      ============================================================ */
   window.PAGES.stock = function (el, actions) {
     const fc = D.forecastTomorrow(), need = fc.filter(i => i.gap > 0);
-    const low = D.ingredients.filter(i => D.stockStatus(i) === 'low');
-    const out = D.ingredients.filter(i => D.stockStatus(i) === 'out');
-    const value = D.ingredients.reduce((s,i)=>s+i.stock*i.cost,0);
+    const low = A.ingredients().filter(i => D.stockStatus(i) === 'low');
+    const out = A.ingredients().filter(i => D.stockStatus(i) === 'out');
+    const value = A.ingredients().reduce((s,i)=>s+i.stock*i.cost,0);
 
     actions.innerHTML = `<button class="btn btn-ghost btn-sm" id="sAdj">${ICO('report',16)} ปรับยอดคงเหลือ</button>
       <button class="btn btn-primary btn-sm" id="sPO">${ICO('stock',16)} สร้างรายการสั่งซื้อ</button>`;
@@ -24,7 +24,7 @@
 
     el.innerHTML = `
       <div class="grid g-4 mb16">
-        ${U.kpi({ label:'วัตถุดิบทั้งหมด', icon:ICO('box'), value:U.nf(D.ingredients.length),
+        ${U.kpi({ label:'วัตถุดิบทั้งหมด', icon:ICO('box'), value:U.nf(A.ingredients().length),
           foot:`<span class="t-xs muted">มูลค่าสต็อกคงเหลือ ${U.baht(value)}</span>` })}
         ${U.kpi({ label:'ใกล้หมด (ต่ำ)', icon:ICO('alert'), iconBg:'var(--warn-soft)', value:U.nf(low.length),
           foot:`<span class="badge badge-warn">ต้องสั่งภายในวันนี้</span>` })}
@@ -60,7 +60,7 @@
         <div class="card-h"><div><h4>วัตถุดิบคงเหลือ</h4>
           <div class="t-sm muted mt4">แถบสีแสดงระดับคงเหลือเทียบกับจุดสั่งซื้อขั้นต่ำ</div></div>
           <div class="tabs" id="stTabs">
-            <button data-s="all" class="on">ทั้งหมด<span class="n num">${D.ingredients.length}</span></button>
+            <button data-s="all" class="on">ทั้งหมด<span class="n num">${A.ingredients().length}</span></button>
             <button data-s="low">ต่ำ<span class="n num">${low.length}</span></button>
             <button data-s="out">หมด<span class="n num">${out.length}</span></button></div>
         </div>
@@ -103,7 +103,7 @@
 
     let filt = 'all';
     const paintRows = () => {
-      const rows = D.ingredients.filter(i => filt === 'all' || D.stockStatus(i) === filt);
+      const rows = A.ingredients().filter(i => filt === 'all' || D.stockStatus(i) === filt);
       el.querySelector('#stRows').innerHTML = rows.map(i => {
         const s = D.stockStatus(i), [lbl, cls] = SLBL[s];
         const ratio = Math.min(100, i.min ? i.stock / (i.min * 1.6) * 100 : 100);
@@ -597,8 +597,8 @@
       const aud = isWin ? D.crm.lost : W.goal==='newcust' ? 400 : D.crm.total;
       const cvr = isWin ? .22 : .12;
       const expOrders = Math.round(aud*cvr);
-      const billProfit = D.today.profit / D.today.orders;          // กำไรเฉลี่ยต่อบิลจริงในระบบ
-      const expRev = expOrders*(D.today.aov-W.disc);
+      const billProfit = A.today().profit / A.today().orders;          // กำไรเฉลี่ยต่อบิลจริงในระบบ
+      const expRev = expOrders*(A.today().aov-W.disc);
       const expProfit = expOrders*(billProfit-W.disc);              // กำไรจากบิลแรก
       const ltProfit = expOrders*billProfit*3;                      // ถ้ากลับมาซื้อซ้ำอีก 3 ครั้งใน 90 วัน
 

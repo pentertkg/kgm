@@ -21,7 +21,7 @@ window.APP = (function () {
       { id:'orders',    t:'Orders',      ic:'orders',    badge:()=>state.orders.filter(o=>o.st==='new').length },
       { id:'menu',      t:'Menu & Cost', ic:'menu' },
       { id:'kitchen',   t:'Kitchen',     ic:'kitchen',   badge:()=>state.orders.filter(o=>o.st==='new'||o.st==='preparing').length },
-      { id:'stock',     t:'Stock',       ic:'stock',     badge:()=>D.ingredients.filter(i=>D.stockStatus(i)!=='ok').length }
+      { id:'stock',     t:'Stock',       ic:'stock',     badge:()=>ingredients().filter(i=>D.stockStatus(i)!=='ok').length }
     ]},
     { g:'เติบโต', items:[
       { id:'customers', t:'Customers',   ic:'customers' },
@@ -187,7 +187,9 @@ window.APP = (function () {
         b.className = 'badge badge-good';
         b.style.cssText = 'margin-left:auto;font-size:10.5px;height:21px;padding:0 8px';
         b.title = state.liveStore
-          ? 'ร้านและเมนูมาจากฐานข้อมูลจริง (' + (A.email() || '') + ') — ยอดขาย/ออเดอร์ยังเป็นตัวอย่าง'
+          ? (state.liveOrders
+              ? 'ร้าน เมนู ต้นทุน และออเดอร์วันนี้มาจากฐานข้อมูลจริง (' + (A.email() || '') + ')'
+              : 'ร้านและเมนูมาจากฐานข้อมูลจริง — ออเดอร์ยังโหลดไม่ได้')
           : 'ล็อกอินแล้ว: ' + (A.email() || '');
       } else if (A.ready && A.isDemo()) {
         b.textContent = 'โหมดเดโม';
@@ -216,6 +218,27 @@ window.APP = (function () {
       if (st2.location)   D.store.location = st2.location;
       if (st2.open_time)  D.store.open  = String(st2.open_time).slice(0, 5);
       if (st2.close_time) D.store.close = String(st2.close_time).slice(0, 5);
+      /* ออเดอร์ของวันนี้จากฐานข้อมูล — ถ้ายังไม่มีบิลเลย จะได้อาเรย์ว่าง
+         ซึ่งถูกต้องกว่าการโชว์บิลตัวอย่างของร้านอื่น */
+      try {
+        const ords = await L.ordersToday();
+        state.orders = ords;
+        state.liveOrders = true;
+      } catch (e) { state.orderLoadError = e.message; }
+
+      /* วัตถุดิบจริง — แปลงจาก v_stock_status ให้เป็นรูปทรงเดียวกับข้อมูลตัวอย่าง
+         ถ้าไม่ต่อส่วนนี้ แถบข้างจะเตือน "ของใกล้หมด 7 รายการ" ของร้านอื่น
+         ซึ่งอาจทำให้ไปสั่งของที่ไม่ได้ขาดจริง */
+      try {
+        const ing = await L.ingredients();
+        state.ingredients = (ing || []).map(i => ({
+          id: i.id, name: i.name, unit: i.unit,
+          cost: +i.cost_per_unit || 0, stock: +i.stock_qty || 0, min: +i.min_qty || 0,
+          use: +i.need_tomorrow || 0
+        }));
+        state.liveStock = true;
+      } catch (e) { state.stockLoadError = e.message; }
+
       const rows = await L.menus();
       if (rows && rows.length) {
         state.menu = rows.map(v => ({
@@ -301,21 +324,81 @@ window.APP = (function () {
     if (q.welcome) { setTimeout(() => welcomeModal(), 400); location.hash = '#/' + id; }
   }
 
+  /* ตัวเลข "วันนี้" — โหมดจริงคิดจากบิลที่บันทึกไว้จริง (ไม่รวมบิลที่ยกเลิก)
+     โหมดเดโมใช้ค่าจากข้อมูลตัวอย่างเหมือนเดิม
+     หน้าต่าง ๆ เรียกผ่าน A.today() เพื่อให้แหล่งเดียวกันทั้งแอป */
+  function today() {
+    if (!state.liveOrders) return D.today;
+    const live = state.orders.filter(o => o.st !== 'cancelled');
+    const revenue = live.reduce((a, o) => a + o.total, 0);
+    const profit  = live.reduce((a, o) => a + o.profit, 0);
+    return { revenue, profit, orders: live.length,
+             get aov() { return this.orders ? this.revenue / this.orders : 0; } };
+  }
+
+  /* วัตถุดิบ — โหมดจริงใช้ของร้านตัวเอง */
+  function ingredients() { return state.liveStock ? state.ingredients : D.ingredients; }
+
+  /* ยอดขายแยกตามเมนูของวันนี้ — คิดจากบิลจริงเมื่ออยู่โหมดจริง
+     ถ้าไม่ทำส่วนนี้ หน้าเมนูจะอ้างว่า "ขายได้ 93 จาน" ทั้งที่ยังไม่มีบิลเลย */
+  function todayUnits() {
+    if (!state.liveOrders) return D.todayUnits;
+    const u = {};
+    state.orders.filter(o => o.st !== 'cancelled').forEach(o =>
+      o.lines.forEach(l => { const k = l.menu.id; if (k) u[k] = (u[k] || 0) + l.qty; }));
+    return u;
+  }
+  function todayLines() {
+    if (!state.liveOrders) return D.todayLines;
+    const acc = {};
+    state.orders.filter(o => o.st !== 'cancelled').forEach(o =>
+      o.lines.forEach(l => {
+        const k = l.menu.id; if (!k) return;
+        acc[k] = acc[k] || { id: k, name: l.menu.name, units: 0, revenue: 0, profit: 0 };
+        acc[k].units += l.qty; acc[k].revenue += l.sum; acc[k].profit += l.profit;
+      }));
+    // เมนูที่ยังไม่ขายวันนี้ก็ต้องมีในรายการ เพื่อให้เห็นว่า "ไม่ขยับ"
+    (state.menu || []).forEach(m => {
+      if (!acc[m.id]) acc[m.id] = { id: m.id, name: m.name, units: 0, revenue: 0, profit: 0 };
+    });
+    return Object.values(acc);
+  }
+
   /* ============================================================
      ORDER ACTIONS (ใช้ร่วมกันระหว่าง Orders / Kitchen / Dashboard)
      ============================================================ */
   function advance(id) {
     const o = state.orders.find(x => x.id === id); if (!o) return;
     const nx = D.ST[o.st].next; if (!nx) return;
-    o.st = nx;
+    const prev = o.st;
+    o.st = nx;                                    // ขยับหน้าจอก่อน แล้วยืนยันกับฐานข้อมูล
     U.toast(`${id} → ${D.ST[nx].label}`, 'ok');
     refresh();
+    if (state.liveOrders && o.dbId) {
+      window.SFOS_LIVE.setOrderStatus(o.dbId, nx).catch(e => {
+        o.st = prev;                              // เขียนไม่สำเร็จ = ย้อนหน้าจอกลับ ไม่ทิ้งให้เข้าใจผิด
+        U.toast('บันทึกสถานะไม่สำเร็จ: ' + e.message, 'warn');
+        refresh();
+      });
+    }
   }
   function cancelOrder(id) {
     const o = state.orders.find(x => x.id === id); if (!o) return;
     U.modal({ title:'ยกเลิกออเดอร์ ' + id, icon:ico('alert',20), okText:'ยืนยันยกเลิก', cancelText:'ไม่ยกเลิก',
       body:`<p>ยอด ${U.baht(o.total)} จะถูกตัดออกจากยอดขายวันนี้ (ยังไม่กระทบตัวเลขสรุปรวมของวัน)</p>`,
-      onOk(){ o.st = 'cancelled'; U.toast(id + ' ถูกยกเลิก', 'warn'); refresh(); } });
+      onOk(){
+        const prev = o.st;
+        o.st = 'cancelled';
+        U.toast(id + ' ถูกยกเลิก', 'warn');
+        refresh();
+        if (state.liveOrders && o.dbId) {
+          window.SFOS_LIVE.cancelOrder(o.dbId, 'ยกเลิกจากหน้าออเดอร์').catch(e => {
+            o.st = prev;
+            U.toast('ยกเลิกไม่สำเร็จ: ' + e.message, 'warn');
+            refresh();
+          });
+        }
+      } });
   }
   function newOrderModal() {
     const gm = k => state.menu.find(x => x.id === k) || D.mi(k);
@@ -349,12 +432,30 @@ window.APP = (function () {
       onOk(m){
         const ids = Object.keys(cart).filter(k => cart[k] > 0);
         if (!ids.length) { U.toast('เลือกเมนูอย่างน้อย 1 รายการ','warn'); return false; }
+        const ch = m.querySelector('#o_ch').value;
+        const note = m.querySelector('#o_note').value.trim();
+
+        /* โหมดจริง: ให้ฐานข้อมูลออกเลขบิลและ snapshot ราคาเอง
+           แล้วค่อยเอาผลจริงมาแสดง — เลขบิลจึงไม่ชนกันแม้เปิดหลายเครื่อง */
+        if (state.liveOrders) {
+          U.toast('กำลังบันทึกบิล...', 'ok');
+          window.SFOS_LIVE.createOrder({
+            channel: ch, note: note || null,
+            lines: ids.map(k => ({ menuId: k, qty: cart[k] }))
+          }).then(o => {
+            state.orders.unshift(o);
+            U.toast('สร้างออเดอร์ ' + o.id + ' และส่งเข้าครัวแล้ว','ok');
+            refresh();
+          }).catch(e => U.toast('บันทึกบิลไม่สำเร็จ: ' + e.message, 'warn'));
+          return;
+        }
+
         const id = '#' + (1284 + state.orders.length - D.orders.length + 1);
         const lines = ids.map(k => { const mm = gm(k); return { menu:mm, qty:cart[k], sum:mm.price*cart[k], profit:mm.profit*cart[k] }; });
         state.orders.unshift({
-          id, t: new Date().toTimeString().slice(0,5), ch: m.querySelector('#o_ch').value, st:'new',
-          cust: m.querySelector('#o_ch').value === 'walkin' ? 'ลูกค้าหน้าร้าน' : 'ลูกค้าใหม่',
-          note: m.querySelector('#o_note').value.trim(), lines,
+          id, t: new Date().toTimeString().slice(0,5), ch, st:'new',
+          cust: ch === 'walkin' ? 'ลูกค้าหน้าร้าน' : 'ลูกค้าใหม่',
+          note, lines,
           total: lines.reduce((s,l)=>s+l.sum,0), profit: lines.reduce((s,l)=>s+l.profit,0),
           qty: lines.reduce((s,l)=>s+l.qty,0)
         });
@@ -661,7 +762,7 @@ window.APP = (function () {
       onOk(){ newOrderModal(); } });
   }
 
-  return { boot, go, refresh, state, advance, cancelOrder, newOrderModal, aiAsk, aiOpen, answer, NAV, FLAT };
+  return { boot, go, refresh, state, today, todayUnits, todayLines, ingredients, advance, cancelOrder, newOrderModal, aiAsk, aiOpen, answer, NAV, FLAT };
 })();
 document.addEventListener('DOMContentLoaded', async () => {
   const A = window.SFOS_AUTH;
