@@ -379,7 +379,7 @@ window.APP = (function () {
             <span class="num b7" style="min-width:56px;text-align:right">${U.baht(mm.price*cart[k])}</span></span></div>`; }).join('')
         + `<div class="between mt12" style="padding-top:10px;border-top:1px dashed var(--line)">
             <b>รวม</b><b class="num" style="font-size:18px">${U.baht(total)}</b></div>
-           <div class="between t-xs muted"><span>กำไรจากบิลนี้</span><b class="num" style="color:var(--good)">${U.baht(total-cost)}</b></div>`;
+           <div class="between t-xs muted"><span>กำไรจากบิลนี้</span><b class="num" style="color:var(--good-ink)">${U.baht(total-cost)}</b></div>`;
       box.querySelectorAll('[data-pl]').forEach(b => b.onclick = () => { cart[b.dataset.pl]++; paint(m); });
       box.querySelectorAll('[data-mi]').forEach(b => b.onclick = () => { cart[b.dataset.mi] = Math.max(0, cart[b.dataset.mi]-1); paint(m); });
     }
@@ -454,7 +454,7 @@ window.APP = (function () {
         • ออเดอร์ <b class="num">${U.nf(t.orders)}</b> บิล ${U.delta(D.cmpYesterday.orders)}<br>
         • Average Order <b class="num">${U.baht(t.aov,0)}</b> ${U.delta(D.cmpYesterday.aov)}<br>
         • กำไรขั้นต้น <b class="num">${U.baht(t.profit)}</b> ${U.delta(D.cmpYesterday.profit)}<br><br>
-        เกินเป้ารายวัน (${U.baht(m.dailyTarget)}) อยู่ <b class="num" style="color:var(--good)">${U.pc(t.revenue/m.dailyTarget*100-100)}</b>
+        เกินเป้ารายวัน (${U.baht(m.dailyTarget)}) อยู่ <b class="num" style="color:var(--good-ink)">${U.pc(t.revenue/m.dailyTarget*100-100)}</b>
         แต่ <b>กำไรสวนทางกับยอดขาย</b> — สาเหตุคือต้นทุนหมูขึ้น 8%`,
         actions:[{label:'ดู Analytics',to:'analytics'},{label:'ดู Top เมนู',to:'menu'}] };
 
@@ -528,7 +528,7 @@ window.APP = (function () {
       return { html: `<b>สรุปลูกค้า</b><br>
         • ลูกค้าทั้งหมด <b class="num">${U.nf(D.crm.total)}</b> คน · ใหม่ 30 วัน <b class="num">${U.nf(D.crm.new30)}</b><br>
         • ซื้อซ้ำ <b class="num">${U.nf(D.crm.repeat)}</b> คน (Repeat rate ${U.pc(D.crm.repeatRate)})<br>
-        • <b style="color:var(--bad)">At Risk ${D.crm.lost} คน</b> ไม่กลับมาเกิน 30 วัน<br>
+        • <b style="color:var(--bad-ink)">At Risk ${D.crm.lost} คน</b> ไม่กลับมาเกิน 30 วัน<br>
         • CLV เฉลี่ย <b class="num">${U.baht(D.crm.clv)}</b> ต่อคน<br><br>
         ถ้าดึงกลับได้ครึ่งหนึ่ง จะได้ยอดขายเพิ่มราว <b class="num">${U.baht(29*65*2)}</b>/เดือน`,
         actions:[{label:'ดู Customers',to:'customers'},{label:'สร้าง Campaign',to:'promotion'}] };

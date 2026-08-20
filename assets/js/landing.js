@@ -107,8 +107,8 @@
     <div class="msg msg-me" style="align-self:flex-end">วันนี้ร้านเป็นยังไง แล้วทำไมกำไรลด?</div>
     <div class="msg msg-ai" style="max-width:100%">
       <b>สรุปวันนี้ (${U.fullToday()})</b><br>
-      ยอดขาย <b class="num">${U.baht(D.today.revenue)}</b> เพิ่มขึ้น <b class="num" style="color:var(--good)">12.0%</b>
-      จากเมื่อวาน แต่กำไรลดลง <b class="num" style="color:var(--bad)">4.0%</b>
+      ยอดขาย <b class="num">${U.baht(D.today.revenue)}</b> เพิ่มขึ้น <b class="num" style="color:var(--good-ink)">12.0%</b>
+      จากเมื่อวาน แต่กำไรลดลง <b class="num" style="color:var(--bad-ink)">4.0%</b>
       เพราะต้นทุนหมูสับปรับขึ้น <b class="num">8%</b> (153 → 165 บาท/กก.)
       ทำให้มาร์จิ้นกลุ่มเมนูหมูลดจาก 38.4% เหลือ 36.8%
       <div class="col g8 mt12">
