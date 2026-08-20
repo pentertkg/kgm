@@ -82,7 +82,7 @@ window.PAGES = window.PAGES || {};
         <div class="insight-chain mt16">
           <span class="step"><b class="num">+12.0%</b> ยอดขาย</span><span class="arw">→</span>
           <span class="step"><b class="num">+8%</b> ต้นทุนหมู</span><span class="arw">→</span>
-          <span class="step"><b class="num" style="color:var(--bad)">−4.0%</b> กำไร</span><span class="arw">→</span>
+          <span class="step"><b class="num" style="color:var(--bad-ink)">−4.0%</b> กำไร</span><span class="arw">→</span>
           <span class="step" style="background:var(--brand-soft);border-color:var(--brand-line);color:var(--brand-ink)">${ICO('advisor',15)} 3 คำแนะนำ</span>
         </div>
         <div class="grid g-3 mt16">
@@ -136,7 +136,7 @@ window.PAGES = window.PAGES || {};
                       <span class="t-xs muted">margin ${U.pc(l.margin)}</span></span></div></td>
                 <td class="r num b7">${U.nf(l.units)}</td>
                 <td class="r num b7">${U.baht(l.revenue)}</td>
-                <td class="r num b7" style="color:var(--good)">${U.baht(l.profit)}</td></tr>`).join('')}
+                <td class="r num b7" style="color:var(--good-ink)">${U.baht(l.profit)}</td></tr>`).join('')}
             </tbody>
           </table>
         </div>
@@ -299,7 +299,7 @@ window.PAGES = window.PAGES || {};
           <div class="between">
             <div><div class="t-xs muted">ยอดรวม</div>
               <div class="num b8" style="font-size:19px">${U.baht(o.total)}</div>
-              <div class="t-xs" style="color:var(--good)">กำไร ${U.baht(o.profit)}</div></div>
+              <div class="t-xs" style="color:var(--good-ink)">กำไร ${U.baht(o.profit)}</div></div>
             <div class="row g6">
               ${o.st==='new'||o.st==='preparing' ? `<button class="btn btn-ghost btn-sm" data-cancel="${o.id}">ยกเลิก</button>`:''}
               ${s.next ? `<button class="btn ${o.st==='ready'?'btn-good':'btn-primary'} btn-sm" data-next="${o.id}">${s.nextLabel} →</button>`
@@ -386,7 +386,7 @@ window.PAGES = window.PAGES || {};
         <div class="t-sm"><b>AI เตือนครัว</b> — ช่วง 11:00–13:00 คือพีคของร้าน (คิดเป็น 34% ของยอดทั้งวัน)
           แนะนำเตรียมหมูกรอบทอดล่วงหน้า 40 ชิ้น และหั่นเครื่องกะเพราให้พร้อมก่อน 10:45
           ${(function(){ const out = D.ingredients.filter(i=>D.stockStatus(i)==='out');
-            return out.length ? `<br><b style="color:var(--bad)">${out.map(i=>U.esc(i.name)).join(', ')} หมด</b> — เมนูที่ใช้วัตถุดิบนี้ถูกปิดขายชั่วคราว` : ''; })()}
+            return out.length ? `<br><b style="color:var(--bad-ink)">${out.map(i=>U.esc(i.name)).join(', ')} หมด</b> — เมนูที่ใช้วัตถุดิบนี้ถูกปิดขายชั่วคราว` : ''; })()}
         </div>
       </div>`;
       el.querySelectorAll('[data-next]').forEach(b => b.onclick = () => A.advance(b.dataset.next));
@@ -451,7 +451,7 @@ window.PAGES = window.PAGES || {};
               <td><span class="badge">${U.esc(m.cat)}</span></td>
               <td class="r num b7">${U.baht(m.price)}</td>
               <td class="r num">${U.baht(m.cost)}</td>
-              <td class="r num b7" style="color:var(--good)">${U.baht(m.profit)}</td>
+              <td class="r num b7" style="color:var(--good-ink)">${U.baht(m.profit)}</td>
               <td class="r">${U.marginBadge(m.margin)}</td>
               <td class="r num">${u ? U.nf(u)+' จาน' : '<span class="muted">—</span>'}</td>
               <td>${u===0 && !m.custom ? '<span class="badge badge-bad">ไม่ขยับ</span>' : '<span class="badge badge-good">ขายอยู่</span>'}</td>
@@ -473,7 +473,7 @@ window.PAGES = window.PAGES || {};
               <div class="t-xs muted mt4">${U.esc(m.cat)} · ต้นทุน ${U.baht(m.cost)}</div>
               <div class="row g12 mt12">${U.ring(m.margin,{size:46,thick:6})}
                 <div><div class="t-xs muted">กำไร/จาน</div>
-                  <div class="num b8" style="color:var(--good)">${U.baht(m.profit)}</div></div></div>
+                  <div class="num b8" style="color:var(--good-ink)">${U.baht(m.profit)}</div></div></div>
             </div></div>`; }).join('')}</div>`;
       }
       body.querySelectorAll('[data-m]').forEach(r => r.onclick = e => {
@@ -517,7 +517,7 @@ window.PAGES = window.PAGES || {};
             <div class="tile">
               <div class="t-xs muted b6">ยอดขายวันนี้จากเมนูนี้</div>
               <div class="num b8" style="font-size:19px">${U.baht(u*m.price)}</div>
-              <div class="t-xs" style="color:var(--good)">กำไร ${U.baht(u*m.profit)}</div>
+              <div class="t-xs" style="color:var(--good-ink)">กำไร ${U.baht(u*m.profit)}</div>
               <div class="bar mt8"><i style="width:${Math.min(100,u*m.price/D.today.revenue*100*3).toFixed(0)}%"></i></div>
               <div class="t-xs muted mt4">${U.pc(u*m.price/D.today.revenue*100)} ของยอดขายวันนี้</div></div>
           </div>

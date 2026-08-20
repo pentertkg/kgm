@@ -161,7 +161,7 @@
           ['Menu', l=>`<div class="row g8"><span style="font-size:17px">${l.emoji}</span><b class="t-sm">${U.esc(l.name)}</b></div>`],
           ['จำนวน', l=>U.nf(l.units), 'r num b7'],
           ['Revenue', l=>U.baht(l.revenue), 'r num'],
-          ['Profit', l=>`<span style="color:var(--good)">${U.baht(l.profit)}</span>`, 'r num b7']], 'วันนี้')}
+          ['Profit', l=>`<span style="color:var(--good-ink)">${U.baht(l.profit)}</span>`, 'r num b7']], 'วันนี้')}
         ${table('เมนูที่ควรทบทวน', lines.filter(l=>l.units<=14).slice(0,6), [
           ['Menu', l=>`<div class="row g8"><span style="font-size:17px">${l.emoji}</span><b class="t-sm">${U.esc(l.name)}</b></div>`],
           ['จำนวน', l=>U.nf(l.units), 'r num'],
@@ -310,7 +310,7 @@
               <td class="r num">${U.pc(p)}</td>
               <td><div class="bar"><i style="width:${Math.min(100,p)}%;background:${c}"></i></div></td></tr>`).join('')}
               <tr style="background:var(--good-soft)"><td><b>Net Profit</b></td>
-                <td class="r num b8" style="color:var(--good);font-size:16px">${U.baht(m.netProfit)}</td>
+                <td class="r num b8" style="color:var(--good-ink);font-size:16px">${U.baht(m.netProfit)}</td>
                 <td class="r num b8">${U.pc(m.netMargin)}</td>
                 <td><div class="bar bar-good"><i style="width:${m.netMargin}%"></i></div></td></tr>
             </tbody></table></div>
@@ -366,7 +366,7 @@
           <p class="muted t-sm mt8">เรียงตามผลกระทบต่อกำไร มากไปน้อย</p></div>
         <div class="tile" style="min-width:190px">
           <div class="t-xs muted b6">ผลรวมที่คาดว่าจะได้เพิ่ม</div>
-          <div class="num b8" style="font-size:23px;color:var(--good)">+${U.baht(21304)}</div>
+          <div class="num b8" style="font-size:23px;color:var(--good-ink)">+${U.baht(21304)}</div>
           <div class="t-xs muted">ต่อเดือน ถ้าทำครบทั้ง 3 ข้อ</div></div>
       </div>
       <div class="col g12 mt20" id="todoList"></div>
@@ -532,7 +532,7 @@
           `<span class="badge" id="polVer">เวอร์ชัน ${A.POLICY_VERSION}</span>`) +
         card('ลบบัญชีและข้อมูล','สิทธิที่จะถูกลืม — ทำได้เองทันที ไม่ต้องติดต่อใคร', `
           <div class="caution" style="border-left:3px solid var(--bad);background:var(--bad-soft);border-radius:0 10px 10px 0;padding:15px 18px">
-            <div class="lbl" style="font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--bad)">ลบแล้วกู้คืนไม่ได้</div>
+            <div class="lbl" style="font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--bad-ink)">ลบแล้วกู้คืนไม่ได้</div>
             <p class="t-sm mt8">จะลบอีเมล บันทึกความยินยอม และสมาชิกภาพร้านของคุณทันที
               และถ้าคุณเป็น<b>เจ้าของร้านคนเดียว</b> ข้อมูลร้านทั้งหมด (เมนู ออเดอร์ ลูกค้า สต็อก)
               จะถูกลบไปพร้อมกัน</p>
@@ -577,7 +577,7 @@
       const paint = async () => {
         let cur = {};
         try { cur = await A.myConsents(); }
-        catch (e) { box.innerHTML = `<div class="t-sm" style="color:var(--bad)">โหลดไม่สำเร็จ: ${U.esc(e.message)}</div>`; return; }
+        catch (e) { box.innerHTML = `<div class="t-sm" style="color:var(--bad-ink)">โหลดไม่สำเร็จ: ${U.esc(e.message)}</div>`; return; }
         box.innerHTML = `<div class="col g10">` + A.PURPOSES.map(p => {
           const r = cur[p.id];
           const on = !!(r && !r.withdrawn_at);
@@ -704,7 +704,7 @@
         <div class="scroll-x"><table class="tbl"><thead><tr><th>สิทธิ์การใช้งาน</th>
           <th class="r">Owner</th><th class="r">Manager</th><th class="r">Cashier</th></tr></thead>
           <tbody>${PERM.map(([l,a,b,c])=>`<tr><td class="t-sm b6">${l}</td>
-            ${[a,b,c].map(v=>`<td class="r">${v?'<span style="color:var(--good);font-weight:800">✓</span>':'<span class="muted-2">—</span>'}</td>`).join('')}
+            ${[a,b,c].map(v=>`<td class="r">${v?'<span style="color:var(--good-ink);font-weight:800">✓</span>':'<span class="muted-2">—</span>'}</td>`).join('')}
           </tr>`).join('')}</tbody></table></div>`);
     }
     function vPayment(){
@@ -784,7 +784,7 @@
             ['AI Advisor','จำกัด','✓','✓'],['Analytics ย้อนหลัง','7 วัน','12 เดือน','ไม่จำกัด'],
             ['Roles & Permissions','—','—','✓']]
             .map(r=>`<tr><td class="t-sm b6">${r[0]}</td>${r.slice(1).map(v=>
-              `<td class="r t-sm ${v==='✓'?'':'muted'}" style="${v==='✓'?'color:var(--good);font-weight:800':''}">${v}</td>`).join('')}</tr>`).join('')}
+              `<td class="r t-sm ${v==='✓'?'':'muted'}" style="${v==='✓'?'color:var(--good-ink);font-weight:800':''}">${v}</td>`).join('')}</tr>`).join('')}
           </tbody></table></div>
         <p class="t-xs muted mt16">* ตัวเลขค่าบริการเป็นข้อมูลตัวอย่าง ยังไม่เปิดขายจริง</p>`);
     }

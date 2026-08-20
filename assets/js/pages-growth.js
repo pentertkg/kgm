@@ -43,7 +43,7 @@
           <button class="btn btn-ai btn-sm" id="fcPO">สร้างรายการสั่งซื้อ →</button>
         </div>
         <h3 class="mt16" style="line-height:1.5">จากยอดขายย้อนหลัง ระบบคาดว่าพรุ่งนี้จะใช้<b> หมูสับประมาณ 7.8 kg</b>
-          แต่ตอนนี้เหลือเพียง 3.2 kg — <span style="color:var(--bad)">ขาดอีก 4.6 kg</span></h3>
+          แต่ตอนนี้เหลือเพียง 3.2 kg — <span style="color:var(--bad-ink)">ขาดอีก 4.6 kg</span></h3>
         <p class="muted t-sm mt8">ถ้าไม่สั่งเพิ่มวันนี้ จะขายกะเพราหมูและข้าวผัดหมูได้ถึงประมาณ 12:40 เท่านั้น
           คิดเป็นยอดขายที่จะเสียไปราว ${U.baht(4.6/0.13*58)}</p>
         <div class="grid g-3 mt16">
@@ -80,7 +80,7 @@
                 <div class="between t-sm"><b>${U.esc(i.name)}</b>
                   <span class="badge ${SLBL[D.stockStatus(i)][1]}">${SLBL[D.stockStatus(i)][0]}</span></div>
                 <div class="row wrap g6 mt8">${used.map(m=>`<span class="badge">${m.emoji} ${U.esc(m.name)}</span>`).join('') || '<span class="t-xs muted">ยังไม่ผูกกับเมนู</span>'}</div>
-                ${D.stockStatus(i)==='out' ? `<div class="t-xs mt8" style="color:var(--bad)">
+                ${D.stockStatus(i)==='out' ? `<div class="t-xs mt8" style="color:var(--bad-ink)">
                   วัตถุดิบหมด → ${used.length} เมนูถูกปิดขายชั่วคราว</div>`:''}
               </div>`; }).join('')}
           </div>
@@ -109,7 +109,7 @@
         const ratio = Math.min(100, i.min ? i.stock / (i.min * 1.6) * 100 : 100);
         return `<tr>
           <td><b class="t-sm">${U.esc(i.name)}</b><div class="t-xs muted">฿${U.nf(i.cost)}/${i.unit}</div></td>
-          <td class="r num b7" style="${s!=='ok'?'color:var(--bad)':''}">${U.nf(i.stock,1)}</td>
+          <td class="r num b7" style="${s!=='ok'?'color:var(--bad-ink)':''}">${U.nf(i.stock,1)}</td>
           <td class="t-sm muted">${i.unit}</td>
           <td class="r num">${U.nf(i.min,1)}</td>
           <td><div class="bar ${s==='ok'?'bar-good':s==='low'?'bar-warn':'bar-bad'}"><i style="width:${ratio}%"></i></div></td>
@@ -185,7 +185,7 @@
         <div class="between wrap g12">
           <span class="ai-badge">${ICO('advisor',16)} AI Insight — Customer</span>
           <button class="btn btn-ai btn-sm" id="aiCam">สร้าง Campaign เรียกลูกค้ากลับมา →</button></div>
-        <h3 class="mt16">มีลูกค้า <b style="color:var(--bad)">${D.crm.lost} คน</b> ที่ไม่ได้กลับมาซื้อเกิน 30 วัน</h3>
+        <h3 class="mt16">มีลูกค้า <b style="color:var(--bad-ink)">${D.crm.lost} คน</b> ที่ไม่ได้กลับมาซื้อเกิน 30 วัน</h3>
         <p class="muted t-sm mt8">กลุ่มนี้เคยซื้อเฉลี่ย 4.2 ครั้ง/คน มูลค่าเฉลี่ย ${U.baht(120)}/เดือน/คน
           รวมเป็นรายได้ที่หายไปประมาณ <b>${U.baht(D.crm.lost*120)}/เดือน</b>
           ต้นทุนดึงกลับ (คูปองลด 20 บาท) ถูกกว่าการหาลูกค้าใหม่ ${U.nf(D.marketing.cac/20,1)} เท่า</p>
@@ -261,7 +261,7 @@
           <td><span class="badge ${SB[c.seg]}">${sg.label}</span></td>
           <td class="r num b7">${c.orders}</td>
           <td class="r num b7">${U.baht(c.spend)}</td>
-          <td class="t-sm ${late?'':''}" style="${late?'color:var(--bad);font-weight:700':''}">${U.esc(c.last)}</td>
+          <td class="t-sm ${late?'':''}" style="${late?'color:var(--bad-ink);font-weight:700':''}">${U.esc(c.last)}</td>
           <td class="t-sm">${m?m.emoji+' '+U.esc(m.name):'—'}</td>
           <td class="r">${c.seg==='risk'||c.seg==='inactive'
             ? `<button class="btn btn-xs btn-primary" data-win="${U.esc(c.name)}">ส่งคูปอง</button>`
@@ -332,7 +332,7 @@
           ถ้าเพิ่มงบจาก ${U.baht(best.spend)} → ${U.baht(best.spend*1.2)} คาดว่าจะได้ยอดขายเพิ่มราว
           <b>${U.baht(best.spend*0.2*best.roas)}</b> (สมมติ ROAS คงที่ที่ระดับงบนี้)<br>
           ขณะเดียวกัน “${U.esc(worst.name)}” มี ROAS เพียง ${U.nf(worst.roas,2)}x ซึ่งต่ำกว่าจุดคุ้มทุน 2.70x
-          — <b style="color:var(--bad)">แนะนำหยุดและย้ายงบ ${U.baht(worst.spend)}</b> ไปที่แคมเปญที่ดีที่สุด</p>
+          — <b style="color:var(--bad-ink)">แนะนำหยุดและย้ายงบ ${U.baht(worst.spend)}</b> ไปที่แคมเปญที่ดีที่สุด</p>
         <div class="grid g-3 mt16">
           <div class="rec" style="background:var(--surface)"><span class="rn">1</span>
             <div class="t-sm"><b>เพิ่มงบ ${U.esc(best.name)} +20%</b><br>
@@ -552,7 +552,7 @@
           <div class="between t-sm"><span class="muted">กำไรหลังโปร</span>
             <b class="num" style="color:${after>0?'var(--good)':'var(--bad)'}">${U.baht(after)}</b></div>
           <div class="bar mt8 ${after>0?'bar-good':'bar-bad'}"><i style="width:${Math.max(3,Math.min(100,mg*2))}%"></i></div>
-          <div class="t-xs mt8 ${after>0?'muted':''}" style="${after<=0?'color:var(--bad);font-weight:700':''}">
+          <div class="t-xs mt8 ${after>0?'muted':''}" style="${after<=0?'color:var(--bad-ink);font-weight:700':''}">
             ${after>0 ? `margin หลังโปร ${U.pc(mg)} — ยังมีกำไร` : 'ลดมากเกินไป จะขายขาดทุนทุกบิล'}</div>`;
       };
       stage().querySelectorAll('[data-t]').forEach(b => b.onclick = () => { W.type = b.dataset.t; s3(); });

@@ -1,23 +1,79 @@
 /* ============================================================
-   Self-hosted fonts (SIL Open Font License 1.1 — ดู assets/fonts/OFL-*.txt)
-   ไม่มีการเรียก CDN หรือบริการภายนอกใดๆ · variable weight 400–800
+   Self-hosted fonts (SIL Open Font License 1.1)
+   ไม่เรียก CDN หรือบริการภายนอกใดๆ — CSP ยังเป็น font-src 'self'
+   Kanit = ตัวนำ (หัวข้อ ตัวเลข ปุ่ม) · Niramit = ตัวอ่าน (เนื้อความ)
+   แยก subset thai/latin เพื่อให้ดาวน์โหลดเฉพาะที่ใช้
    ============================================================ */
 @font-face{
-  font-family:'Noto Sans Thai';
-  font-style:normal; font-weight:400 800; font-display:swap;
-  src:url('../fonts/noto-sans-thai-thai.woff2') format('woff2');
+  font-family:'Kanit';
+  font-style:normal; font-weight:500; font-display:swap;
+  src:url('../fonts/kanit-thai-500.woff2') format('woff2');
   unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC;
 }
 @font-face{
-  font-family:'Noto Sans Thai';
-  font-style:normal; font-weight:400 800; font-display:swap;
-  src:url('../fonts/noto-sans-thai-latin.woff2') format('woff2');
+  font-family:'Kanit';
+  font-style:normal; font-weight:500; font-display:swap;
+  src:url('../fonts/kanit-latin-500.woff2') format('woff2');
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 @font-face{
-  font-family:'Inter';
-  font-style:normal; font-weight:400 800; font-display:swap;
-  src:url('../fonts/inter-latin.woff2') format('woff2');
+  font-family:'Kanit';
+  font-style:normal; font-weight:600; font-display:swap;
+  src:url('../fonts/kanit-thai-600.woff2') format('woff2');
+  unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC;
+}
+@font-face{
+  font-family:'Kanit';
+  font-style:normal; font-weight:600; font-display:swap;
+  src:url('../fonts/kanit-latin-600.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Kanit';
+  font-style:normal; font-weight:700; font-display:swap;
+  src:url('../fonts/kanit-thai-700.woff2') format('woff2');
+  unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC;
+}
+@font-face{
+  font-family:'Kanit';
+  font-style:normal; font-weight:700; font-display:swap;
+  src:url('../fonts/kanit-latin-700.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Niramit';
+  font-style:normal; font-weight:400; font-display:swap;
+  src:url('../fonts/niramit-thai-400.woff2') format('woff2');
+  unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC;
+}
+@font-face{
+  font-family:'Niramit';
+  font-style:normal; font-weight:400; font-display:swap;
+  src:url('../fonts/niramit-latin-400.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Niramit';
+  font-style:normal; font-weight:600; font-display:swap;
+  src:url('../fonts/niramit-thai-600.woff2') format('woff2');
+  unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC;
+}
+@font-face{
+  font-family:'Niramit';
+  font-style:normal; font-weight:600; font-display:swap;
+  src:url('../fonts/niramit-latin-600.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Niramit';
+  font-style:normal; font-weight:700; font-display:swap;
+  src:url('../fonts/niramit-thai-700.woff2') format('woff2');
+  unicode-range:U+02D7,U+0303,U+0331,U+0E01-0E5B,U+200C-200D,U+25CC;
+}
+@font-face{
+  font-family:'Niramit';
+  font-style:normal; font-weight:700; font-display:swap;
+  src:url('../fonts/niramit-latin-700.woff2') format('woff2');
   unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 
@@ -28,90 +84,73 @@
 
 :root{
   /* ════════════════════════════════════════════════════════════
-     Design System: Mastercard-inspired (DESIGN-mastercard.md)
-     ------------------------------------------------------------
-     สามพื้นผิวไล่จังหวะหน้า: canvas cream → lifted cream → ink
-     รูปทรง: 20px (ปุ่ม) · 40px (เฮโร/คอนเทนเนอร์ใหญ่) · 999px (แคปซูล)
-     เอกสารระบุให้เลี่ยงช่วง 8–16px เพราะ "อ่านว่าเทมเพลตทั่วไป"
-
-     ข้อที่ปรับจากเอกสารอย่างมีเหตุผล (บันทึกไว้เพื่อให้ตรวจย้อนได้):
-     · เอกสารเขียนเองว่าปรัชญา whitespace ของมันคือ "ตรงข้ามกับ dashboard
-       ที่หนาแน่น" — หน้า Orders/Kitchen/Stock ของเราเป็น dashboard ที่ใช้งาน
-       ตอนยืนขายของ จึงรับ "สี ตัวอักษร มุมโค้ง เงา eyebrow" มาทั้งหมด
-       แต่คงความหนาแน่นของตารางและรายการไว้ ไม่ใส่ whitespace แบบนิตยสาร
-     · ฟอนต์ MarkForMC เป็นลิขสิทธิ์เฉพาะ และแอปนี้เป็นภาษาไทย
-       Sofia Sans ที่เอกสารแนะนำไม่มีอักษรไทย จึงคง Noto Sans Thai ไว้สำหรับไทย
-       และใช้ Inter (ตัวสำรองที่เอกสารระบุ) กับตัวเลข/ละติน
-       สิ่งที่รักษาไว้ตามเอกสาร: น้ำหนัก 450 ในเนื้อความ และ tracking -2% ในหัวข้อ
-     · เอกสารไม่ได้กำหนดสี good/warn/bad (เป็นหน้าการตลาด ไม่มีสถานะระบบ)
-       จึงตั้งเพิ่มให้เข้าโทนอุ่นและผ่าน WCAG AA ทุกค่าเมื่อใช้เป็นตัวอักษร
+     ทิศทาง D — "ป้ายไทยโมเดิร์น"
+     บล็อกสีทึบ ขอบคม 2px ตัวหนังสือไทยเป็นตัวนำแบบป้ายโปสเตอร์
+     รูปทรงมีสองแบบ: บล็อกเหลี่ยม (0) กับแคปซูล (999) — ไม่มีตรงกลาง
+     ไม่มีเงา ไม่มีไล่เฉด ความลึกมาจากบล็อกซ้อนกันและขอบคม
+     ทุกค่าที่ใช้เป็นตัวอักษรผ่าน WCAG AA (ตัวเลขกำกับไว้ท้ายบรรทัด)
      ════════════════════════════════════════════════════════════ */
 
-  /* Surfaces — สามโทนตามเอกสาร ไม่มีขาวล้วนเป็นพื้นหน้า */
-  --bg:#f3f0ee;          /* Canvas Cream */
-  --bg-2:#e8e2da;        /* whisper cream — ใช้แทนพื้นเทาอ่อนเดิม */
-  --surface:#fcfbfa;     /* Lifted Cream — พื้นการ์ด */
-  --surface-2:#f4f4f4;   /* Soft Bone */
-  --white:#ffffff;       /* สงวนไว้: nav pill, modal, satellite CTA */
-  --line:#dcd6ce;
-  --line-2:#e8e2da;
+  /* Surfaces — ครีมอุ่น ไม่ใช้ขาวล้วนเป็นพื้นหน้า */
+  --bg:#fffdf5;
+  --bg-2:#f7f4e9;
+  --surface:#fffdf5;
+  --surface-2:#f7f4e9;
+  --white:#fffdf5;
+  --line:#e6e2d3;
+  --line-2:#f0ece0;
 
-  /* Ink & neutrals */
-  --ink:#141413;         /* Ink Black — หัวข้อ เนื้อความ ปุ่มหลัก พื้น footer */
-  --ink-2:#262627;       /* Charcoal */
-  --muted:#555555;       /* Granite — ใช้กับข้อความรอง (บน cream ได้ 5.6:1) */
-  --muted-2:#696969;     /* Slate Gray — ป้ายกำกับ/ไอคอน ไม่ใช้กับเนื้อความยาว */
-  --whisper:#d1cdc7;     /* Dust Taupe — ข้อความจาง/สถานะว่าง */
+  /* Ink */
+  --ink:#14201f;
+  --ink-2:#3d4a48;
+  --muted:#5c6a68;       /* 5.52:1 บนครีม — ใช้กับข้อความรองได้ */
+  --muted-2:#5c6a68;     /* ผูกค่าเดียวกัน เพราะคลาสหลายตัวใช้เป็นตัวอักษร */
+  --whisper:#7c8a88;     /* 3.51:1 — จุด เส้น ไอคอน เท่านั้น ห้ามใช้กับตัวอักษร */
 
-  /* Signal Orange — เอกสารสงวนไว้สำหรับ "ความยินยอม/กฎหมาย" เท่านั้น
-     ปุ่มหลักของหน้าเว็บจึงเป็น Ink Pill ไม่ใช่สีส้ม */
-  --brand:#cf4500;       /* Signal Orange — พื้นปุ่มยินยอม (ตัวอักษรขาว 4.65:1) */
-  --brand-2:#b03a00;
-  --brand-ink:#9a3a0a;   /* Clay Brown — เมื่อสีส้มต้องเป็น "ตัวอักษร" (6.2:1) */
-  --brand-soft:#fbeee7;
+  /* โครงสร้าง: เขียวเข้ม (แถบนำทาง) · ทอง (เส้นคั่น ตัวที่เลือก) */
+  --teal:#0f4c4a;        /* 9.52:1 บนครีม */
+  --gold:#c9a227;        /* พื้น/เส้นเท่านั้น — บนเขียวได้ 4.03:1 ไม่ผ่าน */
+  --gold-ink:#e8c85a;    /* 5.95:1 บนเขียว — ใช้เมื่อทองต้องเป็นตัวอักษร */
+
+  /* Brand = แดงชาด (ปุ่มหลักและการเตือน) */
+  --brand:#d13a24;       /* ตัวอักษรครีมบนพื้นนี้ 4.73:1 (เดิม #d63f2a ได้ 4.48 ตกเกณฑ์) */
+  --brand-2:#b8341f;
+  --brand-ink:#b8341f;   /* 5.78:1 บนครีม — เมื่อแดงต้องเป็นตัวอักษร */
+  --brand-soft:#fdf0e3;
   --brand-line:#f0d8c9;
-  --accent:#f37338;      /* Light Signal Orange — เส้นโคจร/จุด eyebrow/ตัวชี้ */
+  --accent:#c9a227;
 
-  /* Semantic — ส่วนขยาย (เอกสารไม่ได้กำหนด) · ค่า *-ink ผ่าน AA บน cream */
-  --good:#1a7f4b;   --good-soft:#e9f3ec; --good-line:#c3ddcb; --good-ink:#136239;
-  --warn:#b06d05;   --warn-soft:#fbf1e2; --warn-line:#eddbb8; --warn-ink:#7d4d04;
-  --bad:#c4212f;    --bad-soft:#fbeaec;  --bad-line:#eec8cc;  --bad-ink:#a01824;
-  --info:#3860be;   --info-soft:#eceff9; --info-line:#ccd5ee; --info-ink:#2f52a2;  /* Link Blue */
-  --ai:#9a3a0a;     --ai-soft:#fbeee7;   --ai-line:#f0d8c9;
+  /* Semantic */
+  --good:#147a4a;   --good-soft:#eaf5ee; --good-line:#c3ddcb; --good-ink:#147a4a;  /* 5.25:1 */
+  --warn:#c9a227;   --warn-soft:#fdf0e3; --warn-line:#f0dcb2; --warn-ink:#8a5405;  /* 6.4:1  */
+  --bad:#d13a24;    --bad-soft:#fdedef;  --bad-line:#f3c8ce;  --bad-ink:#b8341f;   /* 5.78:1 */
+  --info:#2f6bb5;   --info-soft:#eef2fb; --info-line:#cdd9ee; --info-ink:#235a9e;  /* 5.1:1  */
+  --ai:#b8341f;     --ai-soft:#fdf0e3;   --ai-line:#f0d8c9;
 
-  /* Chart series — เริ่มจาก accent แล้วไล่ไปโทนที่แยกกันได้ */
-  --c1:#cf4500; --c2:#3860be; --c3:#1a7f4b; --c4:#b06d05; --c5:#696969; --c6:#0e7490;
+  /* Chart series */
+  --c1:#c9a227; --c2:#0f4c4a; --c3:#147a4a; --c4:#d13a24; --c5:#5c6a68; --c6:#2f6bb5;
 
-  /* Shape — 20 / 40 / 999 ตามเอกสาร (เลี่ยงช่วง 8–16) */
-  --r-sm:6px;            /* ชิปจิ๋วเท่านั้น */
-  --r:20px;              /* ปุ่มและช่องกรอก */
-  --r-lg:20px;           /* การ์ด */
-  --r-xl:40px;           /* คอนเทนเนอร์ใหญ่ เฮโร โมดัล */
-  --r-pill:999px;
+  /* Shape — 0 หรือ 999 เท่านั้น */
+  --r-sm:0; --r:0; --r-lg:0; --r-xl:0; --r-pill:999px;
 
-  /* Elevation — เงาเป็น "เบาะอากาศ" กระจายกว้าง ทึบต่ำ ไม่มีเงาคมสั้น */
-  --sh-1:none;                                         /* ระดับ 0 = ค่าเริ่มต้น */
-  --sh-nav:0 4px 24px rgba(0,0,0,.04);                 /* ระดับ 1 — nav pill */
-  --sh-2:0 24px 48px rgba(0,0,0,.08);                  /* ระดับ 2 — การ์ดยกตัว */
-  --sh-3:0 70px 110px rgba(0,0,0,.25);                 /* ระดับ 3 — ใช้น้อยมาก */
-  --sh-brand:none;
+  /* ไม่มีเงาในระบบนี้ — ของที่ลอยใช้ขอบหมึก 2px กับฉากหลังทึบแทน */
+  --sh-1:none; --sh-2:none; --sh-3:none; --sh-nav:none; --sh-brand:none;
 
-  /* Sidebar = พื้นผิว ink ตามจังหวะ cream → lifted → ink */
-  --sb-bg:#141413;
+  /* แถบข้าง = เขียวเข้ม ขอบทอง */
+  --sb-bg:#0f4c4a;
   --sb-line:rgba(255,255,255,.14);
-  --sb-ink:#f3f0ee;
-  --sb-muted:#a5a19c;
-  --sb-hover:rgba(255,255,255,.07);
+  --sb-ink:#fffdf5;
+  --sb-muted:#b9d1cf;   /* 6.08:1 บนเขียว */
+  --sb-hover:rgba(255,255,255,.09);
 
-  /* Layout — base 8px, สเกล 8/16/24/32/48/64/96/128 */
-  --sidebar:256px;
-  --topbar:64px;
+  /* Layout */
+  --sidebar:236px;
+  --topbar:60px;
   --maxw:1280px;
 
-  /* ตัวอักษร: ไทยใช้ Noto Sans Thai · ตัวเลข/ละตินใช้ Inter (ตัวสำรองที่เอกสารระบุ) */
-  --f-thai:"Noto Sans Thai","Sarabun","IBM Plex Sans Thai","Leelawadee UI","Thonburi",
-           -apple-system,BlinkMacSystemFont,system-ui,"Segoe UI","Helvetica Neue",sans-serif;
-  --f-num:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --f-thai:'Niramit','Noto Sans Thai','Sarabun',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  --f-num:'Kanit','Niramit',system-ui,-apple-system,sans-serif;
+  --f-display:'Kanit','Niramit',system-ui,-apple-system,sans-serif;
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -937,3 +976,158 @@ p{margin:0}
 }
 .field [data-eye]:hover{background:var(--bg-2);border-color:var(--ink)}
 .field .input:has(~ [data-eye]){padding-right:88px}
+
+/* ============================================================
+   ทิศทาง D — ส่วนที่ต่างจากระบบเดิมในระดับคอมโพเนนต์
+   token เปลี่ยนสีกับรูปทรงให้แล้ว ส่วนนี้จัดการเรื่องที่ token ทำไม่ได้:
+   ขอบ 2px · ตัวหนังสือ Kanit นำ · เลิกใช้เงา · แถบข้างเขียวขอบทอง
+   ============================================================ */
+
+/* ── ตัวหนังสือ: Kanit นำ Niramit อ่าน ── */
+body{font-weight:400;font-size:16px;line-height:1.6}
+h1,h2,h3,h4,h5,.page-t{font-family:var(--f-display);font-weight:600;letter-spacing:-.02em}
+h1{font-weight:700}
+.num{font-family:var(--f-num);font-weight:600;letter-spacing:-.02em}
+.b6,.b7{font-weight:600}.b8{font-weight:700}
+/* eyebrow ไม่บังคับตัวพิมพ์ใหญ่ — อักษรไทยไม่มีตัวพิมพ์ใหญ่ */
+.eyebrow,.up{font-family:var(--f-display);text-transform:none;letter-spacing:.06em;font-weight:600}
+.eyebrow::before{background:var(--gold)}
+
+/* ── บล็อก: ขอบหมึก 2px แทนเงา ── */
+.card,.kpi,.ai-card,.tile,.ob-card,.modal{border:2px solid var(--ink);box-shadow:none}
+.card-h,.card-f{border-color:var(--line)}
+.card-hover:hover{transform:none;border-color:var(--brand);background:var(--surface-2)}
+.kpi:hover{transform:none;border-color:var(--brand)}
+.kpi .kl{font-family:var(--f-display);text-transform:none;letter-spacing:.06em;color:var(--muted)}
+.kpi .kv{font-family:var(--f-num);font-weight:700;letter-spacing:-.03em}
+.kpi .ki{border-radius:0;background:var(--bg-2)}
+.kpi-spark{opacity:.55}
+
+/* ── ปุ่ม: แคปซูลเสมอ · หลัก = แดงชาด · รอง = ขอบเขียว ── */
+.btn{border-radius:var(--r-pill);font-family:var(--f-display);font-weight:600;border-width:1.5px}
+.btn-primary{background:var(--brand);border-color:var(--brand);color:#fffdf5}
+.btn-primary:hover{background:var(--brand-2);border-color:var(--brand-2)}
+.btn-ghost{border-color:var(--teal);color:var(--teal);background:transparent}
+.btn-ghost:hover{background:var(--bg-2)}
+.btn-dark,.btn-ai{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn-soft{background:var(--bg-2);border-color:var(--line);color:var(--ink)}
+.btn-icon{border-radius:var(--r-pill);border-color:var(--line)}
+
+/* ── ป้ายและแท็บ: แคปซูล ── */
+.badge{border-radius:var(--r-pill);font-family:var(--f-display);font-weight:600}
+.badge-brand,.badge-ai{background:var(--brand-soft);color:var(--brand-ink);border-color:var(--brand-line)}
+.tabs{border-radius:var(--r-pill);background:var(--bg-2);border:1px solid var(--line)}
+.tabs button{border-radius:var(--r-pill);font-family:var(--f-display);font-weight:500}
+.tabs button.on{background:var(--ink);color:var(--bg);font-weight:600}
+.tabs button .n{border-radius:var(--r-pill);font-family:var(--f-num)}
+.underline-tabs button.on{color:var(--ink);border-color:var(--gold)}
+
+/* ── ช่องกรอก: กล่องเหลี่ยมขอบหมึก 2px ── */
+.input,.select,.textarea{border-radius:0;border:2px solid var(--ink);background:var(--bg)}
+.input:focus,.select:focus,.textarea:focus{border-color:var(--brand)}
+.input::placeholder,.textarea::placeholder{color:var(--muted)}
+.choice{border-radius:0;border:2px solid var(--line)}
+.choice:hover{border-color:var(--ink)}
+.choice.on{border-color:var(--ink);background:var(--brand-soft);box-shadow:none}
+.choice .ci{border-radius:0;background:var(--bg-2)}
+.choice.on .ci{background:var(--teal);color:var(--bg)}
+.switch{border-radius:var(--r-pill)}
+.switch.on{background:var(--teal)}
+
+/* ── ตาราง: หัวตารางสเกล eyebrow ไม่บังคับตัวพิมพ์ใหญ่ ── */
+.tbl th{font-family:var(--f-display);text-transform:none;letter-spacing:.05em;color:var(--muted);background:var(--surface-2)}
+.tbl td{border-color:var(--line-2)}
+.tbl tbody tr:hover{background:var(--surface-2)}
+.bar,.stacked{border-radius:0}
+.bar > i{border-radius:0;background:var(--gold)}
+.bar-good > i{background:var(--good)}
+.bar-warn > i{background:var(--gold)}
+.bar-bad > i{background:var(--brand)}
+
+/* ── แถบข้าง: เขียวเข้ม ขอบทอง 3px ── */
+.sidebar{background:var(--sb-bg);border-right:3px solid var(--gold);box-shadow:none}
+.sb-brand,.sb-store,.sb-foot{border-color:var(--sb-line)}
+.logo{border-radius:0;background:var(--gold);box-shadow:none}
+.logo-txt{font-family:var(--f-display);color:var(--sb-ink)}
+.logo-txt span{color:var(--gold-ink)}
+.sb-store{border-radius:var(--r-pill);background:var(--sb-hover);border:1px solid var(--sb-line)}
+.sb-store:hover{border-color:var(--gold-ink)}
+.sb-store b{color:var(--sb-ink)}
+.sb-store .t-xs,.sb-store .muted{color:var(--sb-muted)}
+.sb-store .av{border-radius:var(--r-pill);background:rgba(255,255,255,.13)}
+.sb-sec{font-family:var(--f-display);text-transform:none;letter-spacing:.05em;color:var(--sb-muted)}
+.sidebar .nav-i{border-radius:var(--r-pill);color:#d5e2e0;font-family:var(--f-thai)}
+.sidebar .nav-i:hover{background:var(--sb-hover);color:var(--sb-ink)}
+.sidebar .nav-i.on{background:var(--gold);color:var(--ink);font-family:var(--f-display);font-weight:600}
+.sidebar .nav-i .ni{color:var(--sb-muted)}
+.sidebar .nav-i.on .ni{color:var(--ink)}
+.sidebar .nav-i .nb{border-radius:var(--r-pill);background:var(--brand);font-family:var(--f-num)}
+.sidebar .nav-i.on .nb{background:var(--ink);color:var(--bg)}
+.plan{border-radius:0;background:var(--sb-hover);border:1px solid var(--sb-line)}
+.plan .btn{background:var(--bg);border-color:var(--bg);color:var(--ink)}
+
+/* ── แถบบน: ทึบ มีเส้นทองคั่น ไม่ลอย ── */
+.topbar{margin:0;border-radius:0;background:var(--bg);border-bottom:2px solid var(--ink);box-shadow:none;position:sticky;top:0;padding:0 22px;min-height:var(--topbar);height:var(--topbar)}
+.search{border-radius:var(--r-pill);background:var(--bg-2);border:1px solid var(--line)}
+.search:focus-within{border-color:var(--ink);background:var(--bg)}
+.avatar{border-radius:var(--r-pill);background:var(--teal);color:var(--bg);font-family:var(--f-display)}
+
+/* ── หน้าและหัวหน้า ── */
+.page-t{font-size:32px;font-weight:600}
+.page-s{color:var(--muted)}
+
+/* ── การเตือนและ AI ── */
+.ai-card{border-left:2px solid var(--ink)}
+.ai-strip{border-radius:0}
+.ai-panel,.toast{border-radius:0;border:2px solid var(--ink);box-shadow:none}
+.ai-head{background:var(--teal);color:var(--bg)}
+.toast{background:var(--ink);color:var(--bg);border-radius:var(--r-pill)}
+.msg{border-radius:0}
+.fab{border-radius:var(--r-pill);background:var(--brand);color:#fffdf5;font-family:var(--f-display);box-shadow:none;border:2px solid var(--ink)}
+.fab:hover{background:var(--brand-2)}
+.fab .fi{border-radius:var(--r-pill)}
+
+/* ── ครัว ── */
+.kds-card{border-radius:0;border:2px solid var(--ink);border-top:6px solid var(--whisper);box-shadow:none}
+
+/* ── ขั้นตอน (วิซาร์ด) ── */
+.step-n{border-radius:0;font-family:var(--f-num)}
+.step-i.on .step-n{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.step-i.done .step-n{background:var(--good);border-color:var(--good)}
+.step-line.done{background:var(--good)}
+
+/* ── สิ่งที่ต้องใช้สีจาง: จุด เส้น ไอคอน (ห้ามใช้กับตัวอักษร) ── */
+.dot{background:var(--whisper)}
+.typing i{background:var(--whisper)}
+.flow-arw,.insight-chain .arw{color:var(--whisper)}
+.nav-i .ni{color:var(--whisper)}
+
+/* ── หน้า Landing ── */
+.lp-nav{position:sticky;top:0;margin:0;padding:0;max-width:none;background:var(--teal)}
+.lp-nav .in{background:transparent;border-radius:0;box-shadow:none;max-width:var(--maxw);margin:0 auto;padding:14px 24px;border-bottom:4px solid var(--gold)}
+.lp-links a{color:#d5e2e0;font-family:var(--f-thai)}
+.lp-links a:hover{color:var(--bg)}
+.lp-nav .logo-txt{color:var(--bg)}
+.lp-nav .btn-ghost{border-color:rgba(255,253,245,.45);color:var(--bg)}
+.lp-nav .btn-ghost:hover{background:rgba(255,255,255,.1)}
+.hero h1 em{color:var(--brand-ink)}
+.preview{border-radius:0;border:2px solid var(--ink);box-shadow:none}
+.cta-band{border-radius:0;background:var(--teal)}
+.cta-band .btn-white{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.ob-nav{border-radius:0;background:var(--teal);border-bottom:4px solid var(--gold);box-shadow:none;width:100%;max-width:none;margin:0;padding:14px 24px}
+.ob-nav .logo-txt{color:var(--bg)}
+.ob-nav .badge{background:rgba(255,255,255,.14);color:var(--bg);border-color:rgba(255,255,255,.24)}
+.ob{background:var(--bg)}
+.calc-box{border-radius:0;background:var(--teal)}
+
+/* ── ความยินยอม ── */
+.consent-main,.consent-opt{border-radius:0;border-width:2px}
+.consent-main.on,.consent-opt.on{border-color:var(--ink);background:var(--brand-soft);box-shadow:none}
+.consent-main a{color:var(--brand-ink)}
+.consent-opt-h{font-family:var(--f-display);color:var(--muted)}
+
+/* ── แก้จากการวัดคอนทราสต์บนหน้าจริง ── */
+/* ชื่อแบรนด์ในแถบข้างใช้ทองเข้มเป็นตัวอักษรบนเขียว = 4.03:1 ตกเกณฑ์ */
+.sidebar .logo-txt span{color:var(--gold-ink)}
+/* ลูกศรในลำดับเหตุผลเป็นอักขระที่สื่อความ ไม่ใช่เส้นประดับ จึงต้องอ่านได้ */
+.insight-chain .arw,.flow-arw{color:var(--muted)}

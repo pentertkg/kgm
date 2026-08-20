@@ -7,7 +7,7 @@
     `<div class="between" style="padding:9px 0;border-bottom:1px solid var(--line-2)">
        <span class="row g10"><span class="badge ${ok ? 'badge-good' : 'badge-bad'}">${ok ? '✓' : '✕'}</span>
          <b class="t-sm">${U.esc(name)}</b></span>
-       <span class="t-sm ${ok ? 'muted' : ''}" style="${ok ? '' : 'color:var(--bad)'}">${U.esc(detail)}</span></div>`;
+       <span class="t-sm ${ok ? 'muted' : ''}" style="${ok ? '' : 'color:var(--bad-ink)'}">${U.esc(detail)}</span></div>`;
 
   $('cfgBox').innerHTML = L.enabled
     ? `<div class="row-t g12"><span class="badge badge-good" style="width:32px;height:32px;justify-content:center">✓</span>
