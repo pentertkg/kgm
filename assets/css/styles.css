@@ -1,5 +1,6 @@
 /* ============================================================
-   Self-hosted fonts (SIL Open Font License 1.1)
+   Self-hosted fonts — Kanit & Niramit (SIL Open Font License 1.1)
+   สัญญาอนุญาตแนบไว้ที่ assets/fonts/OFL-Kanit.txt และ OFL-Niramit.txt
    ไม่เรียก CDN หรือบริการภายนอกใดๆ — CSP ยังเป็น font-src 'self'
    Kanit = ตัวนำ (หัวข้อ ตัวเลข ปุ่ม) · Niramit = ตัวอ่าน (เนื้อความ)
    แยก subset thai/latin เพื่อให้ดาวน์โหลดเฉพาะที่ใช้
